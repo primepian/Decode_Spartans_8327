@@ -41,7 +41,7 @@ public class Constants {
     public static ThreeWheelConstants localizerConstants = new ThreeWheelConstants()
             .forwardTicksToInches(.001974231737)    //OK
             .strafeTicksToInches(.00196201606)     //OK
-            .turnTicksToInches(.001989436789)
+            .turnTicksToInches(.002067782271671084)     //OK
             .leftPodY(5.51181)
             .rightPodY(-5.51181)
             .strafePodX(0)
