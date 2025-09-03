@@ -16,13 +16,10 @@ public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
         .mass(4);   //kg
 
-
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
-
-
     public static Follower createFollower(HardwareMap hardwareMap) {
-        Localizer localizer = new ThreeWheelLocalizer(hardwareMap, localizerConstants);
+        Localizer localizer = new ThreeWheelLocalizer(hardwareMap, localizerConstants); //Locaalizer
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .pathConstraints(pathConstraints)
                 .mecanumDrivetrain(driveConstants)
@@ -39,19 +36,19 @@ public class Constants {
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
+            .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE);
 
     public static ThreeWheelConstants localizerConstants = new ThreeWheelConstants()
-            .forwardTicksToInches(.001989436789)
-            .strafeTicksToInches(.001989436789)
+            .forwardTicksToInches(.001974231737)    //OK
+            .strafeTicksToInches(.00196201606)     //OK
             .turnTicksToInches(.001989436789)
             .leftPodY(5.51181)
             .rightPodY(-5.51181)
             .strafePodX(0)
-            .leftEncoder_HardwareMapName("rightFront")
+            .leftEncoder_HardwareMapName("leftRear")
             .rightEncoder_HardwareMapName("rightRear")
             .strafeEncoder_HardwareMapName("leftFront")
-            .leftEncoderDirection(Encoder.REVERSE)
-            .rightEncoderDirection(Encoder.REVERSE)
-            .strafeEncoderDirection(Encoder.REVERSE);
+            .leftEncoderDirection(Encoder.REVERSE)      //OK
+            .rightEncoderDirection(Encoder.FORWARD)     //OK
+            .strafeEncoderDirection(Encoder.REVERSE);   //OK
 }
