@@ -54,6 +54,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  *
  * See the sensor's product page: https://www.tindie.com/products/35114/
  */
+/*
 @TeleOp(name = "OctoQuad Basic", group="OctoQuad")
 @Disabled
 public class SensorOctoQuad extends LinearOpMode {
@@ -73,6 +74,7 @@ public class SensorOctoQuad extends LinearOpMode {
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
      */
+/*
     @Override
     public void runOpMode() {
 
@@ -139,3 +141,4 @@ public class SensorOctoQuad extends LinearOpMode {
         posPerp  = positions[ODO_PERP];
     }
 }
+*/
