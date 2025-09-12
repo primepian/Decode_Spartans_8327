@@ -12,7 +12,8 @@ import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 
 
-@TeleOp(name = "Vision Color-Sensor", group = "Camera")
+@TeleOp(name = "Vision Color-Sensor", group = "Sensor")
+@Disabled
 public class CameraColorsTest extends LinearOpMode
 {
     @Override
@@ -69,7 +70,7 @@ public class CameraColorsTest extends LinearOpMode
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
 
         // WARNING:  To be able to view the stream preview on the Driver Station, this code runs in INIT mode.
-        while (opModeIsActive())    // || opModeInInit()
+        while (opModeIsActive() || opModeInInit())
         {
             telemetry.addLine("Preview on/off: 3 dots, Camera Stream\n");
 
@@ -89,6 +90,9 @@ public class CameraColorsTest extends LinearOpMode
             PredominantColorProcessor.Result result = colorSensor.getAnalysis();
 
             telemetry.addData("Best Match", result.closestSwatch);
+            telemetry.addLine(String.format("RGB   (%3d, %3d, %3d)", result.RGB[0], result.RGB[1], result.RGB[2]));
+            telemetry.addLine(String.format("HSV   (%3d, %3d, %3d)", result.HSV[0], result.HSV[1], result.HSV[2]));
+            telemetry.addLine(String.format("YCrCb (%3d, %3d, %3d)", result.YCrCb[0], result.YCrCb[1], result.YCrCb[2]));
             telemetry.update();
 
             sleep(20);
