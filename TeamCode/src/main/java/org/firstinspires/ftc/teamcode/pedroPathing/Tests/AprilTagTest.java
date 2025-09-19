@@ -30,7 +30,9 @@ import java.util.List;
 
             if (opModeIsActive()) {
                 while (opModeIsActive()) {
+                    if (mecanism.id == 21){
 
+                    }
                     mecanism.telemetryAprilTag(telemetry);
 
                     // Push telemetry to the Driver Station.
