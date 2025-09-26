@@ -13,7 +13,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
     @TeleOp(name = "Concept: AprilTag")
-//    @Disabled
+    @Disabled
     public class AprilTagTest extends LinearOpMode {
         AprilTagTestMecanism mecanism = new AprilTagTestMecanism();
 
