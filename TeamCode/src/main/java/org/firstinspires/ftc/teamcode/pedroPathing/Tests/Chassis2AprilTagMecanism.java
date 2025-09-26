@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.Tests;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -20,7 +21,7 @@ public class Chassis2AprilTagMecanism {
     final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
     final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_STRAFE= 0.5;   //  Clip the strafing speed to this max value (adjust for your robot)
+//    final double MAX_AUTO_STRAFE= 0.5;   //  Clip the strafing speed to this max value (adjust for your robot)
     final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
 
     public DcMotor frontLeftDrive = null;  //  Used to control the left front drive wheel
@@ -43,16 +44,16 @@ public class Chassis2AprilTagMecanism {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must match the names assigned during the robot configuration.
         // step (using the FTC Robot Controller app on the phone).
-        frontLeftDrive = hwMap.get(DcMotor.class, "front_left_drive");
-        frontRightDrive = hwMap.get(DcMotor.class, "front_right_drive");
-        backLeftDrive = hwMap.get(DcMotor.class, "back_left_drive");
-        backRightDrive = hwMap.get(DcMotor.class, "back_right_drive");
+        frontLeftDrive = hwMap.get(DcMotor.class, "leftFront");
+        frontRightDrive = hwMap.get(DcMotor.class, "rightFront");
+        backLeftDrive = hwMap.get(DcMotor.class, "leftRear");
+        backRightDrive = hwMap.get(DcMotor.class, "rightRear");
 
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
         // Create the AprilTag processor by using a builder.
         aprilTag = new AprilTagProcessor.Builder().build();
 

@@ -26,10 +26,6 @@ public class Chassis2AprilTag extends LinearOpMode
     @Override public void runOpMode()
     {
         mecanism.initAprilTag(hardwareMap);
-
-        telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch START to start OpMode");
-        telemetry.update();
         waitForStart();
 
         while (opModeIsActive())
@@ -84,10 +80,11 @@ public class Chassis2AprilTag extends LinearOpMode
             } else {
 
                 // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
-                mecanism.drive  = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
-                mecanism.strafe = -gamepad1.left_stick_x  / 2.0;  // Reduce strafe rate to 50%.
-                mecanism.turn   = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
-                telemetry.addData("Manual","Drive %5.2f, Turn %5.2f ", mecanism.drive, mecanism.turn);
+                mecanism.drive  = -gamepad1.left_stick_y / 2;  // Reduce drive rate to 50%.
+                mecanism.strafe = -gamepad1.left_stick_x / 2;  // Reduce strafe rate to 50%.
+                mecanism.turn   = -gamepad1.right_stick_x /
+                        2;  // Reduce turn rate to 33%.
+                telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", mecanism.drive, mecanism.strafe, mecanism.turn);
             }
             telemetry.update();
 
