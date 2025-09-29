@@ -108,6 +108,9 @@ public class TeleOpMaster extends OpMode {
                     true
             );
         }
+//  Tl: CHOOSE TEAM FOR SHOOTING POSE
+        if (gamepad2.left_stick_button)  {mecanism.DESIRED_TAG_ID = 20;}    //NOTE: BLUE TEAM
+        if (gamepad2.right_stick_button) {mecanism.DESIRED_TAG_ID = 24;}    //NOTE: RED TEAM
 
 //  TL: INTAKE      {GPAD_1}
 //  TL: POS. SHOOT  {GPAD_1}

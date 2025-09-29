@@ -28,7 +28,7 @@ public class Mecanismos {
     final double MAX_AUTO_SPEED = 0.6;
     final double MAX_AUTO_TURN  = 0.35;
 
-    public static final int DESIRED_TAG_ID = 20;
+    public int DESIRED_TAG_ID = 0;
     public VisionPortal visionPortal;
     public AprilTagProcessor aprilTag;
     public AprilTagDetection desiredTag = null;
