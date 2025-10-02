@@ -25,8 +25,8 @@ public class Mecanismos {
     final double DESIRED_DISTANCE =  40;
     final double SPEED_GAIN  =  0.02  ;
     final double TURN_GAIN   =  0.01  ;
-    final double MAX_AUTO_SPEED = 0.6;
-    final double MAX_AUTO_TURN  = 0.35;
+    final double MAX_AUTO_SPEED = 0.5;
+    final double MAX_AUTO_TURN  = 0.3;
 
     public int DESIRED_TAG_ID = 0;
     public VisionPortal visionPortal;
@@ -46,7 +46,7 @@ public class Mecanismos {
 //        barril = hwMap.get(Servo.class, "Barril");
 
         aprilTag = new AprilTagProcessor.Builder().build();
-        aprilTag.setDecimation(1);
+        aprilTag.setDecimation(2);
         visionPortal = new VisionPortal.Builder()
                 .setCamera(hwMap.get(WebcamName.class, "Webcam 1"))
                 .addProcessor(aprilTag)
