@@ -19,21 +19,21 @@ public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(3)
 //NOTE: Automatic Tunners
-            .forwardZeroPowerAcceleration(-71.2700359634458)
-            .lateralZeroPowerAcceleration(-67.342491844080064)
+            .forwardZeroPowerAcceleration(69.214302351815287)
+            .lateralZeroPowerAcceleration(75.259033163616505)
 //NOTE: Translational PID
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.03, 0, 0, 0.015))
-            .translationalPIDFSwitch(4)
-            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.4, 0, 0.005, 0.0006))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0.002, 0.023))
+//            .translationalPIDFSwitch(4)
+//            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.4, 0, 0.005, 0.0006));
 //NOTE: Heading PID
-            .headingPIDFCoefficients(new PIDFCoefficients(0.8, 0, 0, 0.01))
-            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(2.5, 0, 0.1, 0.0005))
+            .headingPIDFCoefficients(new PIDFCoefficients(0.9, 0, 0.03, 0.01))
+            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(2.5, 0, 0.07, 0.01))
 //NOTE: Drive PID
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.1, 0, 0.00035, 0.6, 0.015))
-            .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.02, 0, 0.000005, 0.6, 0.01))
-            .drivePIDFSwitch(15)
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.005, 0, 0.00001, 0.6, 0.001))
+            .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.02, 0, 0.000001, 0.6, 0.01))
+            .drivePIDFSwitch(15);
 //NOTE: Centripental PID
-            .centripetalScaling(0.0005);
+//            .centripetalScaling(0.0005);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
@@ -45,8 +45,8 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(72.98235202899443)    //NOTE: FORWARD VELOCITY TUNNER
-            .yVelocity(64.47022397499385);  //NOTE: LATERAL VELOCITY TUNNER
+            .xVelocity(80.754619736558)    //NOTE: FORWARD VELOCITY TUNNER
+            .yVelocity(68.384774852362);  //NOTE: LATERAL VELOCITY TUNNER
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(133.1)
