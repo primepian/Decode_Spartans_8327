@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.OpMaster;
 
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -11,22 +13,20 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 public class Mecanismos {
 //Tl:       INTAKE
-    public CRServo intake_1;
-    public CRServo intake_2;
+    public DcMotor intake;
 //TL:       CANNON
-    public CRServo cannon_1;
-    public CRServo cannon_2;
-    public CRServo cannon_3;
+    public DcMotor cannonR;
+    public DcMotor cannonL;
 //Tl:       BARRIL
     public Servo barril;
 //Tl:       COSOS CHISTOSOS
     public double slowModeMultiplier = 0.3; //Modo slow
 //note    AprilTag search
-    final double DESIRED_DISTANCE =  40;
-    final double SPEED_GAIN  =  0.02  ;
-    final double TURN_GAIN   =  0.01  ;
-    final double MAX_AUTO_SPEED = 0.5;
-    final double MAX_AUTO_TURN  = 0.3;
+    public final double DESIRED_DISTANCE =  40;
+    public final double SPEED_GAIN  =  0.02  ;
+    public final double TURN_GAIN   =  0.01  ;
+    public final double MAX_AUTO_SPEED = 0.5;
+    public final double MAX_AUTO_TURN  = 0.3;
 
     public int DESIRED_TAG_ID = 0;
     public VisionPortal visionPortal;
@@ -38,11 +38,10 @@ public class Mecanismos {
     public double  turn            = 0;
 
     public void initAll(HardwareMap hwMap){
-//        intake_1 = hwMap.get(CRServo.class, "IntakeR");
-//        intake_2 = hwMap.get(CRServo.class, "IntakeL");
-//        cannon_1 = hwMap.get(CRServo.class, "CannonR");
-//        cannon_2 = hwMap.get(CRServo.class, "CannonL");
-//        cannon_3 = hwMap.get(CRServo.class, "CannonA");
+        intake = hwMap.get(DcMotor.class, "Intake");
+        cannonR = hwMap.get(DcMotor.class, "CannonR");
+        cannonL = hwMap.get(DcMotor.class, "CannonL");
+        cannonL.setDirection(DcMotorSimple.Direction.REVERSE);
 //        barril = hwMap.get(Servo.class, "Barril");
 
         aprilTag = new AprilTagProcessor.Builder().build();
