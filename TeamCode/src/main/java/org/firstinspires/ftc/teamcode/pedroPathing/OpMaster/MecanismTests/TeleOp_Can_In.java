@@ -79,19 +79,35 @@ public class TeleOp_Can_In extends OpMode {
         mecanism.desiredTag  = null;
 
         if (!automatedDrive) {//  TL: DRIVE {GPAD_1}
-            if (gamepad1.left_trigger == 0.0 && !gamepad1.x) follower.setTeleOpDrive(
-                    -gamepad1.left_stick_y,
-                    -gamepad1.left_stick_x,
-                    -gamepad1.right_stick_x,
-                    true // Robot Centric
-            );
-            else follower.setTeleOpDrive(
-                    -gamepad1.left_stick_y * mecanism.slowModeMultiplier,
-                    -gamepad1.left_stick_x * mecanism.slowModeMultiplier,
-                    -gamepad1.right_stick_x * mecanism.slowModeMultiplier,
-                    true // Robot Centric
-            );
+            if (!mecanism.invertedDrive) {
+                if (gamepad1.left_trigger == 0.0 && !gamepad1.x) follower.setTeleOpDrive(
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x,
+                        -gamepad1.right_stick_x,
+                        true // Robot Centric
+                );
+                else follower.setTeleOpDrive(
+                        -gamepad1.left_stick_y * mecanism.slowModeMultiplier,
+                        -gamepad1.left_stick_x * mecanism.slowModeMultiplier,
+                        -gamepad1.right_stick_x * mecanism.slowModeMultiplier,
+                        true // Robot Centric
+                );
+            } else {
+                if (gamepad1.left_trigger == 0.0 && !gamepad1.x) follower.setTeleOpDrive(
+                        gamepad1.left_stick_y,
+                        gamepad1.left_stick_x,
+                        -gamepad1.right_stick_x,
+                        true // Robot Centric
+                );
+                else follower.setTeleOpDrive(
+                        gamepad1.left_stick_y * mecanism.slowModeMultiplier,
+                        gamepad1.left_stick_x * mecanism.slowModeMultiplier,
+                        -gamepad1.right_stick_x * mecanism.slowModeMultiplier,
+                        true // Robot Centric
+                );
+            }
         }
+
         List<AprilTagDetection> currentDetections = mecanism.aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
@@ -122,12 +138,19 @@ public class TeleOp_Can_In extends OpMode {
                     true
             );
         }
-//  Tl: CHOOSE TEAM FOR SHOOTING POSE
+//  Tl: CHOOSE TEAM FOR SHOOTING POSE   {GPAD_2}
         if (gamepad2.left_stick_button)  {mecanism.DESIRED_TAG_ID = 20;}    //NOTE: BLUE TEAM
         if (gamepad2.right_stick_button) {mecanism.DESIRED_TAG_ID = 24;}    //NOTE: RED TEAM
 
+//  TL: INVERT DRIVE    {GPAD_1}
+        boolean currentRB = gamepad1.right_bumper;
+        if (currentRB && !mecanism.RBflag) {
+            mecanism.invertedDrive = !mecanism.invertedDrive;
+        }
+        mecanism.RBflag = currentRB;
+
 //  TL: INTAKE      {GPAD_1}
-        if (gamepad1.right_trigger > 1){
+        if (gamepad1.right_trigger > 0.0){
             inTake();
         }else {
             mecanism.intake.setPower(0.0);
@@ -148,7 +171,11 @@ public class TeleOp_Can_In extends OpMode {
 //        if (gamepad2.dpad_up){PGP = true;}
         if (gamepad2.dpad_left){PPG = true;}
 
-
+        telem();
+    }
+    public void telem(){
+        telemetry.addData("Inverted Drive: ",mecanism.invertedDrive);
+        telemetry.update();
     }
 
 //  NOTE: ======MECANISM STUFF=======

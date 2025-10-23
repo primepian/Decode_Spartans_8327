@@ -21,6 +21,8 @@ public class Mecanismos {
     public Servo barril;
 //Tl:       COSOS CHISTOSOS
     public double slowModeMultiplier = 0.3; //Modo slow
+    public boolean invertedDrive;
+    public boolean RBflag;
 //note    AprilTag search
     public final double DESIRED_DISTANCE =  40;
     public final double SPEED_GAIN  =  0.02  ;
@@ -38,7 +40,7 @@ public class Mecanismos {
     public double  turn            = 0;
 
     public void initAll(HardwareMap hwMap){
-        intake = hwMap.get(DcMotor.class, "Intake");
+        intake = hwMap.get(DcMotor.class, "barredora");
         cannonR = hwMap.get(DcMotor.class, "CannonR");
         cannonL = hwMap.get(DcMotor.class, "CannonL");
         cannonL.setDirection(DcMotorSimple.Direction.REVERSE);
