@@ -82,8 +82,7 @@ public class AutoBlueV1 extends OpMode {
             case 1:
             /* You could check for
             - Follower State: "if(!follower.isBusy()) {}"
-            - Ti
-            me: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
+            - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
             - Robot Position: "if(follower.getPose().getX() > 36) {}"
             */
 
