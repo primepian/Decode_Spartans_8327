@@ -12,7 +12,7 @@ import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "Example Auto", group = "Examples")
+@Autonomous(group = "Tests")
 public class AutoBlueV1 extends OpMode {
 
     private Follower follower;
@@ -20,29 +20,37 @@ public class AutoBlueV1 extends OpMode {
 
     private int pathState;
 
-    private final Pose startPose = new Pose(32, 135, Math.toRadians(0)); //PT: Start Pose of our robot.
-    private final Pose controlPoint = new Pose(35, 118); //CP: CONTROL POINT FOR STP-OBP.
-    private final Pose obeliskPose = new Pose(48, 120, Math.toRadians(50)); //PT: ROBOT IS SEEING THE OBELISK.
+    private final Pose startPose = new Pose(32, 135.5, Math.toRadians(270)); //PT: Start Pose of robot.
+    private final Pose controlPoint = new Pose(35, 118); //CP: CONTROL POINT FOR STP-SHP.
+//    private final Pose obeliskPose = new Pose(48, 120, Math.toRadians(50)); //PT: ROBOT IS SEEING THE OBELISK.
     private final Pose shootPose = new Pose(48, 120, Math.toRadians(150)); //PT: Robot is diagonally seeing the blue goal.
     private final Pose pickupIIIPose = new Pose(48, 84, Math.toRadians(180)); //PT: Top (First Set) Blue.
     private final Pose pickedIIIPose = new Pose(17, 84, Math.toRadians(180)); //PT: Top (First Set) Blue already picked.
     private final Pose pickupIIPose = new Pose(48, 60, Math.toRadians(180)); //PT: Middle (Second Set) Blue.
     private final Pose pickedIIPose = new Pose(17, 60, Math.toRadians(180)); //PT: Middle (Second Set) Blue already picked.
-    private final Pose parkPose = new Pose(16, 84, Math.toRadians(0));//PT: Robot tangent to blue ramp.
+    private final Pose controlPoint2 = new Pose(60, 60); //CP: CONTROL POINT FOR III TO SHP.
+    private final Pose pickupIPose = new Pose(45, 35, Math.toRadians(180)); //PT: Low (First Set) Blue.
+    private final Pose pickedIPose = new Pose(18, 35, Math.toRadians(180)); //PT: Low (First Set) Blue already picked.
+    private final Pose parkPose = new Pose(15, 85, Math.toRadians(0));//PT: Robot tangent to blue ramp.
 
     private Path startpath;
-    private PathChain obelisk2IIIBlue, pickiiiblue,iii2shoot, shoot2ii, pickiiblue, ii2shoot, park;
+    private PathChain shoot2iii, pickiii, iii2shoot, shoot2ii, pickii, ii2shoot, shoot2i, picki, i2shoot, park; //obelisk2IIIBlue
 
     public void buildPaths() {
-        startpath = new Path(new BezierCurve(startPose, controlPoint, obeliskPose));
-        startpath.setLinearHeadingInterpolation(startPose.getHeading(), obeliskPose.getHeading());
+        startpath = new Path(new BezierCurve(startPose, controlPoint, shootPose));
+        startpath.setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading());
 
-        obelisk2IIIBlue = follower.pathBuilder()
-                .addPath(new BezierLine(obeliskPose, pickupIIIPose))
-                .setLinearHeadingInterpolation(obeliskPose.getHeading(), pickupIIIPose.getHeading())
+//        obelisk2IIIBlue = follower.pathBuilder()
+//                .addPath(new BezierLine(obeliskPose, pickupIIIPose))
+//                .setLinearHeadingInterpolation(obeliskPose.getHeading(), pickupIIIPose.getHeading())
+//                .build();
+
+        shoot2iii = follower.pathBuilder()
+                .addPath(new BezierLine(shootPose, pickupIIIPose))
+                .setLinearHeadingInterpolation(shootPose.getHeading(), pickupIIIPose.getHeading())
                 .build();
 
-        pickiiiblue = follower.pathBuilder()
+        pickiii = follower.pathBuilder()
                 .addPath(new BezierLine(pickupIIIPose, pickedIIIPose))
                 .setLinearHeadingInterpolation(pickupIIIPose.getHeading(), pickedIIIPose.getHeading())
                 .build();
@@ -57,14 +65,29 @@ public class AutoBlueV1 extends OpMode {
                 .setLinearHeadingInterpolation(shootPose.getHeading(), pickupIIPose.getHeading())
                 .build();
 
-        pickiiblue = follower.pathBuilder()
+        pickii = follower.pathBuilder()
                 .addPath(new BezierLine(pickupIIPose, pickedIIPose))
                 .setLinearHeadingInterpolation(pickupIIPose.getHeading(), pickedIIPose.getHeading())
                 .build();
 
         ii2shoot = follower.pathBuilder()
-                .addPath(new BezierLine(pickedIIPose, shootPose))
+                .addPath(new BezierCurve(pickedIIPose, controlPoint2, shootPose))
                 .setLinearHeadingInterpolation(pickedIIPose.getHeading(), shootPose.getHeading())
+                .build();
+
+        shoot2i = follower.pathBuilder()
+                .addPath(new BezierLine(shootPose, pickupIPose))
+                .setLinearHeadingInterpolation(shootPose.getHeading(), pickupIPose.getHeading())
+                .build();
+
+        picki = follower.pathBuilder()
+                .addPath(new BezierLine(pickupIPose, pickedIPose))
+                .setLinearHeadingInterpolation(pickupIPose.getHeading(), pickedIPose.getHeading())
+                .build();
+
+        i2shoot = follower.pathBuilder()
+                .addPath(new BezierLine(pickedIPose, shootPose))
+                .setLinearHeadingInterpolation(pickedIPose.getHeading(), shootPose.getHeading())
                 .build();
 
         park = follower.pathBuilder()
@@ -88,13 +111,13 @@ public class AutoBlueV1 extends OpMode {
             */
 
                 if (!follower.isBusy()) {
-                    follower.followPath(obelisk2IIIBlue, true);
+                    follower.followPath(shoot2iii, true);
                     setPathState(2);
                 }
                 break;
             case 2:
                 if (!follower.isBusy()) {
-                    follower.followPath(pickiiiblue, true);
+                    follower.followPath(pickiii, true);
                     setPathState(3);
                 }
                 break;
@@ -112,7 +135,7 @@ public class AutoBlueV1 extends OpMode {
                 break;
             case 5:
                 if (!follower.isBusy()) {
-                    follower.followPath(pickiiblue, true);
+                    follower.followPath(pickii, true);
                     setPathState(6);
                 }
                 break;
@@ -124,11 +147,29 @@ public class AutoBlueV1 extends OpMode {
                 break;
             case 7:
                 if (!follower.isBusy()) {
-                    follower.followPath(park, true);
+                    follower.followPath(shoot2i, true);
                     setPathState(8);
                 }
                 break;
             case 8:
+                if (!follower.isBusy()) {
+                    follower.followPath(picki, true);
+                    setPathState(9);
+                }
+                break;
+            case 9:
+                if (!follower.isBusy()) {
+                    follower.followPath(i2shoot, true);
+                    setPathState(10);
+                }
+                break;
+            case 10:
+                if (!follower.isBusy()) {
+                    follower.followPath(park, true);
+                    setPathState(11);
+                }
+                break;
+            case 11:
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }

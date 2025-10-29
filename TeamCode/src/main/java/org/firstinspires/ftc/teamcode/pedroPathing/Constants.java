@@ -29,11 +29,12 @@ public class Constants {
             .headingPIDFCoefficients(new PIDFCoefficients(0.9, 0, 0.03, 0.01))
             .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(2.5, 0, 0.07, 0.01))
 //NOTE: Drive PID
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.005, 0, 0.00001, 0.6, 0.001))
-            .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.02, 0, 0.000001, 0.6, 0.01))
-            .drivePIDFSwitch(15);
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.0045, 0, 0.0002, 0.6, 0.01))
+            .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.005, 0, 0.05, 0.6, 0.01))
+            .drivePIDFSwitch(15)
+
 //NOTE: Centripental PID
-//            .centripetalScaling(0.0005);
+            .centripetalScaling(0.00091);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)

@@ -139,8 +139,8 @@ public class TeleOp_Can_In extends OpMode {
             );
         }
 //  Tl: CHOOSE TEAM FOR SHOOTING POSE   {GPAD_2}
-        if (gamepad2.left_stick_button)  {mecanism.DESIRED_TAG_ID = 20;}    //NOTE: BLUE TEAM
-        if (gamepad2.right_stick_button) {mecanism.DESIRED_TAG_ID = 24;}    //NOTE: RED TEAM
+        if (gamepad2.left_stick_button)  {mecanism.DESIRED_TAG_ID = 20; telemetry.addLine("====BLUE TEAM====");}    //NOTE: BLUE TEAM
+        if (gamepad2.right_stick_button) {mecanism.DESIRED_TAG_ID = 24; telemetry.addLine("====RED TEAM====");}    //NOTE: RED TEAM
 
 //  TL: INVERT DRIVE    {GPAD_1}
         boolean currentRB = gamepad1.right_bumper;

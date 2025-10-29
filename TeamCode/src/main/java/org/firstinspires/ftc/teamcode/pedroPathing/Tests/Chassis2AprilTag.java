@@ -17,8 +17,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name="Omni Drive To AprilTag")
-//@Disabled
+@TeleOp()
+@Disabled
 public class Chassis2AprilTag extends LinearOpMode
 {
     Chassis2AprilTagMecanism mecanism = new Chassis2AprilTagMecanism();
