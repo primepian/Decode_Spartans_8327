@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.AutoTests;
-
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -13,22 +12,22 @@ import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous(name = "Example Auto", group = "Examples")
-public class AutoBlueV1 extends OpMode {
+public class AutoRedV1 extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
 
     private int pathState;
 
-    private final Pose startPose = new Pose(32, 135, Math.toRadians(0)); //PT: Start Pose of our robot.
-    private final Pose controlPoint = new Pose(35, 118); //CP: CONTROL POINT FOR STP-OBP.
-    private final Pose obeliskPose = new Pose(48, 120, Math.toRadians(50)); //PT: ROBOT IS SEEING THE OBELISK.
-    private final Pose shootPose = new Pose(48, 120, Math.toRadians(150)); //PT: Robot is diagonally seeing the blue goal.
-    private final Pose pickupIIIPose = new Pose(48, 84, Math.toRadians(180)); //PT: Top (First Set) Blue.
-    private final Pose pickedIIIPose = new Pose(17, 84, Math.toRadians(180)); //PT: Top (First Set) Blue already picked.
-    private final Pose pickupIIPose = new Pose(48, 60, Math.toRadians(180)); //PT: Middle (Second Set) Blue.
-    private final Pose pickedIIPose = new Pose(17, 60, Math.toRadians(180)); //PT: Middle (Second Set) Blue already picked.
-    private final Pose parkPose = new Pose(16, 84, Math.toRadians(0));//PT: Robot tangent to blue ramp.
+    private final Pose startPose = new Pose(32, 135, Math.toRadians(0)).mirror(); //PT: Start Pose of our robot.
+    private final Pose controlPoint = new Pose(35, 118).mirror(); //CP: CONTROL POINT FOR STP-OBP.
+    private final Pose obeliskPose = new Pose(48, 120, Math.toRadians(50)).mirror(); //PT: ROBOT IS SEEING THE OBELISK.
+    private final Pose shootPose = new Pose(48, 120, Math.toRadians(150)).mirror(); //PT: Robot is diagonally seeing the blue goal.
+    private final Pose pickupIIIPose = new Pose(48, 84, Math.toRadians(180)).mirror(); //PT: Top (First Set) Blue.
+    private final Pose pickedIIIPose = new Pose(17, 84, Math.toRadians(180)).mirror(); //PT: Top (First Set) Blue already picked.
+    private final Pose pickupIIPose = new Pose(48, 60, Math.toRadians(180)).mirror(); //PT: Middle (Second Set) Blue.
+    private final Pose pickedIIPose = new Pose(17, 60, Math.toRadians(180)).mirror(); //PT: Middle (Second Set) Blue already picked.
+    private final Pose parkPose = new Pose(16, 84, Math.toRadians(0)).mirror();//PT: Robot tangent to blue ramp.
 
     private Path startpath;
     private PathChain obelisk2IIIBlue, pickiiiblue,iii2shoot, shoot2ii, pickiiblue, ii2shoot, park;
@@ -187,4 +186,5 @@ public class AutoBlueV1 extends OpMode {
         opmodeTimer.resetTimer();
         setPathState(0);
     }
+
 }
