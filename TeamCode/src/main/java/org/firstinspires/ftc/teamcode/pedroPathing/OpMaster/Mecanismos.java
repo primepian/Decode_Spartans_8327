@@ -12,7 +12,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 public class Mecanismos {
-//Tl:       INTAKE
+    //public static final double DESIRED_DISTANCE = 0;
+    //Tl:       INTAKE
     public DcMotor intake;
 //TL:       CANNON
     public DcMotor cannonR;
