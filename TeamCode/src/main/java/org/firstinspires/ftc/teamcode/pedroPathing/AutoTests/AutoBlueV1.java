@@ -11,14 +11,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.OpMaster.Mecanismos;
 
 @Autonomous(group = "Tests")
 public class AutoBlueV1 extends OpMode {
+    Mecanismos mecanism = new Mecanismos();
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
 
     private int pathState;
+    public double timeStamp;
 
     private final Pose startPose = new Pose(32, 135.5, Math.toRadians(270)); //PT: Start Pose of robot.
     private final Pose controlPoint = new Pose(35, 118); //CP: CONTROL POINT FOR STP-SHP.
@@ -97,10 +100,15 @@ public class AutoBlueV1 extends OpMode {
     }
 
     public void autonomousPathUpdate() {
+
+        double actualTime = pathTimer.getElapsedTimeSeconds();
+
         switch (pathState) {
             case 0:
                 follower.followPath(startpath);
                 setPathState(1);
+                timeStamp = actualTime;
+                mecanism.shoot(0.45);
                 break;
             case 1:
             /* You could check for
@@ -109,61 +117,78 @@ public class AutoBlueV1 extends OpMode {
             - Robot Position: "if(follower.getPose().getX() > 36) {}"
             */
 
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && actualTime >= timeStamp + 3) {
+                    mecanism.shoot(0);
                     follower.followPath(shoot2iii, true);
                     setPathState(2);
                 }
                 break;
             case 2:
                 if (!follower.isBusy()) {
+                    mecanism.intake(1.0);
                     follower.followPath(pickiii, true);
                     setPathState(3);
-                }
-                break;
+                  }
+              break;
             case 3:
                 if (!follower.isBusy()) {
+                    mecanism.intake(0);
                     follower.followPath(iii2shoot, true);
+                    timeStamp = actualTime;
+                    mecanism.shoot(0.45);
                     setPathState(4);
                 }
                 break;
             case 4:
-                if (!follower.isBusy()) {
+
+                if (!follower.isBusy() && actualTime >= timeStamp + 3) {
+                    mecanism.shoot(0);
                     follower.followPath(shoot2ii, true);
                     setPathState(5);
                 }
                 break;
             case 5:
                 if (!follower.isBusy()) {
+                    mecanism.intake(1.0);
                     follower.followPath(pickii, true);
                     setPathState(6);
                 }
                 break;
             case 6:
                 if (!follower.isBusy()) {
+                    mecanism.intake(0.0);
                     follower.followPath(ii2shoot, true);
+                    timeStamp = actualTime;
+                    mecanism.shoot(0.45);
                     setPathState(7);
                 }
                 break;
             case 7:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && actualTime >= timeStamp + 3) {
+                    mecanism.shoot(0);
                     follower.followPath(shoot2i, true);
                     setPathState(8);
                 }
                 break;
             case 8:
                 if (!follower.isBusy()) {
+                    mecanism.intake(1.0);
                     follower.followPath(picki, true);
                     setPathState(9);
                 }
                 break;
             case 9:
                 if (!follower.isBusy()) {
+                    mecanism.intake(0);
                     follower.followPath(i2shoot, true);
+                    timeStamp = actualTime;
+                    mecanism.shoot(0.45);
                     setPathState(10);
                 }
                 break;
             case 10:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy()  && actualTime >= timeStamp + 3) {
+                    mecanism.shoot(0);
                     follower.followPath(park, true);
                     setPathState(11);
                 }

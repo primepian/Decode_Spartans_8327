@@ -18,6 +18,16 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
 import java.util.function.Supplier;
+/*
+ * =====GPAD 1=====
+ * DRIVE [JOYSTICKS]
+ * SLOW MODE [L_TRIGGER]
+ * SEARCH APRILTAGS [LEFT BUMPER]
+ *
+ * =====GPAD 2======
+ * BLUE APRILTAG [LEFT STICK BUTTON]
+ * RED APRILTAG [RIGHT STICK BUTTON]
+ */
 
 @Configurable
 @TeleOp
@@ -66,18 +76,33 @@ public class TeleOpMaster extends OpMode {
         mecanism.desiredTag  = null;
 
         if (!automatedDrive) {//  TL: DRIVE {GPAD_1}
-            if (gamepad1.left_trigger == 0.0 && !gamepad1.x) follower.setTeleOpDrive(
-                    -gamepad1.left_stick_y,
-                    -gamepad1.left_stick_x,
-                    -gamepad1.right_stick_x,
-                    true // Robot Centric
-            );
-            else follower.setTeleOpDrive(
-                    -gamepad1.left_stick_y * mecanism.slowModeMultiplier,
-                    -gamepad1.left_stick_x * mecanism.slowModeMultiplier,
-                    -gamepad1.right_stick_x * mecanism.slowModeMultiplier,
-                    true // Robot Centric
-            );
+            if (!mecanism.invertedDrive) {
+                if (gamepad1.left_trigger == 0.0 && !gamepad1.x) follower.setTeleOpDrive(
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x,
+                        -gamepad1.right_stick_x,
+                        true // Robot Centric
+                );
+                else follower.setTeleOpDrive(
+                        -gamepad1.left_stick_y * mecanism.slowModeMultiplier,
+                        -gamepad1.left_stick_x * mecanism.slowModeMultiplier,
+                        -gamepad1.right_stick_x * mecanism.slowModeMultiplier,
+                        true // Robot Centric
+                );
+            } else {
+                if (gamepad1.left_trigger == 0.0 && !gamepad1.x) follower.setTeleOpDrive(
+                        gamepad1.left_stick_y,
+                        gamepad1.left_stick_x,
+                        -gamepad1.right_stick_x,
+                        true // Robot Centric
+                );
+                else follower.setTeleOpDrive(
+                        gamepad1.left_stick_y * mecanism.slowModeMultiplier,
+                        gamepad1.left_stick_x * mecanism.slowModeMultiplier,
+                        -gamepad1.right_stick_x * mecanism.slowModeMultiplier,
+                        true // Robot Centric
+                );
+            }
         }
         List<AprilTagDetection> currentDetections = mecanism.aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {

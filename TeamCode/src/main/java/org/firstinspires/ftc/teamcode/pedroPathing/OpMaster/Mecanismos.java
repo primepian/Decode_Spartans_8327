@@ -12,9 +12,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 public class Mecanismos {
-    //public static final double DESIRED_DISTANCE = 0;
-    //Tl:       INTAKE
-    public DcMotor intake;
+//Tl:       INTAKE
+    public DcMotor barredora;
 //TL:       CANNON
     public DcMotor cannonR;
     public DcMotor cannonL;
@@ -41,9 +40,10 @@ public class Mecanismos {
     public double  turn            = 0;
 
     public void initAll(HardwareMap hwMap){
-        intake = hwMap.get(DcMotor.class, "barredora");
+        barredora = hwMap.get(DcMotor.class, "barredora");
         cannonR = hwMap.get(DcMotor.class, "CannonR");
         cannonL = hwMap.get(DcMotor.class, "CannonL");
+        barredora.setDirection(DcMotorSimple.Direction.REVERSE);
         cannonL.setDirection(DcMotorSimple.Direction.REVERSE);
 //        barril = hwMap.get(Servo.class, "Barril");
 
@@ -53,5 +53,12 @@ public class Mecanismos {
                 .setCamera(hwMap.get(WebcamName.class, "Webcam 1"))
                 .addProcessor(aprilTag)
                 .build();
+    }
+    public void shoot(double power){
+        cannonR.setPower(power);
+        cannonL.setPower(power);
+    }
+    public void intake(double power){
+        barredora.setPower(power);
     }
 }
