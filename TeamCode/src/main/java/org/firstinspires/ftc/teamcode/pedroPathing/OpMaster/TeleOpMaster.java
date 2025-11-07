@@ -40,11 +40,6 @@ public class TeleOpMaster extends OpMode {
     private TelemetryManager telemetryM;
 
 
-    // Tl: variables chistosas
-    boolean GPP = false;
-    boolean PGP = false;
-    boolean PPG = false;
-
     @Override
     public void init() {
         mecanism.initAll(hardwareMap);
@@ -104,6 +99,7 @@ public class TeleOpMaster extends OpMode {
                 );
             }
         }
+
         List<AprilTagDetection> currentDetections = mecanism.aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
@@ -133,25 +129,47 @@ public class TeleOpMaster extends OpMode {
                     true
             );
         }
-//  Tl: CHOOSE TEAM FOR SHOOTING POSE
+
+//  Tl: CHOOSE TEAM FOR SHOOTING POSE   {GPAD_2}
         if (gamepad2.left_stick_button)  {mecanism.DESIRED_TAG_ID = 20;}    //NOTE: BLUE TEAM
         if (gamepad2.right_stick_button) {mecanism.DESIRED_TAG_ID = 24;}    //NOTE: RED TEAM
 
-//  TL: INTAKE      {GPAD_1}
-//  TL: POS. SHOOT  {GPAD_1}
+//  TL: INVERT DRIVE    {GPAD_1}
+        boolean currentRB = gamepad1.right_bumper;
+        if (currentRB && !mecanism.RBflag) {
+            mecanism.invertedDrive = !mecanism.invertedDrive;
+        }
+        mecanism.RBflag = currentRB;
 
+//  TL: INTAKE      {GPAD_1}
+        if (gamepad1.right_trigger > 0.0){
+            mecanism.intake(1);
+        } if (gamepad1.left_trigger > 0.0){
+            mecanism.intake(-1);
+        } else {
+            mecanism.barredora.setPower(0.0);
+        }
+
+//  TL: POS. SHOOT  {GPAD_1}
 //  TL: BARRIL      {GPAD_2}
+
 //  TL: CANNON      {GPAD_2}
+        if (gamepad2.right_trigger > 0.0){
+            mecanism.shoot(0.35);
+        } if (gamepad2.left_trigger > 0.0){
+            mecanism.shoot(0.45);
+        } else {
+            mecanism.shoot(0);
+        }
+
 //  TL: CAMBIO DE MODO [GPP] [PGP] [PPG]    {GPAD_2}
-        if (gamepad2.dpad_right){GPP = true;}
-        if (gamepad2.dpad_up){PGP = true;}
-        if (gamepad2.dpad_left){PPG = true;}
+        if (gamepad2.dpad_right){mecanism.GPP = true;}
+        if (gamepad2.dpad_up){mecanism.PGP = true;}
+        if (gamepad2.dpad_left){mecanism.PPG = true;}
 
 
         telemetryM.addLine("");
-//        telemetryM.debug("position", follower.getPose());
-//        telemetryM.debug("velocity", follower.getVelocity());
-//        telemetryM.debug("automatedDrive", automatedDrive);
+        mecanism.telem(telemetry);
 
     }
 }

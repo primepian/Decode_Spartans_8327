@@ -63,8 +63,8 @@ public class CannonTest extends LinearOpMode {
       }
     }
     public void initall(HardwareMap hwmap){
-        CannonR = hwmap.get(DcMotor.class, "cannonR");
-        CannonL = hwmap.get(DcMotor.class, "cannonL");
+        CannonR = hwmap.get(DcMotor.class, "CannonR");
+        CannonL = hwmap.get(DcMotor.class, "CannonL");
         CannonR.setDirection(DcMotor.Direction.REVERSE);
         CannonL.setDirection(DcMotor.Direction.FORWARD);
     }

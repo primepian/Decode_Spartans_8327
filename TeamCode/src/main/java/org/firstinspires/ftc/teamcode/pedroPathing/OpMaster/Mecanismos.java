@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -23,6 +24,11 @@ public class Mecanismos {
     public double slowModeMultiplier = 0.3; //Modo slow
     public boolean invertedDrive;
     public boolean RBflag;
+// Tl: variables chistosas
+    boolean GPP = false;
+    boolean PGP = false;
+    boolean PPG = false;
+
 //note    AprilTag search
     public final double DESIRED_DISTANCE =  40;
     public final double SPEED_GAIN  =  0.02  ;
@@ -60,5 +66,15 @@ public class Mecanismos {
     }
     public void intake(double power){
         barredora.setPower(power);
+    }
+    public void telem(Telemetry telemetry){
+        if (GPP){telemetry.addLine("PATTERN = GPP");}
+        if (PGP) {telemetry.addLine("PATTERN = PGP");}
+        if (PPG) {telemetry.addLine("PATTERN = PPG");}
+        if (DESIRED_TAG_ID == 20){ telemetry.addLine("====BLUE TEAM====");}
+        if (DESIRED_TAG_ID == 24){ telemetry.addLine("====RED TEAM====");}
+
+        telemetry.addData("Inverted Drive: ",invertedDrive);
+        telemetry.update();
     }
 }
