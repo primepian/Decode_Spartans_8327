@@ -105,7 +105,6 @@ public class AutoRedV1 extends OpMode {
         real_time = pathTimer.getElapsedTimeSeconds();
 
         double new_requerid_time;
-        //new_requerid_time = real_time + 3;
 
         switch (pathState) {
 
@@ -120,7 +119,7 @@ public class AutoRedV1 extends OpMode {
             case 1:
             /* You could check for
             - Follower State: "if(!follower.isBusy()) {}"
-            - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
+            - Time: "if(pathTimer.getElapsedTimeSeconds()  uuuuu> 1) {}"
             - Robot Position: "if(follower.getPose().getX() > 36) {}"
             */
 
@@ -128,8 +127,10 @@ public class AutoRedV1 extends OpMode {
                     follower.followPath(shoot2iii, true);
                     //setPathState(2);
                     new_requerid_time = real_time + 3;
+                    telemetry.addData("new_required_time establecido", new_requerid_time);
                     if (real_time > new_requerid_time) {
                         setPathState(2);
+                        telemetry.addLine("Pasar al camino 2");
                     }
                 }
 
@@ -221,6 +222,7 @@ public class AutoRedV1 extends OpMode {
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("real_time", pathTimer.getElapsedTimeSeconds());
         telemetry.update();
     }
 
