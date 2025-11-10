@@ -25,7 +25,6 @@ public class CannonTest extends LinearOpMode {
               shoot(gamepad1.left_trigger);
           }
           if (gamepad1.right_trigger > 0.0){
-
               shoot(pow);
           }
 
@@ -56,6 +55,8 @@ public class CannonTest extends LinearOpMode {
           if (gamepad1.a){
               pow = 1.0;
               shoot(pow);
+          }else {
+              shoot(0);
           }
 
           telemetry.addData("POW: ", pow);

@@ -14,7 +14,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 public class Mecanismos {
 //Tl:       INTAKE
-    public DcMotor barredora;
+    public DcMotor intakeL;
+    public DcMotor intakeR;
 //TL:       CANNON
     public DcMotor cannonR;
     public DcMotor cannonL;
@@ -46,10 +47,11 @@ public class Mecanismos {
     public double  turn            = 0;
 
     public void initAll(HardwareMap hwMap){
-        barredora = hwMap.get(DcMotor.class, "barredora");
+        intakeL = hwMap.get(DcMotor.class, "IntakeL");
+        intakeR = hwMap.get(DcMotor.class, "IntakeR");
         cannonR = hwMap.get(DcMotor.class, "CannonR");
         cannonL = hwMap.get(DcMotor.class, "CannonL");
-        barredora.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeR.setDirection(DcMotorSimple.Direction.REVERSE);
         cannonL.setDirection(DcMotorSimple.Direction.REVERSE);
 //        barril = hwMap.get(Servo.class, "Barril");
 
@@ -65,7 +67,9 @@ public class Mecanismos {
         cannonL.setPower(power);
     }
     public void intake(double power){
-        barredora.setPower(power);
+        intakeL.setPower(power);
+        intakeR.setPower(power);
+
     }
     public void telem(Telemetry telemetry){
         if (GPP){telemetry.addLine("PATTERN = GPP");}

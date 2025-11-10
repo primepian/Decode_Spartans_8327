@@ -22,6 +22,7 @@ import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 import java.util.List;
 
 @TeleOp (name = "Center objects", group = "Camera")
+@Disabled
 public class CAMERA_DETECTOR extends LinearOpMode {
     @Override
     public void runOpMode()

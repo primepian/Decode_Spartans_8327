@@ -19,14 +19,17 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import java.util.List;
 import java.util.function.Supplier;
 /*
- * =====GPAD 1=====
+ * ======GPAD 1=====
  * DRIVE [JOYSTICKS]
  * SLOW MODE [L_TRIGGER]
+ * INTAKE [R_TRIGGER]
  * SEARCH APRILTAGS [LEFT BUMPER]
  *
  * =====GPAD 2======
  * BLUE APRILTAG [LEFT STICK BUTTON]
  * RED APRILTAG [RIGHT STICK BUTTON]
+ * CANNON [RIGHT TRIGGER]
+ *
  */
 
 @Configurable
@@ -145,9 +148,9 @@ public class TeleOpMaster extends OpMode {
         if (gamepad1.right_trigger > 0.0){
             mecanism.intake(1);
         } if (gamepad1.left_trigger > 0.0){
-            mecanism.intake(-1);
+            mecanism.intake(-0.5);
         } else {
-            mecanism.barredora.setPower(0.0);
+            mecanism.intake(0);
         }
 
 //  TL: POS. SHOOT  {GPAD_1}

@@ -152,14 +152,14 @@ public class TeleOp_Can_In extends OpMode {
         mecanism.RBflag = currentRB;
 
 //  TL: INTAKE      {GPAD_1}
-        if (gamepad1.right_trigger > 0.0){
-            inTake(1);
-        }if (gamepad1.left_trigger > 0.0){
-            inTake(-1);
-        }
-        else {
-            mecanism.barredora.setPower(0.0);
-        }
+//        if (gamepad1.right_trigger > 0.0){
+//            inTake(1);
+//        }if (gamepad1.left_trigger > 0.0){
+//            inTake(-1);
+//        }
+//        else {
+//            mecanism.intake(0);
+//        }
 
 //  TL: POS. SHOOT  {GPAD_1}
 //  TL: BARRIL      {GPAD_2}
@@ -187,8 +187,5 @@ public class TeleOp_Can_In extends OpMode {
     public void shoot(double power){
         mecanism.cannonR.setPower(power);
         mecanism.cannonL.setPower(power);
-    }
-    public void inTake(double power){
-        mecanism.barredora.setPower(power);
     }
 }
