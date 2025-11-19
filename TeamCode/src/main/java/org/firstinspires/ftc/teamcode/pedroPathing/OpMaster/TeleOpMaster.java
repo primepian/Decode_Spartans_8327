@@ -145,10 +145,10 @@ public class TeleOpMaster extends OpMode {
         mecanism.RBflag = currentRB;
 
 //  TL: INTAKE      {GPAD_1}
-        if (gamepad1.right_trigger > 0.0){
+        if (gamepad1.a){
             mecanism.intake(1);
-        } if (gamepad1.left_trigger > 0.0){
-            mecanism.intake(-0.5);
+        } if (gamepad1.b){
+            mecanism.intake(-1);
         } else {
             mecanism.intake(0);
         }
