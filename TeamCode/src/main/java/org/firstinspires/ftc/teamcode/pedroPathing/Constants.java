@@ -19,8 +19,8 @@ public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(12)
 //NOTE: Automatic Tunners
-            .forwardZeroPowerAcceleration(69.214302351815287)
-            .lateralZeroPowerAcceleration(75.259033163616505)
+            .forwardZeroPowerAcceleration(-56.7944403)
+            .lateralZeroPowerAcceleration(-90.7600363)
 //NOTE: Translational PID
             .translationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0.002, 0.023))
 //            .translationalPIDFSwitch(4)
@@ -46,8 +46,8 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(80.754619736558)    //NOTE: FORWARD VELOCITY TUNNER
-            .yVelocity(68.384774852362);  //NOTE: LATERAL VELOCITY TUNNER
+            .xVelocity(67.6213273)    //NOTE: FORWARD VELOCITY TUNNER
+            .yVelocity(54.0367637);  //NOTE: LATERAL VELOCITY TUNNER
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(133.1)
