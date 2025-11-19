@@ -19,6 +19,8 @@ import kotlinx.coroutines.Delay;
 @Autonomous(group = "Tests")
 public class AutoRedV1 extends OpMode {
     boolean case1 = false;
+    double real_time;
+    double new_requerid_time = 0;
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -102,10 +104,10 @@ public class AutoRedV1 extends OpMode {
     }
 
     public void autonomousPathUpdate() {
-        double real_time;
+        //double real_time;
         real_time = pathTimer.getElapsedTimeSeconds();
 
-        double new_requerid_time = 0;
+        //double new_requerid_time = 0;
 
         switch (pathState) {
 
@@ -127,12 +129,12 @@ public class AutoRedV1 extends OpMode {
                 if (!follower.isBusy()) {
                     if (!case1) {
                         follower.followPath(shoot2iii, true);
-                        new_requerid_time = real_time + 3;
+                        //new_requerid_time = real_time + 3;
                         telemetry.addData("new_required_time establecido", new_requerid_time);
                         case1 = true;
                     }
                     //setPathState(2);
-                    //new_requerid_time = real_time + 3;
+                    new_requerid_time = real_time + 3;
                     //telemetry.addData("new_required_time establecido", new_requerid_time);
                     if (real_time > new_requerid_time) {
                         setPathState(2);
@@ -210,7 +212,7 @@ public class AutoRedV1 extends OpMode {
      **/
     public void setPathState(int pState) {
         pathState = pState;
-        pathTimer.resetTimer();
+        //pathTimer.resetTimer();
     }
 
     /**
