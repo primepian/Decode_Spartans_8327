@@ -76,6 +76,7 @@ public class TeleOpMaster extends OpMode {
         if (!automatedDrive) {//  TL: DRIVE {GPAD_1}
             if (!mecanism.invertedDrive) {
                 if (gamepad1.left_trigger == 0.0 && !gamepad1.x) follower.setTeleOpDrive(
+
                         -gamepad1.left_stick_y,
                         -gamepad1.left_stick_x,
                         -gamepad1.right_stick_x,
