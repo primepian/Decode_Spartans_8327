@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.OpMaster;
+package org.firstinspires.ftc.teamcode.pedroPathing.OpMaster.MecanismTests;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.OpMaster.Mecanismos;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
@@ -30,12 +31,12 @@ import java.util.function.Supplier;
  * BLUE APRILTAG [LEFT STICK BUTTON]
  * RED APRILTAG [RIGHT STICK BUTTON]
  * CANNON [RIGHT TRIGGER]
- *
+ * Turret [LEFT TRIGGER]
  */
 
 @Configurable
 @TeleOp
-public class TeleOpMaster extends OpMode {
+public class TeleOpShooter extends OpMode {
     Mecanismos mecanism = new Mecanismos();
     private Follower follower;
     public static Pose startingPose; //See ExampleAuto to understand how to use this
@@ -77,7 +78,6 @@ public class TeleOpMaster extends OpMode {
         if (!automatedDrive) {//  TL: DRIVE {GPAD_1}
             if (!mecanism.invertedDrive) {
                 if (gamepad1.left_trigger == 0.0 && !gamepad1.x) follower.setTeleOpDrive(
-
                         -gamepad1.left_stick_y,
                         -gamepad1.left_stick_x,
                         -gamepad1.right_stick_x,
@@ -119,20 +119,24 @@ public class TeleOpMaster extends OpMode {
                 telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
             }
         }
+// TL: TURN TURRET {GPAD_2}
+        if (gamepad2.x && mecanism.targetFound) {
+            double headingError = mecanism.desiredTag.ftcPose.bearing;
+            //P
+            mecanism.turretP = Range.clip(headingError * mecanism.Kp, -mecanism.MAX_AUTO_TURN, mecanism.MAX_AUTO_TURN);
+            //D
+            double deltaTime = mecanism.timer.seconds();
+            if (deltaTime > 0) {
+                double derivada = (headingError - mecanism.lastHeadingError) / deltaTime;
+                mecanism.turretD = mecanism.Kd * derivada;
+            } else {
+                mecanism.turretD = 0;
+            }
+            //update...
+            mecanism.lastHeadingError = headingError;
+            mecanism.timer.reset();
 
-        if (gamepad1.left_bumper && mecanism.targetFound) {
-            double  rangeError      = (mecanism.desiredTag.ftcPose.range - mecanism.DESIRED_DISTANCE);
-            double  headingError    = mecanism.desiredTag.ftcPose.bearing;
-
-            mecanism.drive  = Range.clip(rangeError * mecanism.SPEED_GAIN, -mecanism.MAX_AUTO_SPEED, mecanism.MAX_AUTO_SPEED);
-            mecanism.turn   = Range.clip(headingError * mecanism.TURN_GAIN, -mecanism.MAX_AUTO_TURN, mecanism.MAX_AUTO_TURN) ;
-
-            follower.setTeleOpDrive(
-                    mecanism.drive,
-                    -gamepad1.left_stick_x * 0.3,
-                    mecanism.turn,
-                    true
-            );
+            mecanism.turret.setPower(mecanism.turretP + mecanism.turretD);
         }
 
 //  Tl: CHOOSE TEAM FOR SHOOTING POSE   {GPAD_2}
@@ -147,7 +151,7 @@ public class TeleOpMaster extends OpMode {
         mecanism.RBflag = currentRB;
 
 //  TL: INTAKE      {GPAD_1}
-        if (gamepad1.right_trigger > 0.0){
+        if (gamepad1.a){
             mecanism.intake(1);
         } if (gamepad1.b){
             mecanism.intake(-1);
@@ -168,9 +172,9 @@ public class TeleOpMaster extends OpMode {
         }
 
 //  TL: CAMBIO DE MODO [GPP] [PGP] [PPG]    {GPAD_2}
-        if (gamepad2.dpad_right){mecanism.GPP = true;}
-        if (gamepad2.dpad_up){mecanism.PGP = true;}
-        if (gamepad2.dpad_left){mecanism.PPG = true;}
+//        if (gamepad2.dpad_right){mecanism.GPP = true;}
+//        if (gamepad2.dpad_up){mecanism.PGP = true;}
+//        if (gamepad2.dpad_left){mecanism.PPG = true;}
 
 
         telemetryM.addLine("");

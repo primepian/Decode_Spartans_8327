@@ -5,12 +5,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Mecanismos {
 //Tl:       INTAKE
@@ -19,6 +22,7 @@ public class Mecanismos {
 //TL:       CANNON
     public DcMotor cannonR;
     public DcMotor cannonL;
+    public DcMotor turret;
 //Tl:       BARRIL
     public Servo barril;
 //Tl:       COSOS CHISTOSOS
@@ -46,11 +50,19 @@ public class Mecanismos {
     public double  drive           = 0;
     public double  turn            = 0;
 
+    public double  turretP      = 0;
+    public double  turretD      = 0;
+    public final double Kp   =  0.01  ;
+    public final double Kd   =  0.01  ;
+    public double lastHeadingError = 0.0;
+    public ElapsedTime timer = new ElapsedTime();  // Timer for delta time
+
     public void initAll(HardwareMap hwMap){
         intakeL = hwMap.get(DcMotor.class, "IntakeL");
         intakeR = hwMap.get(DcMotor.class, "IntakeR");
         cannonR = hwMap.get(DcMotor.class, "CannonR");
         cannonL = hwMap.get(DcMotor.class, "CannonL");
+        turret = hwMap.get(DcMotor.class, "turret");
         intakeR.setDirection(DcMotorSimple.Direction.REVERSE);
         cannonL.setDirection(DcMotorSimple.Direction.REVERSE);
 //        barril = hwMap.get(Servo.class, "Barril");
@@ -69,8 +81,8 @@ public class Mecanismos {
     public void intake(double power){
         intakeL.setPower(power);
         intakeR.setPower(power);
-
     }
+
     public void telem(Telemetry telemetry){
         if (GPP){telemetry.addLine("PATTERN = GPP");}
         if (PGP) {telemetry.addLine("PATTERN = PGP");}
