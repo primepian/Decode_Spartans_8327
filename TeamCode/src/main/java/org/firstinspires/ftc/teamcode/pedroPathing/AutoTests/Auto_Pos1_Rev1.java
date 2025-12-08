@@ -7,6 +7,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -19,65 +20,61 @@ public class Auto_Pos1_Rev1 extends OpMode{
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private final Pose startingPose = new Pose(56.000, 9.000, Math.toRadians(90));
-    private final Pose startingPose_CP = new Pose(64.000, 66.000);
+    private final Pose startingPose = new Pose(56.000, 9.000, Math.toRadians(90));            //TL:Path #1
+    private final Pose startingPose_CP = new Pose(64.000, 66.000);                            //TL:Path #1
+    private final Pose search_pose = new Pose(55.000, 101.000, Math.toRadians(66));           //TL:Path #1
 
-    private final Pose startPose = new Pose(56.000, 9.000, Math.toRadians(90));               //Starting and first Position for shooting Pose TL:Path #1
-    private final Pose startPose_CP = new Pose(64.000, 66.000);                               //Control Point (CP) for Bezier Curve           TL:Path #1
-    private final Pose searchPose = new Pose(54.000, 101.000, Math.toRadians(135));           //Search QR                                     TL:Path #2
+    private final Pose shoot_Pose = new Pose(55.000, 101.000, Math.toRadians(139));          //TL:Path #2
 
-    private final Pose fst_itk_Pose = new Pose(40.000, 84.000, Math.toRadians(68));           //Position for the first intake                 TL:Path #3
-    private final Pose fst_itk_Pose_CP = new Pose(49, 84);                                    //Control Point (CP) for Bezier Curve           TL:Path #3
-    private final Pose fst_itk = new Pose(19.000, 84.000, Math.toRadians(180));               //First Intake                                  TL:Path #4
-    private final Pose snd_shooter_Pose = new Pose(54.000, 101.000, Math.toRadians(180));     //Position for the second shooter               TL:Path #5
-    private final Pose snd_itk_Pose = new Pose(40.000, 60.000, Math.toRadians(135));          //Position for the second intake                TL:Path #6
-    private final Pose snd_itk_Pose_CP = new Pose(51.000, 60.000);                            //Control Point (CP) for Bezier Curve           TL:Path #6
-    private final Pose snd_itk = new Pose(19.000, 60.000, Math.toRadians(180));               //Second Intake                                 TL:Path #7
-    private final Pose trd_shooter_Pose = new Pose(51.000, 101.000, Math.toRadians(180));     //Position for second shooter                   TL:Path #8
-    private final Pose parking = new Pose(16.000, 79.000, Math.toRadians(135));               //Parking                                         TL:Path #9
-    private final Pose parking_CP = new Pose(40.000, 77.000);                                 //Control Point (CP) for Bezier Curve           TL:Path #9
+    private final Pose fst_itk_pose_CP = new Pose(49.000, 84.000);                            //TL:Path #3
+    private final Pose fst_itk_pose = new Pose(40.000, 84.000, Math.toRadians(180));          //TL:Path #3
+
+    //fixme:
+
+    private final Pose fst_itk = new Pose(19.000, 84.000, Math.toRadians(180));               //TL:Path #4
+
+    private final Pose hatch_CP = new Pose(56.000, 80.000);                                   //TL:Path #5
+    private final Pose hatch = new Pose(17.000, 75.000, Math.toRadians(0));                   //TL:Path #5
+
+    private final Pose snd_shoot_CP = new Pose(48.000, 76.000);                               //TL:Path #6
+
+    //fixme:
+
+    private final Pose
+
 
     private Path start_path;
-    private PathChain fst_path, snd_path, trd_path, fth_path, fvth_path, sxth_path, svnth_path, egth_path, nnth_path;
+    private PathChain snd_path, trd_path, fth_path, fvth_path, sxth_path, svnth_path, egth_path, nnth_path;
 
     public void buildPaths() {
 
-        start_path = new Path(new BezierCurve(startPose, startPose_CP, searchPose));
-        start_path.setLinearHeadingInterpolation(startPose.getHeading(), searchPose.getHeading());
-
-        fst_path = follower.pathBuilder()
-                .addPath(new BezierLine(searchPose, fst_itk_Pose))
-                .setLinearHeadingInterpolation(searchPose.getHeading(), fst_itk_Pose.getHeading())
-                .build();
+        start_path = new Path(new BezierCurve(startingPose, startingPose_CP, shoot_Pose));                 //TL:Path #1
+        start_path.setLinearHeadingInterpolation(startingPose.getHeading(), shoot_Pose.getHeading());      //TL:Path #1
 
         snd_path = follower.pathBuilder()
-                .addPath(new BezierCurve(fst_itk_Pose, fst_itk_Pose_CP, fst_itk))
-                .setLinearHeadingInterpolation(fst_itk_Pose.getHeading(), fst_itk.getHeading())
+                .addPath(new BezierLine(shoot_Pose, search_pose))
+                .setLinearHeadingInterpolation(shoot_Pose.getHeading(), search_pose.getHeading())
                 .build();
 
         trd_path = follower.pathBuilder()
-                .addPath(new BezierLine(fst_itk, snd_shooter_Pose))
-                .setLinearHeadingInterpolation(fst_itk.getHeading(), snd_shooter_Pose.getHeading())
+                .addPath(new BezierCurve(search_pose, fst_itk_pose_CP, fst_itk_pose))
+                .setLinearHeadingInterpolation(search_pose.getHeading(), fst_itk_pose.getHeading())
                 .build();
+
 
         fth_path = follower.pathBuilder()
-                .addPath(new BezierLine(snd_shooter_Pose, snd_itk_Pose))
-                .setLinearHeadingInterpolation(snd_shooter_Pose.getHeading(), snd_itk_Pose.getHeading())
+                .addPath(new BezierLine(fst_itk_pose, fst_itk))
+                .setLinearHeadingInterpolation(fst_itk_pose.getHeading(), fst_itk.getHeading())
                 .build();
 
-        fvth_path = follower.pathBuilder()
-                .addPath(new BezierCurve(snd_itk_Pose, snd_itk_Pose_CP, snd_itk))
-                .setLinearHeadingInterpolation(snd_itk_Pose.getHeading(), snd_itk.getHeading())
+        fvth_path = follower.pathBuilder()                                                          //TL:Path #5
+                .addPath(new BezierCurve(fst_itk, hatch_CP, hatch))
+                .setLinearHeadingInterpolation(fst_itk.getHeading(), hatch.getHeading())
                 .build();
 
         sxth_path = follower.pathBuilder()
-                .addPath(new BezierLine(snd_itk, trd_shooter_Pose))
-                .setLinearHeadingInterpolation(snd_itk.getHeading(), trd_shooter_Pose.getHeading())
-                .build();
-
-        svnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(trd_shooter_Pose, parking))
-                .setLinearHeadingInterpolation(trd_shooter_Pose.getHeading(), parking.getHeading())
+                .addPath(new BezierCurve(hatch, snd_shoot_CP, shoot_Pose))
+                .setLinearHeadingInterpolation(hatch.getHeading(), shoot_Pose.getHeading())
                 .build();
     }
 
@@ -88,52 +85,19 @@ public class Auto_Pos1_Rev1 extends OpMode{
                 setPathState(1);
                 break;
             case 1:
-                if(!follower.isBusy()) {
-                    follower.followPath(fst_path,true);
+                if (!follower.isBusy()) {
+                    follower.followPath(snd_path,true);
                     setPathState(2);
                 }
                 break;
             case 2:
-                if(!follower.isBusy()) {
-                    follower.followPath(snd_path,true);
+                if (!follower.isBusy()) {
+                    follower.followPath(trd_path, true);
                     setPathState(3);
                 }
-                break;
             case 3:
-                if(!follower.isBusy()) {
-                    follower.followPath(trd_path,true);
-                    setPathState(4);
+                if (!follower.isBusy()) {
                 }
-                break;
-            case 4:
-                if(!follower.isBusy()) {
-                    follower.followPath(fth_path,true);
-                    setPathState(5);
-                }
-                break;
-            case 5:
-                if(!follower.isBusy()) {
-                    follower.followPath(fvth_path,true);
-                    setPathState(6);
-                }
-                break;
-            case 6:
-                if(!follower.isBusy()) {
-                    follower.followPath(sxth_path, true);
-                    setPathState(7);
-                }
-                break;
-            case 7:
-                if(!follower.isBusy()) {
-                    follower.followPath(svnth_path, true);
-                    setPathState(8);
-                }
-                break;
-            case 8:
-                if(!follower.isBusy()) {
-                    setPathState(-1);
-                }
-                break;
         }
     }
 
