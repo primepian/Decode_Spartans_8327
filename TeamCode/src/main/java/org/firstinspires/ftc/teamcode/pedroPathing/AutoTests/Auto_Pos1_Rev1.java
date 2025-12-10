@@ -12,9 +12,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.OpMaster.Mecanismos;
 
 @Autonomous(name = "Auto_Pos1_Rev1", group = "Autonomous")
 public class Auto_Pos1_Rev1 extends OpMode{
+    Mecanismos mecanism = new Mecanismos();
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -24,7 +26,7 @@ public class Auto_Pos1_Rev1 extends OpMode{
     private final Pose startingPose_CP = new Pose(64.000, 66.000);                            //TL:Path #1
     private final Pose search_pose = new Pose(55.000, 101.000, Math.toRadians(66));           //TL:Path #1
 
-    private final Pose shoot_Pose = new Pose(55.000, 101.000, Math.toRadians(139));          //TL:Path #2
+    private final Pose shoot_Pose = new Pose(55.000, 101.000, Math.toRadians(139));           //TL:Path #2
 
     private final Pose fst_itk_pose_CP = new Pose(49.000, 84.000);                            //TL:Path #3
     private final Pose fst_itk_pose = new Pose(40.000, 84.000, Math.toRadians(180));          //TL:Path #3
@@ -40,7 +42,8 @@ public class Auto_Pos1_Rev1 extends OpMode{
 
     //fixme:
 
-    private final Pose
+    private final Pose snd_itk_pose_CP = new Pose(51.000, 60.000);                            //TL:Path #7
+    private final Pose snd_itk_pose = new Pose(40.000, 60.000, Math.toRadians(180));          //TL:Path #7
 
 
     private Path start_path;
@@ -61,6 +64,7 @@ public class Auto_Pos1_Rev1 extends OpMode{
                 .setLinearHeadingInterpolation(search_pose.getHeading(), fst_itk_pose.getHeading())
                 .build();
 
+        //fixme:
 
         fth_path = follower.pathBuilder()
                 .addPath(new BezierLine(fst_itk_pose, fst_itk))
@@ -76,6 +80,8 @@ public class Auto_Pos1_Rev1 extends OpMode{
                 .addPath(new BezierCurve(hatch, snd_shoot_CP, shoot_Pose))
                 .setLinearHeadingInterpolation(hatch.getHeading(), shoot_Pose.getHeading())
                 .build();
+
+        //fixme:
     }
 
     public void autonomousPathUpdate() {
@@ -92,11 +98,13 @@ public class Auto_Pos1_Rev1 extends OpMode{
                 break;
             case 2:
                 if (!follower.isBusy()) {
-                    follower.followPath(trd_path, true);
+                    follower.followPath(trd_path, 1, true);
+                    //follower.followPath(trd_path, true);
                     setPathState(3);
                 }
             case 3:
                 if (!follower.isBusy()) {
+                    setPathState(-1);
                 }
         }
     }
@@ -139,7 +147,7 @@ public class Auto_Pos1_Rev1 extends OpMode{
 
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
-        follower.setStartingPose(startPose);
+        follower.setStartingPose(startingPose);
 
     }
 
