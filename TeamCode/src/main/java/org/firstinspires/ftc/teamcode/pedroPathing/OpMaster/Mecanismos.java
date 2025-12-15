@@ -4,11 +4,15 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.pedroPathing.Tests.TestColorSensorMecanism;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -16,15 +20,21 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Mecanismos {
-//Tl:       INTAKE
+//Tl:========= INTAKE =========
     public DcMotor intakeL;
     public DcMotor intakeR;
-//TL:       CANNON
+//TL:======== CANNON ===========
     public DcMotor cannonR;
     public DcMotor cannonL;
     public DcMotor turret;
-//Tl:       BARRIL
+//Tl:======== BARRIL ==========
     public Servo barril;
+    NormalizedColorSensor colorSensor;
+    public enum DetectedColor{
+        PURPLE,
+        GREEN,
+        UNKNOWN,
+    }
 //Tl:       COSOS CHISTOSOS
     public double slowModeMultiplier = 0.3; //Modo slow
     public boolean invertedDrive;
@@ -62,7 +72,10 @@ public class Mecanismos {
         intakeR = hwMap.get(DcMotor.class, "IntakeR");
         cannonR = hwMap.get(DcMotor.class, "CannonR");
         cannonL = hwMap.get(DcMotor.class, "CannonL");
-        turret = hwMap.get(DcMotor.class, "turret");
+        colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
+        barril = hwMap.get(Servo.class,"servo");
+        colorSensor.setGain(10);
+//        turret = hwMap.get(DcMotor.class, "turret");
         intakeR.setDirection(DcMotorSimple.Direction.REVERSE);
         cannonL.setDirection(DcMotorSimple.Direction.REVERSE);
 //        barril = hwMap.get(Servo.class, "Barril");
@@ -81,6 +94,33 @@ public class Mecanismos {
     public void intake(double power){
         intakeL.setPower(power);
         intakeR.setPower(power);
+    }
+
+    public TestColorSensorMecanism.DetectedColor getDetectedColor(Telemetry telemetry){
+        NormalizedRGBA colors = colorSensor.getNormalizedColors();
+
+        float normRed, normGreen, normBlue;
+        normRed = colors.red / colors.alpha;
+        normGreen = colors.green / colors.alpha;
+        normBlue = colors.blue / colors.alpha;
+
+        telemetry.addData("red", normRed);
+        telemetry.addData("green", normGreen);
+        telemetry.addData("blue", normBlue);
+
+        //TODO colors
+        /*
+         GREEN = <.5, >.3, <.5
+         PURPLE =  <.25, <.25, >.25
+         */
+
+        if (normRed < 0.075 && normGreen > 0.11 && normBlue < 0.20) {
+            return TestColorSensorMecanism.DetectedColor.GREEN;
+        } else if (normRed < 0.25 && normGreen < 0.25 && normBlue > 0.16) {
+            return TestColorSensorMecanism.DetectedColor.PURPLE;
+        } else {
+            return TestColorSensorMecanism.DetectedColor.UNKNOWN;
+        }
     }
 
     public void telem(Telemetry telemetry){

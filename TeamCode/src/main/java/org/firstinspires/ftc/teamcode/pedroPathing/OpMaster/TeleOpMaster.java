@@ -23,14 +23,15 @@ import java.util.function.Supplier;
  * DRIVE [JOYSTICKS]
  * SLOW MODE [L_TRIGGER]
  * INTAKE [R_TRIGGER]
+ * -INTAKE [B]
  * INVERT DRIVE [RIGHT BUMPER]
  * SEARCH APRILTAGS [LEFT BUMPER]
  *
  * =====GPAD 2======
  * BLUE APRILTAG [LEFT STICK BUTTON]
  * RED APRILTAG [RIGHT STICK BUTTON]
- * CANNON [RIGHT TRIGGER]
- *
+ * CANNON NEAR [RIGHT TRIGGER]
+ * CANNON FAR [LEFT TRIGGER]
  */
 
 @Configurable
@@ -168,9 +169,9 @@ public class TeleOpMaster extends OpMode {
         }
 
 //  TL: CAMBIO DE MODO [GPP] [PGP] [PPG]    {GPAD_2}
-        if (gamepad2.dpad_right){mecanism.GPP = true;}
+        if (gamepad2.dpad_right){mecanism.PPG = true;}
         if (gamepad2.dpad_up){mecanism.PGP = true;}
-        if (gamepad2.dpad_left){mecanism.PPG = true;}
+        if (gamepad2.dpad_left){mecanism.GPP = true;}
 
 
         telemetryM.addLine("");
