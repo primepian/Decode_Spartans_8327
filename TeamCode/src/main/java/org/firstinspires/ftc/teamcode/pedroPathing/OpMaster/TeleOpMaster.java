@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Tests.TestColorSensorMecanism;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
@@ -38,11 +39,36 @@ import java.util.function.Supplier;
 @TeleOp
 public class TeleOpMaster extends OpMode {
     Mecanismos mecanism = new Mecanismos();
+    Mecanismos.DetectedColor detectedColor;
     private Follower follower;
     public static Pose startingPose; //See ExampleAuto to understand how to use this
     private boolean automatedDrive;
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
+//TL: BARREL POSITIONS
+    private static final double  Ain = 0.41;
+    private static final double  Bin = 0.495;
+    private static final double  Cin = 0.565;
+    private static final double  Aout = 0.53;
+    private static final double  Bout = 0.6;
+    private static final double  Cout = 0.68;
+    char actualPos = 'a';
+    //NOTE: 0 = empty || 1 = PURPLE || 2 = GREEN
+    int A = 0;
+    int B = 0;
+    int C = 0;
+    //TL: MODES
+    private boolean PPG = false;
+    private boolean PGP = false;
+    private boolean GPP = false;
+
+    private boolean isShooting = false;
+    private int shootStep = 0;
+    private long shootStartTime = 0;
+
+    private final long OUTTAKE_HOLD_TIME_MS = 2000;
+    private long lastIntakeTime = 0;
+    private static final long INTAKE_COOLDOWN_MS = 800;
 
 
     @Override
@@ -52,7 +78,9 @@ public class TeleOpMaster extends OpMode {
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-
+//       start positions
+        mecanism.barril.setPosition(Ain);
+        mecanism.pateador.setPosition(0.475); //fixme
 
         pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98))))
@@ -149,33 +177,201 @@ public class TeleOpMaster extends OpMode {
 
 //  TL: INTAKE      {GPAD_1}
         if (gamepad1.right_trigger > 0.0){
-            mecanism.intake(1);
+            mecanism.intake( 1);
         } if (gamepad1.b){
-            mecanism.intake(-1);
+            mecanism.intake( -1);
         } else {
-            mecanism.intake(0);
+            mecanism.intake( 0);
         }
 
-//  TL: POS. SHOOT  {GPAD_1}
-//  TL: BARRIL      {GPAD_2}
 
-//  TL: CANNON      {GPAD_2}
-        if (gamepad2.right_trigger > 0.0){
-            mecanism.shoot(0.35);
-        } if (gamepad2.left_trigger > 0.0){
-            mecanism.shoot(0.45);
-        } else {
-            mecanism.shoot(0);
+//TL ================= BARRIL ================== {GPAD_2}
+//TL ---------- MODE SELECT ----------
+        if (gamepad2.dpad_right) {
+            PPG = true;
+            PGP = false;
+            GPP = false;
+        }
+        if (gamepad2.dpad_up) {
+            PGP = true;
+            PPG = false;
+            GPP = false;
+        }
+        if (gamepad2.dpad_left) {
+            GPP = true;
+            PPG = false;
+            PGP = false;
+        }
+        if (gamepad2.dpad_down) {
+            PPG = PGP = GPP = false;
+        }
+//TL  ---------- EMPTY -> G28 ----------
+        if (A == 0 && B == 0 && C == 0) {
+            mecanism.barril.setPosition(Ain);
+            actualPos = 'a';
+            isShooting = false;
+        }
+        if (A != 0 && B != 0 && C != 0){
+            mecanism.barril.setPosition(Aout);
+            actualPos = 'a';
+        }
+//TL ---------- CANNON / AUTOMATIC ----------
+
+        if (gamepad2.right_trigger > 0.1f && !isShooting && (PPG || PGP || GPP)) {
+            mecanism.shoot(1.0); //fixme
+            isShooting = true;
+            shootStep = 0;
+            shootStartTime = System.currentTimeMillis();
+
         }
 
-//  TL: CAMBIO DE MODO [GPP] [PGP] [PPG]    {GPAD_2}
-        if (gamepad2.dpad_right){mecanism.PPG = true;}
-        if (gamepad2.dpad_up){mecanism.PGP = true;}
-        if (gamepad2.dpad_left){mecanism.GPP = true;}
+        if (isShooting) {
+            String sequence = PPG ? "PPG" : PGP ? "PGP" : "GPP";
+
+            int neededValue = (sequence.charAt(shootStep) == 'P') ? 1 : 2;
+            telemetry.addData("VALUE: ", neededValue);
+
+            char chamber = '\0';
+            //note: Searches on the current pos if there is the shit we need
+            int currentVal = 0;
+            if (actualPos == 'a') currentVal = A;
+            else if (actualPos == 'b') currentVal = B;
+            else if (actualPos == 'c') currentVal = C;
+
+            if (currentVal == neededValue) {
+                chamber = actualPos;
+            } else{
+                if (A == neededValue) chamber = 'a';
+                else if (B == neededValue) chamber = 'b';
+                else if (C == neededValue) chamber = 'c';
+            }
+            if ((neededValue != A && neededValue != B && neededValue != C ) && (A!=0 || B!=0 || C!=0)){//note: no hay valor requerido pero si hay artefactos
+                if (A!=0) chamber = 'a';
+                else if (B!=0) chamber = 'b';
+                else chamber = 'c';
+            }
+            if (chamber == '\0') { //note:  skipear si no hay artefactos
+                shootStep++;
+                shootStartTime = System.currentTimeMillis();
+            }
+            else { //note: changes the barrel pos
+                double targetPos = (chamber == 'a') ? Aout : (chamber == 'b') ? Bout : Cout;
+                mecanism.barril.setPosition(targetPos);
+                actualPos = chamber;
+                if (System.currentTimeMillis() - shootStartTime >= 500){
+                    mecanism.pateador.setPosition(0.33); //fixme
+                }
+                if (System.currentTimeMillis() - shootStartTime >= 1000){
+                    mecanism.pateador.setPosition(0.475); //fixme
+                }
+                if (System.currentTimeMillis() - shootStartTime >= OUTTAKE_HOLD_TIME_MS) {
+                    if (chamber == 'a') A = 0;
+                    else if (chamber == 'b') B = 0;
+                    else C = 0;
+
+                    shootStep++;
+
+                    if (shootStep >= 3) {
+                        mecanism.shoot(0);
+                        isShooting = false;
+                        advanceToPreferredEmpty();
+                    }
+                    shootStartTime = System.currentTimeMillis();
+                }
+            }
 
 
+
+
+        } else {
+//TL --------- INTAKE MODE ------
+            // empty chambers return to home
+            if (A == 0 && B == 0 && C == 0) {
+                mecanism.barril.setPosition(Ain);
+                actualPos = 'a';
+            }
+
+            TestColorSensorMecanism.DetectedColor detected = mecanism.getDetectedColor(telemetry);
+
+            boolean canIntakeNow = System.currentTimeMillis() - lastIntakeTime >= INTAKE_COOLDOWN_MS;
+
+            if (canIntakeNow &&
+                    (detected == TestColorSensorMecanism.DetectedColor.PURPLE ||
+                            detected == TestColorSensorMecanism.DetectedColor.GREEN)) {
+
+                int value = detected == TestColorSensorMecanism.DetectedColor.PURPLE ? 1 : 2;
+
+                boolean actuallyLoaded = false;
+
+                if (actualPos == 'a' && A == 0) {
+                    A = value;
+                    actuallyLoaded = true;
+                } else if (actualPos == 'b' && B == 0) {
+                    B = value;
+                    actuallyLoaded = true;
+                } else if (actualPos == 'c' && C == 0) {
+                    C = value;
+                    actuallyLoaded = true;
+                }
+
+                if (actuallyLoaded) {
+                    advanceToPreferredEmpty();
+                    lastIntakeTime = System.currentTimeMillis(); // cooldown
+                }
+            }
+
+// Auto-advance even if we didn't intake
+            int currentValue = switch (actualPos) {
+                case 'a' -> A;
+                case 'b' -> B;
+                case 'c' -> C;
+                default -> 0;
+            };
+
+            if (currentValue != 0 && (A == 0 || B == 0 || C == 0)) {
+                advanceToPreferredEmpty();
+            }
+        }
+        telemetry.addData("A: ",A);
+        telemetry.addData("B: ",B);
+        telemetry.addData("C: ",C);
         telemetryM.addLine("");
         mecanism.telem(telemetry);
+    }
+    public void autoShoot(){
+        if (!isShooting && (PPG || PGP || GPP)) {
+            isShooting = true;
+            shootStep = 0;
+            shootStartTime = System.currentTimeMillis();
+        }
+    }
 
+//tl ----------------MOVE BARREL------------------
+    private void advanceToPreferredEmpty() {
+        if (actualPos == 'a') {
+            if (B == 0) {
+                mecanism.barril.setPosition(Bin);
+                actualPos = 'b';
+            } else if (C == 0) {
+                mecanism.barril.setPosition(Cin);
+                actualPos = 'c';
+            }
+        } else if (actualPos == 'b') {
+            if (A == 0) {
+                mecanism.barril.setPosition(Ain);
+                actualPos = 'a';
+            } else if (C == 0) {
+                mecanism.barril.setPosition(Cin);
+                actualPos = 'c';
+            }
+        } else if (actualPos == 'c') {
+            if (A == 0) {
+                mecanism.barril.setPosition(Ain);
+                actualPos = 'a';
+            } else if (B == 0) {
+                mecanism.barril.setPosition(Bin);
+                actualPos = 'b';
+            }
+        }
     }
 }

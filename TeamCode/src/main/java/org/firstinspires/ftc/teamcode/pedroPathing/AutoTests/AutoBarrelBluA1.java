@@ -164,7 +164,7 @@ private static final double  Ain = 0.38;
             case 2: //note: INTAKE
                 if (!follower.isBusy()) {
                     follower.setMaxPower(0.35);
-                    mecanism.intake(1);
+                    mecanism.intake( 1);
                     follower.followPath(pickiii, true);
                     setPathState(3);
                 }
@@ -195,14 +195,14 @@ private static final double  Ain = 0.38;
                 break;
             case 6:
                 if (!follower.isBusy()) {
-                    mecanism.intake(1.0);
+                    mecanism.intake( 1);
                     follower.followPath(pickii, true);
                     setPathState(7);
                 }
                 break;
             case 7:
                 if (!follower.isBusy()) {
-                    mecanism.intake(0.0);
+                    mecanism.intake( 0);
                     follower.followPath(ii2shoot, true);
                     timeStamp = actualTime;
                     mecanism.shoot(0.45);
@@ -218,7 +218,7 @@ private static final double  Ain = 0.38;
                 break;
             case 9:
                 if (!follower.isBusy()) {
-                    mecanism.intake(1.0);
+                    mecanism.intake( 1);
 
                     follower.followPath(picki, true);
                     setPathState(10);
@@ -226,7 +226,7 @@ private static final double  Ain = 0.38;
                 break;
             case 10:
                 if (!follower.isBusy()) {
-                    mecanism.intake(0);
+                    mecanism.intake( 0);
                     follower.followPath(i2shoot, true);
                     timeStamp = actualTime;
                     mecanism.shoot(0.45);
@@ -249,6 +249,7 @@ private static final double  Ain = 0.38;
         }
     }
 
+    
     public void setPathState(int pState) {
         pathState = pState;
         pathTimer.resetTimer();

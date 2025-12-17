@@ -18,17 +18,25 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 public class Mecanismos {
 //Tl:========= INTAKE =========
-    public DcMotor intakeL;
-    public DcMotor intakeR;
+    public DcMotor intake;
 //TL:======== CANNON ===========
     public DcMotor cannonR;
     public DcMotor cannonL;
     public DcMotor turret;
 //Tl:======== BARRIL ==========
     public Servo barril;
+    public Servo pateador;
     NormalizedColorSensor colorSensor;
     public enum DetectedColor{
         PURPLE,
@@ -68,17 +76,15 @@ public class Mecanismos {
     public ElapsedTime timer = new ElapsedTime();  // Timer for delta time
 
     public void initAll(HardwareMap hwMap){
-        intakeL = hwMap.get(DcMotor.class, "IntakeL");
-        intakeR = hwMap.get(DcMotor.class, "IntakeR");
+        pateador = hwMap.get(Servo.class, "pateador");
+        intake = hwMap.get(DcMotor.class, "Intake");
         cannonR = hwMap.get(DcMotor.class, "CannonR");
+
         cannonL = hwMap.get(DcMotor.class, "CannonL");
         colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
         barril = hwMap.get(Servo.class,"servo");
         colorSensor.setGain(10);
-//        turret = hwMap.get(DcMotor.class, "turret");
-        intakeR.setDirection(DcMotorSimple.Direction.REVERSE);
         cannonL.setDirection(DcMotorSimple.Direction.REVERSE);
-//        barril = hwMap.get(Servo.class, "Barril");
 
         aprilTag = new AprilTagProcessor.Builder().build();
         aprilTag.setDecimation(2);
@@ -91,9 +97,8 @@ public class Mecanismos {
         cannonR.setPower(power);
         cannonL.setPower(power);
     }
-    public void intake(double power){
-        intakeL.setPower(power);
-        intakeR.setPower(power);
+    public void intake(double pow){
+        intake.setPower(pow);
     }
 
     public TestColorSensorMecanism.DetectedColor getDetectedColor(Telemetry telemetry){
