@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.AutoTests;
 
+import static kotlinx.coroutines.DelayKt.delay;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -13,6 +15,9 @@ import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.OpMaster.Mecanismos;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+
+import java.util.List;
 
 @Autonomous(name = "Auto_Pos1_Rev1", group = "Autonomous")
 public class Auto_Pos1_Rev1 extends OpMode{
@@ -51,17 +56,17 @@ public class Auto_Pos1_Rev1 extends OpMode{
 
     public void buildPaths() {
 
-        start_path = new Path(new BezierCurve(startingPose, startingPose_CP, shoot_Pose));                 //TL:Path #1
-        start_path.setLinearHeadingInterpolation(startingPose.getHeading(), shoot_Pose.getHeading());      //TL:Path #1
+        start_path = new Path(new BezierCurve(startingPose, startingPose_CP, search_pose));                 //TL:Path #1
+        start_path.setLinearHeadingInterpolation(startingPose.getHeading(), search_pose.getHeading());      //TL:Path #1
 
         snd_path = follower.pathBuilder()
-                .addPath(new BezierLine(shoot_Pose, search_pose))
-                .setLinearHeadingInterpolation(shoot_Pose.getHeading(), search_pose.getHeading())
+                .addPath(new BezierLine(search_pose, shoot_Pose))
+                .setLinearHeadingInterpolation(search_pose.getHeading(), shoot_Pose.getHeading())
                 .build();
 
         trd_path = follower.pathBuilder()
-                .addPath(new BezierCurve(search_pose, fst_itk_pose_CP, fst_itk_pose))
-                .setLinearHeadingInterpolation(search_pose.getHeading(), fst_itk_pose.getHeading())
+                .addPath(new BezierCurve(shoot_Pose, fst_itk_pose_CP, fst_itk_pose))
+                .setLinearHeadingInterpolation(shoot_Pose.getHeading(), fst_itk_pose.getHeading())
                 .build();
 
         //fixme:
@@ -93,18 +98,20 @@ public class Auto_Pos1_Rev1 extends OpMode{
             case 1:
                 if (!follower.isBusy()) {
                     follower.followPath(snd_path,true);
+                    follower.setMaxPower(0);
                     setPathState(2);
                 }
                 break;
             case 2:
                 if (!follower.isBusy()) {
-                    follower.followPath(trd_path, 1, true);
+                    follower.followPath(trd_path, 0.5, true);
+                    follower.setMaxPower(0.5);
                     //follower.followPath(trd_path, true);
                     setPathState(3);
                 }
             case 3:
                 if (!follower.isBusy()) {
-                    setPathState(-1);
+                    setPathState(4);
                 }
         }
     }
@@ -122,6 +129,27 @@ public class Auto_Pos1_Rev1 extends OpMode{
      **/
     @Override
     public void loop() {
+        //TL: APRIL TAG DETECTION
+
+        /*List<AprilTagDetection> currentDetections = mecanism.aprilTag.getDetections();
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                if ((detection.id == 21)) {
+                    mecanism.DESIRED_TAG_ID = 21;
+                    break;
+                }if ((detection.id == 22)) {
+                    mecanism.DESIRED_TAG_ID = 22;
+                    break;
+                }if ((detection.id == 23)) {
+                    mecanism.DESIRED_TAG_ID = 23;
+                    break;
+                } else {
+                    telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                }
+            } else {
+                telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+            }
+        }*/
 
         // These loop the movements of the robot, these must be called continuously in order to work
         follower.update();

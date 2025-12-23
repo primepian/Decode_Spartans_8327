@@ -374,4 +374,8 @@ public class TeleOpMaster extends OpMode {
             }
         }
     }
+
+     public void seleccionar_lanzar() {
+
+     }
 }

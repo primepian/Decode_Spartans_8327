@@ -30,6 +30,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Mecanismos {
 //Tl:========= INTAKE =========
     public DcMotor intake;
+
+    public CRServo intake_S;                                                                          //fixme
 //TL:======== CANNON ===========
     public DcMotor cannonR;
     public DcMotor cannonL;
@@ -78,6 +80,9 @@ public class Mecanismos {
     public void initAll(HardwareMap hwMap){
         pateador = hwMap.get(Servo.class, "pateador");
         intake = hwMap.get(DcMotor.class, "Intake");
+
+        intake_S = hwMap.get(CRServo.class, "intake_S");
+
         cannonR = hwMap.get(DcMotor.class, "CannonR");
 
         cannonL = hwMap.get(DcMotor.class, "CannonL");
@@ -99,6 +104,7 @@ public class Mecanismos {
     }
     public void intake(double pow){
         intake.setPower(pow);
+        intake_S.setPower(pow);
     }
 
     public TestColorSensorMecanism.DetectedColor getDetectedColor(Telemetry telemetry){

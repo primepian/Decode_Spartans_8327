@@ -8,6 +8,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -16,14 +17,13 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Tests.TestColorSensorMecanism
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
-
 @Autonomous()
 public class AutoBarrelBluA1 extends OpMode {
     Mecanismos mecanism = new Mecanismos();
     Mecanismos.DetectedColor detectedColor;
 //TL: VARIABLES BARRIL
 //Tl: POSICIONES☺
-private static final double  Ain = 0.38;
+    private static final double  Ain = 0.38;
     private static final double  Bin = 0.46;
     private static final double  Cin = 0.535;
     private static final double  Aout = 0.5;
@@ -343,6 +343,7 @@ private static final double  Ain = 0.38;
             }
 
             if (chamber == '\0') { //note:  skipeao
+                //fixme:
                 shootStep++;
                 shootStartTime = System.currentTimeMillis();
             } else {
