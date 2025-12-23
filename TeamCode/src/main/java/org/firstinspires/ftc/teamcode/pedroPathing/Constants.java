@@ -19,18 +19,18 @@ public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(12)
 //NOTE: Automatic Tunners
-            .forwardZeroPowerAcceleration(-56.7944403)
-            .lateralZeroPowerAcceleration(-90.7600363)
+            .forwardZeroPowerAcceleration(-50.38070003)
+            .lateralZeroPowerAcceleration(-73.468493)
 //NOTE: Translational PID
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0.002, 0.023))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0, 0.05))
 //            .translationalPIDFSwitch(4)
 //            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.4, 0, 0.005, 0.0006));
 //NOTE: Heading PID
-            .headingPIDFCoefficients(new PIDFCoefficients(0.9, 0, 0.03, 0.01))
+            .headingPIDFCoefficients(new PIDFCoefficients(0.8, 0, 0.27, 1))
             .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(2.5, 0, 0.07, 0.01))
 //NOTE: Drive PID
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.0045, 0, 0.0002, 0.6, 0.01))
-            .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.005, 0, 0.05, 0.6, 0.01))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.05, 0, 0.002, 0, 0.1))
+//            .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.005, 0, 0.05, 0.6, 0.01))
             .drivePIDFSwitch(15)
 
 //NOTE: Centripental PID
@@ -46,8 +46,8 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(67.6213273)    //NOTE: FORWARD VELOCITY TUNNER
-            .yVelocity(54.0367637);  //NOTE: LATERAL VELOCITY TUNNER
+            .xVelocity(61.5480897)    //NOTE: FORWARD VELOCITY TUNNER
+            .yVelocity(38.2470323);  //NOTE: LATERAL VELOCITY TUNNER
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(133.1)
