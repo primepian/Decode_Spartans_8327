@@ -7,17 +7,21 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+
+
 @TeleOp
-//@Disabled
 public class CannonTest extends LinearOpMode {
     DcMotor CannonR;
     DcMotor CannonL;
+    Servo pateador;
     double pow = 0;
     boolean RBflag = false;
     boolean LBflag = false;
     @Override
     public void runOpMode(){
         initall(hardwareMap);
+        pateador.setPosition(0.52);
 
       waitForStart();
       while (opModeIsActive()){
@@ -47,6 +51,7 @@ public class CannonTest extends LinearOpMode {
           if (gamepad1.y){
               pow = 0.5;
               shoot(pow);
+              
           }
           if (gamepad1.b){
               pow = 0.75;
@@ -58,6 +63,12 @@ public class CannonTest extends LinearOpMode {
           }else {
               shoot(0);
           }
+          if (gamepad1.dpad_up){
+              pateador.setPosition(0.48);
+          }
+          if (gamepad1.dpad_down){
+              pateador.setPosition(0.52);
+          }
 
           telemetry.addData("POW: ", pow);
           telemetry.update();
@@ -66,8 +77,9 @@ public class CannonTest extends LinearOpMode {
     public void initall(HardwareMap hwmap){
         CannonR = hwmap.get(DcMotor.class, "CannonR");
         CannonL = hwmap.get(DcMotor.class, "CannonL");
-        CannonR.setDirection(DcMotor.Direction.REVERSE);
-        CannonL.setDirection(DcMotor.Direction.FORWARD);
+        pateador = hwmap.get(Servo.class, "pateador");
+        CannonR.setDirection(DcMotor.Direction.FORWARD);
+        CannonL.setDirection(DcMotor.Direction.REVERSE);
     }
     public void shoot(double power){
         CannonR.setPower(power);

@@ -19,17 +19,32 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 /**
- *
- *
- *
- *
- *
- *
- *
+ *>>Control Hub:
+ * motores:
+ *  ("rightFront")  //0
+ *  ("rightRear")    //2
+ *  ("leftRear")  //3
+ *  ("leftFront")    //1
+ * Servos:
+ *   barril = 0
+ *   intakeR = x
+ *   intakeL = 1
+ * I2C:
+ *  colorSensor = 1
+ *  pinpoint = 2
+
+ *>>Expansion Hub;
+ * motores:
+ *  cannonL = 0
+ *  intake = 1
+ *  cannonR = 2
+ * servos:
+ *  pateador = 0
  */
 public class Mecanismos {
 //Tl:========= INTAKE =========
     public DcMotor intake;
+    public DcMotor intake_S;
 //TL:======== CANNON ===========
     public DcMotor cannonR;
     public DcMotor cannonL;
@@ -43,14 +58,33 @@ public class Mecanismos {
         GREEN,
         UNKNOWN,
     }
+    public static final double  Ain = 0.41;
+    public static final double  Bin = 0.495;
+    public static final double  Cin = 0.565;
+    public static final double  Aout = 0.53;
+    public static final double  Bout = 0.6;
+    public static final double  Cout = 0.68;
+    char actualPos = 'a';
+    //NOTE: 0 = empty || 1 = PURPLE || 2 = GREEN
+    int A = 0;
+    int B = 0;
+    int C = 0;
+    //TL: MODES
+    public boolean PPG = false;
+    public boolean PGP = false;
+    public boolean GPP = false;
+
+    public boolean isShooting = false;
+    public int shootStep = 0;
+    public long shootStartTime = 0;
+
+    public final long OUTTAKE_HOLD_TIME_MS = 2000;
+    public long lastIntakeTime = 0;
+    public static final long INTAKE_COOLDOWN_MS = 800;
 //Tl:       COSOS CHISTOSOS
     public double slowModeMultiplier = 0.3; //Modo slow
     public boolean invertedDrive;
     public boolean RBflag;
-// Tl: variables chistosas
-    boolean GPP = false;
-    boolean PGP = false;
-    boolean PPG = false;
 
 //note    AprilTag search
     public final double DESIRED_DISTANCE =  40;
@@ -78,6 +112,7 @@ public class Mecanismos {
     public void initAll(HardwareMap hwMap){
         pateador = hwMap.get(Servo.class, "pateador");
         intake = hwMap.get(DcMotor.class, "Intake");
+        intake_S = hwMap.get(DcMotor.class, "Intake_S");
         cannonR = hwMap.get(DcMotor.class, "CannonR");
 
         cannonL = hwMap.get(DcMotor.class, "CannonL");
@@ -93,12 +128,25 @@ public class Mecanismos {
                 .addProcessor(aprilTag)
                 .build();
     }
-    public void shoot(double power){
+    public void shootPow(double power){
         cannonR.setPower(power);
         cannonL.setPower(power);
     }
     public void intake(double pow){
         intake.setPower(pow);
+        intake_S.setPower(pow);
+    }
+//TL: BARRREL STUFF
+    public void G28(){
+        if (A == 0 && B == 0 && C == 0) {
+            barril.setPosition(Ain);
+            actualPos = 'a';
+            isShooting = false;
+        }
+        if (A != 0 && B != 0 && C != 0){
+            barril.setPosition(Aout);
+            actualPos = 'a';
+        }
     }
 
     public TestColorSensorMecanism.DetectedColor getDetectedColor(Telemetry telemetry){

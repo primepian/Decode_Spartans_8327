@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.OpMaster;
+package org.firstinspires.ftc.teamcode.pedroPathing.OpMaster.MecanismTests;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.OpMaster.Mecanismos;
 import org.firstinspires.ftc.teamcode.pedroPathing.Tests.TestColorSensorMecanism;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
@@ -33,11 +34,12 @@ import java.util.function.Supplier;
  * RED APRILTAG [RIGHT STICK BUTTON]
  * CANNON NEAR [RIGHT TRIGGER]
  * CANNON FAR [LEFT TRIGGER]
+ * SELECT PATTERN [DPADS]
  */
 
 @Configurable
 @TeleOp
-public class TeleOpMaster extends OpMode {
+public class TeleOpMasterAlfa extends OpMode {
     Mecanismos mecanism = new Mecanismos();
     Mecanismos.DetectedColor detectedColor;
     private Follower follower;
@@ -45,30 +47,8 @@ public class TeleOpMaster extends OpMode {
     private boolean automatedDrive;
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
-    //TL: BARREL POSITIONS
-    private static final double  Ain = 0.41;
-    private static final double  Bin = 0.495;
-    private static final double  Cin = 0.565;
-    private static final double  Aout = 0.53;
-    private static final double  Bout = 0.6;
-    private static final double  Cout = 0.68;
-    char actualPos = 'a';
-    //NOTE: 0 = empty || 1 = PURPLE || 2 = GREEN
-    int A = 0;
-    int B = 0;
-    int C = 0;
-    //TL: MODES
-    private boolean PPG = false;
-    private boolean PGP = false;
-    private boolean GPP = false;
+//TL: BARREL POSITIONS
 
-    private boolean isShooting = false;
-    private int shootStep = 0;
-    private long shootStartTime = 0;
-
-    private final long OUTTAKE_HOLD_TIME_MS = 2000;
-    private long lastIntakeTime = 0;
-    private static final long INTAKE_COOLDOWN_MS = 800;
 
 
     @Override
@@ -79,8 +59,8 @@ public class TeleOpMaster extends OpMode {
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 //       start positions
-        mecanism.barril.setPosition(Ain);
-        mecanism.pateador.setPosition(0.475); //fixme
+        mecanism.barril.setPosition(mecanism.Ain);
+        mecanism.pateador.setPosition(0.52); //fixme
 
         pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98))))
@@ -188,42 +168,33 @@ public class TeleOpMaster extends OpMode {
 //TL ================= BARRIL ================== {GPAD_2}
 //TL ---------- MODE SELECT ----------
         if (gamepad2.dpad_right) {
-            PPG = true;
-            PGP = false;
-            GPP = false;
+            mecanism.PPG = true;
+            mecanism.PGP = false;
+            mecanism.GPP = false;
         }
         if (gamepad2.dpad_up) {
-            PGP = true;
-            PPG = false;
-            GPP = false;
+            mecanism.PGP = true;
+            mecanism.PPG = false;
+            mecanism.GPP = false;
         }
         if (gamepad2.dpad_left) {
-            GPP = true;
-            PPG = false;
-            PGP = false;
+            mecanism.GPP = true;
+            mecanism.PPG = false;
+            mecanism.PGP = false;
         }
         if (gamepad2.dpad_down) {
-            PPG = PGP = GPP = false;
+            mecanism.PPG = mecanism.PGP = mecanism.GPP = false;
         }
 //TL  ---------- EMPTY -> G28 ----------
-        if (A == 0 && B == 0 && C == 0) {
-            mecanism.barril.setPosition(Ain);
-            actualPos = 'a';
-            isShooting = false;
-        }
-        if (A != 0 && B != 0 && C != 0){
-            mecanism.barril.setPosition(Aout);
-            actualPos = 'a';
-        }
-//TL ---------- CANNON / AUTOMATIC ----------
-
-        if (gamepad2.right_trigger > 0.1f && !isShooting && (PPG || PGP || GPP)) {
+        mecanism.G28();
+//TL --------------- CANNON / AUTOMATIC --------------
+        if (gamepad2.right_trigger > 0.1f && !mecanism.isShooting && (mecanism.PPG || mecanism.PGP || mecanism.GPP)) {
             mecanism.shootPow(1.0); //fixme
-            isShooting = true;
-            shootStep = 0;
-            shootStartTime = System.currentTimeMillis();
-
+            mecanism.isShooting = true;
+            mecanism.shootStep = 0;
+            mecanism.shootStartTime = System.currentTimeMillis();
         }
+
 
         if (isShooting) {
             String sequence = PPG ? "PPG" : PGP ? "PGP" : "GPP";
@@ -259,10 +230,10 @@ public class TeleOpMaster extends OpMode {
                 mecanism.barril.setPosition(targetPos);
                 actualPos = chamber;
                 if (System.currentTimeMillis() - shootStartTime >= 500){
-                    mecanism.pateador.setPosition(0.33); //fixme
+                    mecanism.pateador.setPosition(0.48); //fixme
                 }
                 if (System.currentTimeMillis() - shootStartTime >= 1000){
-                    mecanism.pateador.setPosition(0.475); //fixme
+                    mecanism.pateador.setPosition(0.52); //fixme
                 }
                 if (System.currentTimeMillis() - shootStartTime >= OUTTAKE_HOLD_TIME_MS) {
                     if (chamber == 'a') A = 0;
@@ -272,7 +243,7 @@ public class TeleOpMaster extends OpMode {
                     shootStep++;
 
                     if (shootStep >= 3) {
-                        mecanism.shootPow(0);
+                        mecanism.shoot(0);
                         isShooting = false;
                         advanceToPreferredEmpty();
                     }
