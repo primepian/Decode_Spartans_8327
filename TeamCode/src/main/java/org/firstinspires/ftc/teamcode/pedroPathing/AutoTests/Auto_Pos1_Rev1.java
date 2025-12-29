@@ -29,7 +29,7 @@ public class Auto_Pos1_Rev1 extends OpMode{
 
     private final Pose startingPose = new Pose(56.000, 9.000, Math.toRadians(90));            //TL:Path #1
     private final Pose startingPose_CP = new Pose(64.000, 66.000);                            //TL:Path #1
-    private final Pose search_pose = new Pose(55.000, 101.000, Math.toRadians(66));           //TL:Path #1
+    private final Pose search_pose = new Pose(57.000, 105.000, Math.toRadians(66));           //TL:Path #1 fixme: 55.000, 101.000
 
     private final Pose shoot_Pose = new Pose(55.000, 101.000, Math.toRadians(139));           //TL:Path #2
 
@@ -98,21 +98,29 @@ public class Auto_Pos1_Rev1 extends OpMode{
             case 1:
                 if (!follower.isBusy()) {
                     follower.followPath(snd_path,true);
-                    follower.setMaxPower(0);
+                    //follower.setMaxPower(0);
                     setPathState(2);
                 }
                 break;
             case 2:
                 if (!follower.isBusy()) {
-                    follower.followPath(trd_path, 0.5, true);
-                    follower.setMaxPower(0.5);
-                    //follower.followPath(trd_path, true);
+                    //follower.followPath(trd_path, 0.5, true);
+                    //follower.setMaxPower(0.5);
+                    follower.followPath(trd_path, true);
                     setPathState(3);
                 }
+                break;
             case 3:
                 if (!follower.isBusy()) {
+                    follower.followPath(fth_path, true);
                     setPathState(4);
                 }
+                break;
+            case 4:
+                if (!follower.isBusy()) {
+                    setPathState(-1);
+                }
+                break;
         }
     }
 
