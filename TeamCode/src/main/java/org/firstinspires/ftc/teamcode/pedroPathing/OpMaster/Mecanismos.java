@@ -35,16 +35,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
  *>>Expansion Hub;
  * motores:
- *  cannonL = 0
- *  intake = 1
- *  cannonR = 2
+ *  CannonL = 0
+ *  Intake = 1
+ *  CannonR = 2
  * servos:
  *  pateador = 0
  */
 public class Mecanismos {
 //Tl:========= INTAKE =========
     public DcMotor intake;
-    public DcMotor intake_S;
+    public  CRServo intake_S;
 //TL:======== CANNON ===========
     public DcMotor cannonR;
     public DcMotor cannonL;
@@ -58,14 +58,17 @@ public class Mecanismos {
         GREEN,
         UNKNOWN,
     }
-    public static final double  Ain = 0.41;
-    public static final double  Bin = 0.495;
-    public static final double  Cin = 0.565;
-    public static final double  Aout = 0.53;
-    public static final double  Bout = 0.6;
-    public static final double  Cout = 0.68;
+    public static final double  Ain = 0.607;
+    public static final double  Bin = 0.528;
+    public static final double  Cin = 0.45;
+    public static final double  Aout = 0.712;
+    public static final double  Bout = 0.643;
+    public static final double  Cout = 0.567;
+    public static final double  pateador_off = 0.3;
+    public static final double  pateador_on = 0.26;
     char actualPos = 'a';
-    //NOTE: 0 = empty || 1 = PURPLE || 2 = GREEN
+    //NOTE: 0 = empty || 1 = PURPLE |
+    // | 2 = GREEN
     int A = 0;
     int B = 0;
     int C = 0;
@@ -73,6 +76,7 @@ public class Mecanismos {
     public boolean PPG = false;
     public boolean PGP = false;
     public boolean GPP = false;
+    public boolean NoPattern = false;
 
     public boolean isShooting = false;
     public int shootStep = 0;
@@ -80,7 +84,7 @@ public class Mecanismos {
 
     public final long OUTTAKE_HOLD_TIME_MS = 2000;
     public long lastIntakeTime = 0;
-    public static final long INTAKE_COOLDOWN_MS = 800;
+    public static final long INTAKE_COOLDOWN_MS = 500;
 //Tl:       COSOS CHISTOSOS
     public double slowModeMultiplier = 0.3; //Modo slow
     public boolean invertedDrive;
@@ -112,14 +116,14 @@ public class Mecanismos {
     public void initAll(HardwareMap hwMap){
         pateador = hwMap.get(Servo.class, "pateador");
         intake = hwMap.get(DcMotor.class, "Intake");
-        intake_S = hwMap.get(DcMotor.class, "Intake_S");
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        intake_S = hwMap.get(CRServo.class, "Intake_S");
         cannonR = hwMap.get(DcMotor.class, "CannonR");
 
         cannonL = hwMap.get(DcMotor.class, "CannonL");
         colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
         barril = hwMap.get(Servo.class,"servo");
         colorSensor.setGain(10);
-        cannonL.setDirection(DcMotorSimple.Direction.REVERSE);
 
         aprilTag = new AprilTagProcessor.Builder().build();
         aprilTag.setDecimation(2);
@@ -132,10 +136,12 @@ public class Mecanismos {
         cannonR.setPower(power);
         cannonL.setPower(power);
     }
+
     public void intake(double pow){
         intake.setPower(pow);
         intake_S.setPower(pow);
     }
+
 //TL: BARRREL STUFF
     public void G28(){
         if (A == 0 && B == 0 && C == 0) {
@@ -146,6 +152,137 @@ public class Mecanismos {
         if (A != 0 && B != 0 && C != 0){
             barril.setPosition(Aout);
             actualPos = 'a';
+        }
+    }
+
+    public void shootingandIntake(Telemetry telemetry) {
+        if (isShooting) {
+            String sequence = PPG ? "PPG" : PGP ? "PGP" : "GPP";
+
+            int neededValue = (sequence.charAt(shootStep) == 'P') ? 1 : 2;
+            telemetry.addData("VALUE: ", neededValue);
+
+            char chamber = '\0';
+            //note: Searches on the current pos if there is the shit we need
+            int currentVal = 0;
+            if (actualPos == 'a') currentVal = A;
+            else if (actualPos == 'b') currentVal = B;
+            else if (actualPos == 'c') currentVal = C;
+
+            if (currentVal == neededValue) {
+                chamber = actualPos;
+            } else {
+                if (A == neededValue) chamber = 'a';
+                else if (B == neededValue) chamber = 'b';
+                else if (C == neededValue) chamber = 'c';
+            }
+            if ((neededValue != A && neededValue != B && neededValue != C) && (A != 0 || B != 0 || C != 0)) {//note: no hay valor requerido pero si hay artefactos
+                if (A != 0) chamber = 'a';
+                else if (B != 0) chamber = 'b';
+                else chamber = 'c';
+            }
+            if (chamber == '\0') { //note:  skipear si no hay artefactos
+                shootStep++;
+                shootStartTime = System.currentTimeMillis();
+            } else { //note: changes the barrel pos
+                double targetPos = (chamber == 'a') ? Aout : (chamber == 'b') ? Bout : Cout;
+                barril.setPosition(targetPos);
+                actualPos = chamber;
+                if (System.currentTimeMillis() - shootStartTime >= 500) {
+                    pateador.setPosition(pateador_on); //fixme
+                }
+                if (System.currentTimeMillis() - shootStartTime >= 1000) {
+                    pateador.setPosition(pateador_off); //fixme
+                }
+                if (System.currentTimeMillis() - shootStartTime >= OUTTAKE_HOLD_TIME_MS) {
+                    if (chamber == 'a') A = 0;
+                    else if (chamber == 'b') B = 0;
+                    else C = 0;
+
+                    shootStep++;
+
+                    if (shootStep >= 3) {
+                        shootPow(0);
+                        isShooting = false;
+                        advanceToPreferredEmpty();
+                    }
+                    shootStartTime = System.currentTimeMillis();
+                }
+            }
+        } else {
+//TL --------- INTAKE MODE ------
+            // empty chambers return to home
+            if (A == 0 && B == 0 && C == 0) {
+                barril.setPosition(Ain);
+                actualPos = 'a';
+            }
+
+            TestColorSensorMecanism.DetectedColor detected = getDetectedColor(telemetry);
+
+            boolean canIntakeNow = System.currentTimeMillis() - lastIntakeTime >= INTAKE_COOLDOWN_MS;
+
+            if (canIntakeNow &&
+                    (detected == TestColorSensorMecanism.DetectedColor.PURPLE ||
+                            detected == TestColorSensorMecanism.DetectedColor.GREEN)) {
+
+                int value = detected == TestColorSensorMecanism.DetectedColor.PURPLE ? 1 : 2;
+
+                boolean actuallyLoaded = false;
+
+                if (actualPos == 'a' && A == 0) {
+                    A = value;
+                    actuallyLoaded = true;
+                } else if (actualPos == 'b' && B == 0) {
+                    B = value;
+                    actuallyLoaded = true;
+                } else if (actualPos == 'c' && C == 0) {
+                    C = value;
+                    actuallyLoaded = true;
+                }
+
+                if (actuallyLoaded) {
+                    advanceToPreferredEmpty();
+                    lastIntakeTime = System.currentTimeMillis(); // cooldown
+                }
+            }
+            int currentValue = switch (actualPos) {
+                case 'a' -> A;
+                case 'b' -> B;
+                case 'c' -> C;
+                default -> 0;
+            };
+
+            if (currentValue != 0 && (A == 0 || B == 0 || C == 0)) {
+                advanceToPreferredEmpty();
+            }
+        }
+    }
+
+    private void advanceToPreferredEmpty() {
+        if (actualPos == 'a') {
+            if (B == 0) {
+                barril.setPosition(Bin);
+                actualPos = 'b';
+            } else if (C == 0) {
+                barril.setPosition(Cin);
+                actualPos = 'c';
+            }
+        } else if (actualPos == 'b') {
+            if (A == 0) {
+                barril.setPosition(Ain);
+                actualPos = 'a';
+            } else if (C == 0) {
+                barril.setPosition(Cin);
+                actualPos = 'c';
+            }
+        } else if (actualPos == 'c') {
+            if (A == 0) {
+                barril.setPosition(Ain);
+                actualPos = 'a';
+            } else if (B == 0) {
+                barril.setPosition(Bin);
+                actualPos = 'b';
+            }
         }
     }
 
@@ -182,6 +319,10 @@ public class Mecanismos {
         if (PPG) {telemetry.addLine("PATTERN = PPG");}
         if (DESIRED_TAG_ID == 20){ telemetry.addLine("====BLUE TEAM====");}
         if (DESIRED_TAG_ID == 24){ telemetry.addLine("====RED TEAM====");}
+        telemetry.addData("A: ",A);
+        telemetry.addData("B: ",B);
+        telemetry.addData("C: ",C);
+        telemetry.addLine("");
 
         telemetry.addData("Inverted Drive: ",invertedDrive);
         telemetry.update();

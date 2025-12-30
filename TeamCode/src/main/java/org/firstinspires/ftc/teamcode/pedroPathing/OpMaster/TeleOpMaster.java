@@ -33,6 +33,7 @@ import java.util.function.Supplier;
  * RED APRILTAG [RIGHT STICK BUTTON]
  * CANNON NEAR [RIGHT TRIGGER]
  * CANNON FAR [LEFT TRIGGER]
+ * SELECT PATTERN [DPADS]
  */
 
 @Configurable
@@ -45,32 +46,6 @@ public class TeleOpMaster extends OpMode {
     private boolean automatedDrive;
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
-    //TL: BARREL POSITIONS
-    private static final double  Ain = 0.41;
-    private static final double  Bin = 0.495;
-    private static final double  Cin = 0.565;
-    private static final double  Aout = 0.53;
-    private static final double  Bout = 0.6;
-    private static final double  Cout = 0.68;
-    char actualPos = 'a';
-    //NOTE: 0 = empty || 1 = PURPLE || 2 = GREEN
-    int A = 0;
-    int B = 0;
-    int C = 0;
-    //TL: MODES
-    private boolean PPG = false;
-    private boolean PGP = false;
-    private boolean GPP = false;
-
-    private boolean isShooting = false;
-    private int shootStep = 0;
-    private long shootStartTime = 0;
-
-    private final long OUTTAKE_HOLD_TIME_MS = 2000;
-    private long lastIntakeTime = 0;
-    private static final long INTAKE_COOLDOWN_MS = 800;
-
-
     @Override
     public void init() {
         mecanism.initAll(hardwareMap);
@@ -79,8 +54,8 @@ public class TeleOpMaster extends OpMode {
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 //       start positions
-        mecanism.barril.setPosition(Ain);
-        mecanism.pateador.setPosition(0.475); //fixme
+        mecanism.barril.setPosition(Mecanismos.Ain);
+        mecanism.pateador.setPosition(Mecanismos.pateador_off); //fixme
 
         pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98))))
@@ -132,7 +107,7 @@ public class TeleOpMaster extends OpMode {
                         true // Robot Centric
                 );
             }
-        }
+        } //tl: drive / inverted drive
 
         List<AprilTagDetection> currentDetections = mecanism.aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
@@ -147,7 +122,7 @@ public class TeleOpMaster extends OpMode {
             } else {
                 telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
             }
-        }
+        } //tl: April Tags
 
         if (gamepad1.left_bumper && mecanism.targetFound) {
             double  rangeError      = (mecanism.desiredTag.ftcPose.range - mecanism.DESIRED_DISTANCE);
@@ -162,7 +137,7 @@ public class TeleOpMaster extends OpMode {
                     mecanism.turn,
                     true
             );
-        }
+        }   //tl: Automatic Shoot Positioning
 
 //  Tl: CHOOSE TEAM FOR SHOOTING POSE   {GPAD_2}
         if (gamepad2.left_stick_button)  {mecanism.DESIRED_TAG_ID = 20;}    //NOTE: BLUE TEAM
@@ -178,200 +153,43 @@ public class TeleOpMaster extends OpMode {
 //  TL: INTAKE      {GPAD_1}
         if (gamepad1.right_trigger > 0.0){
             mecanism.intake( 1);
-        } if (gamepad1.b){
-            mecanism.intake( -1);
-        } else {
+        }
+        if (gamepad1.b){
+            mecanism.intake( -0.5);
+        }
+        else {
             mecanism.intake( 0);
         }
 
-
-//TL ================= BARRIL ================== {GPAD_2}
 //TL ---------- MODE SELECT ----------
         if (gamepad2.dpad_right) {
-            PPG = true;
-            PGP = false;
-            GPP = false;
+            mecanism.PPG = true;
+            mecanism.PGP = false;
+            mecanism.GPP = false;
         }
         if (gamepad2.dpad_up) {
-            PGP = true;
-            PPG = false;
-            GPP = false;
+            mecanism.PGP = true;
+            mecanism.PPG = false;
+            mecanism.GPP = false;
         }
         if (gamepad2.dpad_left) {
-            GPP = true;
-            PPG = false;
-            PGP = false;
+            mecanism.GPP = true;
+            mecanism.PPG = false;
+            mecanism.PGP = false;
         }
         if (gamepad2.dpad_down) {
-            PPG = PGP = GPP = false;
+            mecanism.PPG = mecanism.PGP = mecanism.GPP = false;
         }
 //TL  ---------- EMPTY -> G28 ----------
-        if (A == 0 && B == 0 && C == 0) {
-            mecanism.barril.setPosition(Ain);
-            actualPos = 'a';
-            isShooting = false;
-        }
-        if (A != 0 && B != 0 && C != 0){
-            mecanism.barril.setPosition(Aout);
-            actualPos = 'a';
-        }
-//TL ---------- CANNON / AUTOMATIC ----------
-
-        if (gamepad2.right_trigger > 0.1f && !isShooting && (PPG || PGP || GPP)) {
+        mecanism.G28();
+//TL --------------- CANNON / AUTOMATIC --------------
+        if (gamepad2.right_trigger > 0.1f && !mecanism.isShooting && (mecanism.PPG || mecanism.PGP || mecanism.GPP)) {
             mecanism.shootPow(1.0); //fixme
-            isShooting = true;
-            shootStep = 0;
-            shootStartTime = System.currentTimeMillis();
-
+            mecanism.isShooting = true;
+            mecanism.shootStep = 0;
+            mecanism.shootStartTime = System.currentTimeMillis();
         }
-
-        if (isShooting) {
-            String sequence = PPG ? "PPG" : PGP ? "PGP" : "GPP";
-
-            int neededValue = (sequence.charAt(shootStep) == 'P') ? 1 : 2;
-            telemetry.addData("VALUE: ", neededValue);
-
-            char chamber = '\0';
-            //note: Searches on the current pos if there is the shit we need
-            int currentVal = 0;
-            if (actualPos == 'a') currentVal = A;
-            else if (actualPos == 'b') currentVal = B;
-            else if (actualPos == 'c') currentVal = C;
-
-            if (currentVal == neededValue) {
-                chamber = actualPos;
-            } else{
-                if (A == neededValue) chamber = 'a';
-                else if (B == neededValue) chamber = 'b';
-                else if (C == neededValue) chamber = 'c';
-            }
-            if ((neededValue != A && neededValue != B && neededValue != C ) && (A!=0 || B!=0 || C!=0)){//note: no hay valor requerido pero si hay artefactos
-                if (A!=0) chamber = 'a';
-                else if (B!=0) chamber = 'b';
-                else chamber = 'c';
-            }
-            if (chamber == '\0') { //note:  skipear si no hay artefactos
-                shootStep++;
-                shootStartTime = System.currentTimeMillis();
-            }
-            else { //note: changes the barrel pos
-                double targetPos = (chamber == 'a') ? Aout : (chamber == 'b') ? Bout : Cout;
-                mecanism.barril.setPosition(targetPos);
-                actualPos = chamber;
-                if (System.currentTimeMillis() - shootStartTime >= 500){
-                    mecanism.pateador.setPosition(0.33); //fixme
-                }
-                if (System.currentTimeMillis() - shootStartTime >= 1000){
-                    mecanism.pateador.setPosition(0.475); //fixme
-                }
-                if (System.currentTimeMillis() - shootStartTime >= OUTTAKE_HOLD_TIME_MS) {
-                    if (chamber == 'a') A = 0;
-                    else if (chamber == 'b') B = 0;
-                    else C = 0;
-
-                    shootStep++;
-
-                    if (shootStep >= 3) {
-                        mecanism.shootPow(0);
-                        isShooting = false;
-                        advanceToPreferredEmpty();
-                    }
-                    shootStartTime = System.currentTimeMillis();
-                }
-            }
-
-
-
-
-        } else {
-//TL --------- INTAKE MODE ------
-            // empty chambers return to home
-            if (A == 0 && B == 0 && C == 0) {
-                mecanism.barril.setPosition(Ain);
-                actualPos = 'a';
-            }
-
-            TestColorSensorMecanism.DetectedColor detected = mecanism.getDetectedColor(telemetry);
-
-            boolean canIntakeNow = System.currentTimeMillis() - lastIntakeTime >= INTAKE_COOLDOWN_MS;
-
-            if (canIntakeNow &&
-                    (detected == TestColorSensorMecanism.DetectedColor.PURPLE ||
-                            detected == TestColorSensorMecanism.DetectedColor.GREEN)) {
-
-                int value = detected == TestColorSensorMecanism.DetectedColor.PURPLE ? 1 : 2;
-
-                boolean actuallyLoaded = false;
-
-                if (actualPos == 'a' && A == 0) {
-                    A = value;
-                    actuallyLoaded = true;
-                } else if (actualPos == 'b' && B == 0) {
-                    B = value;
-                    actuallyLoaded = true;
-                } else if (actualPos == 'c' && C == 0) {
-                    C = value;
-                    actuallyLoaded = true;
-                }
-
-                if (actuallyLoaded) {
-                    advanceToPreferredEmpty();
-                    lastIntakeTime = System.currentTimeMillis(); // cooldown
-                }
-            }
-
-// Auto-advance even if we didn't intake
-            int currentValue = switch (actualPos) {
-                case 'a' -> A;
-                case 'b' -> B;
-                case 'c' -> C;
-                default -> 0;
-            };
-
-            if (currentValue != 0 && (A == 0 || B == 0 || C == 0)) {
-                advanceToPreferredEmpty();
-            }
-        }
-        telemetry.addData("A: ",A);
-        telemetry.addData("B: ",B);
-        telemetry.addData("C: ",C);
-        telemetryM.addLine("");
+        mecanism.shootingandIntake(telemetry);
         mecanism.telem(telemetry);
-    }
-    public void autoShoot(){
-        if (!isShooting && (PPG || PGP || GPP)) {
-            isShooting = true;
-            shootStep = 0;
-            shootStartTime = System.currentTimeMillis();
-        }
-    }
-
-    //tl ----------------MOVE BARREL------------------
-    private void advanceToPreferredEmpty() {
-        if (actualPos == 'a') {
-            if (B == 0) {
-                mecanism.barril.setPosition(Bin);
-                actualPos = 'b';
-            } else if (C == 0) {
-                mecanism.barril.setPosition(Cin);
-                actualPos = 'c';
-            }
-        } else if (actualPos == 'b') {
-            if (A == 0) {
-                mecanism.barril.setPosition(Ain);
-                actualPos = 'a';
-            } else if (C == 0) {
-                mecanism.barril.setPosition(Cin);
-                actualPos = 'c';
-            }
-        } else if (actualPos == 'c') {
-            if (A == 0) {
-                mecanism.barril.setPosition(Ain);
-                actualPos = 'a';
-            } else if (B == 0) {
-                mecanism.barril.setPosition(Bin);
-                actualPos = 'b';
-            }
-        }
     }
 }
