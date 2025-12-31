@@ -1,0 +1,267 @@
+package org.firstinspires.ftc.teamcode.pedroPathing.AutoTests;
+
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierCurve;
+import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.Path;
+import com.pedropathing.paths.PathChain;
+import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.OpMaster.Mecanismos;
+
+@Autonomous()
+public class AutoRedA1 extends OpMode {
+    Mecanismos mecanism = new Mecanismos();
+
+    private Follower follower;
+    private Timer pathTimer, actionTimer, opmodeTimer;
+
+    private int pathState;
+    public double timeStamp;
+
+    private final Pose startPose = new Pose(32, 135.5, Math.toRadians(0)).mirror();      //PT: Start Pose of robot.
+    private final Pose startCP = new Pose(45, 120).mirror();                             //CP: CONTROL POINT FOR STP-SHP.
+//    private final Pose obeliskPose = new Pose(60, 132, Math.toRadians(55)).mirror();         //PT: ROBOT IS SEEING THE OBELISK.
+    private final Pose shootPose = new Pose(60, 132, Math.toRadians(180)).mirror();      //PT: Robot is horizontally seeing the blue goal.
+    private final Pose pickIIIPose = new Pose(60, 84, Math.toRadians(180)).mirror();     //PT: Top (First Set) Blue.
+    private final Pose pickedIIIPose = new Pose(18, 84, Math.toRadians(180)).mirror();   //PT: Top (First Set) Blue already picked.
+    private final Pose release = new Pose(16, 70, Math.toRadians(90)).mirror();          //PT: Release Gate
+    private final Pose releaseCP = new Pose(30, 70).mirror();
+    private final Pose pickIIPose = new Pose(60, 60, Math.toRadians(180)).mirror();      //PT: Middle (Second Set) Blue.
+    private final Pose pickedIIPose = new Pose(18, 60, Math.toRadians(180)).mirror();    //PT: Middle (Second Set) Blue already picked.
+    private final Pose pickIPose = new Pose(60, 35, Math.toRadians(180)).mirror();       //PT: Low (First Set) Blue.
+    private final Pose pickedIPose = new Pose(18, 35, Math.toRadians(180)).mirror();     //PT: Low (First Set) Blue already picked.
+    private final Pose parkPose = new Pose(15, 110, Math.toRadians(0)).mirror();         //PT: Robot tangent to blue ramp.
+
+    private Path startpath;
+    private PathChain shoot2iii, pickiii, iii2release, iii2shoot, shoot2ii, pickii, ii2shoot, shoot2i, picki, i2shoot, park; //obelisk2IIIBlue
+
+    public void buildPaths() {
+        startpath = new Path(new BezierCurve(startPose, startCP, shootPose));
+        startpath.setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading());
+
+//        obelisk2IIIBlue = follower.pathBuilder()
+//                .addPath(new BezierLine(obeliskPose, pickupIIIPose))
+//                .setLinearHeadingInterpolation(obeliskPose.getHeading(), pickupIIIPose.getHeading())
+//                .build();
+
+        shoot2iii = follower.pathBuilder()
+                .addPath(new BezierLine(shootPose, pickIIIPose))
+                .setLinearHeadingInterpolation(shootPose.getHeading(), pickIIIPose.getHeading())
+                .build();
+
+        pickiii = follower.pathBuilder()
+                .addPath(new BezierLine(pickIIIPose, pickedIIIPose))
+                .setLinearHeadingInterpolation(pickIIIPose.getHeading(), pickedIIIPose.getHeading())
+                .build();
+
+        iii2release = follower.pathBuilder()
+                .addPath(new BezierCurve(pickIIIPose, releaseCP, release))
+                .setLinearHeadingInterpolation(pickIIIPose.getHeading(), release.getHeading())
+                .build();
+
+        iii2shoot = follower.pathBuilder()
+                .addPath(new BezierLine(release, shootPose))
+                .setLinearHeadingInterpolation(release.getHeading(), shootPose.getHeading())
+                .build();
+
+        shoot2ii = follower.pathBuilder()
+                .addPath(new BezierLine(shootPose, pickIIPose))
+                .setLinearHeadingInterpolation(shootPose.getHeading(), pickIIPose.getHeading())
+                .build();
+
+        pickii = follower.pathBuilder()
+                .addPath(new BezierLine(pickIIPose, pickedIIPose))
+                .setLinearHeadingInterpolation(pickIIPose.getHeading(), pickedIIPose.getHeading())
+                .build();
+
+        ii2shoot = follower.pathBuilder()
+                .addPath(new BezierCurve(pickedIIPose, pickIIPose, shootPose))
+                .setLinearHeadingInterpolation(pickedIIPose.getHeading(), shootPose.getHeading())
+                .build();
+
+        shoot2i = follower.pathBuilder()
+                .addPath(new BezierLine(shootPose, pickIPose))
+                .setLinearHeadingInterpolation(shootPose.getHeading(), pickIPose.getHeading())
+                .build();
+
+        picki = follower.pathBuilder()
+                .addPath(new BezierLine(pickIPose, pickedIPose))
+                .setLinearHeadingInterpolation(pickIPose.getHeading(), pickedIPose.getHeading())
+                .build();
+
+        i2shoot = follower.pathBuilder()
+                .addPath(new BezierLine(pickedIPose, shootPose))
+                .setLinearHeadingInterpolation(pickedIPose.getHeading(), shootPose.getHeading())
+                .build();
+
+        park = follower.pathBuilder()
+                .addPath(new BezierLine(shootPose, parkPose))
+                .setLinearHeadingInterpolation(shootPose.getHeading(), parkPose.getHeading())
+                .build();
+    }
+
+    public void autonomousPathUpdate() {
+
+        double actualTime = pathTimer.getElapsedTimeSeconds();
+
+        switch (pathState) {
+            case 0:
+                follower.followPath(startpath);
+                setPathState(1);
+                timeStamp = actualTime;
+                //mecanism.shoot(0.45);
+                break;
+            case 1:
+            /* You could check for
+            - Follower State: "if(!follower.isBusy()) {}"
+            - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
+            - Robot Position: "if(follower.getPose().getX() > 36) {}"
+            */
+
+                if (!follower.isBusy() && actualTime >= timeStamp + 3) {
+                    //mecanism.shoot(0);
+                    follower.followPath(shoot2iii, true);
+                    setPathState(2);
+                }
+                break;
+            case 2:
+                if (!follower.isBusy()) {
+                    mecanism.intake(1.0);
+                    follower.followPath(pickiii, true);
+                    setPathState(3);
+                  }
+              break;
+            case 3:
+                if (!follower.isBusy()) {
+                    mecanism.intake(0);
+                    follower.followPath(iii2release, true);
+                    setPathState(3);
+                }
+                break;
+            case 4:
+                if (!follower.isBusy()) {
+                    follower.followPath(iii2shoot, true);
+                    timeStamp = actualTime;
+                    //mecanism.shoot(0.45);
+                    setPathState(4);
+                }
+                break;
+            case 5:
+
+                if (!follower.isBusy() && actualTime >= timeStamp + 3) {
+                    //mecanism.shoot(0);
+                    follower.followPath(shoot2ii, true);
+                    setPathState(5);
+                }
+                break;
+            case 6:
+                if (!follower.isBusy()) {
+                    mecanism.intake(1.0);
+                    follower.followPath(pickii, true);
+                    setPathState(6);
+                }
+                break;
+            case 7:
+                if (!follower.isBusy()) {
+                    mecanism.intake(0.0);
+                    follower.followPath(ii2shoot, true);
+                    timeStamp = actualTime;
+                    //mecanism.shoot(0.45);
+                    setPathState(7);
+                }
+                break;
+            case 8:
+                if (!follower.isBusy() && actualTime >= timeStamp + 3) {
+                    //mecanism.shoot(0);
+                    follower.followPath(shoot2i, true);
+                    setPathState(8);
+                }
+                break;
+            case 9:
+                if (!follower.isBusy()) {
+                    mecanism.intake(1.0);
+                    follower.followPath(picki, true);
+                    setPathState(9);
+                }
+                break;
+            case 10:
+                if (!follower.isBusy()) {
+                    mecanism.intake(0);
+                    follower.followPath(i2shoot, true);
+                    timeStamp = actualTime;
+                    //mecanism.shoot(0.45);
+                    setPathState(10);
+                }
+                break;
+            case 11:
+                if (!follower.isBusy()  && actualTime >= timeStamp + 3) {
+                    //mecanism.shoot(0);
+                    follower.followPath(park, true);
+                    setPathState(11);
+                }
+                break;
+            case 12:
+                if (!follower.isBusy()) {
+                    setPathState(-1);
+                }
+                break;
+        }
+    }
+
+    /**
+     * These change the states of the paths and actions. It will also reset the timers of the individual switches
+     **/
+    public void setPathState(int pState) {
+        pathState = pState;
+        pathTimer.resetTimer();
+    }
+
+    /**
+     * This is the main loop of the OpMode, it will run repeatedly after clicking "Play".
+     **/
+    @Override
+    public void loop() {
+
+        // These loop the movements of the robot, these must be called continuously in order to work
+        follower.update();
+        autonomousPathUpdate();
+
+        // Feedback to Driver Hub for debugging
+        telemetry.addData("path state", pathState);
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.update();
+    }
+
+    /**
+     * This method is called once at the init of the OpMode.
+     **/
+    @Override
+    public void init() {
+        pathTimer = new Timer();
+        opmodeTimer = new Timer();
+        opmodeTimer.resetTimer();
+
+
+        follower = Constants.createFollower(hardwareMap);
+        buildPaths();
+        follower.setStartingPose(startPose);
+
+    }
+
+    /**
+     * This method is called once at the start of the OpMode.
+     * It runs all the setup actions, including building paths and starting the path system
+     **/
+    @Override
+    public void start() {
+        opmodeTimer.resetTimer();
+        setPathState(0);
+    }
+}

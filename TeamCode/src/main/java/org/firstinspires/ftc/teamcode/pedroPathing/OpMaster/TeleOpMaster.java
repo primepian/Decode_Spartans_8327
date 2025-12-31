@@ -218,7 +218,7 @@ public class TeleOpMaster extends OpMode {
 //TL ---------- CANNON / AUTOMATIC ----------
 
         if (gamepad2.right_trigger > 0.1f && !isShooting && (PPG || PGP || GPP)) {
-            mecanism.shoot(1.0); //fixme
+            //mecanism.shoot(1.0); //fixme
             isShooting = true;
             shootStep = 0;
             shootStartTime = System.currentTimeMillis();
@@ -272,7 +272,7 @@ public class TeleOpMaster extends OpMode {
                     shootStep++;
 
                     if (shootStep >= 3) {
-                        mecanism.shoot(0);
+                        //mecanism.shoot(0);
                         isShooting = false;
                         advanceToPreferredEmpty();
                     }
