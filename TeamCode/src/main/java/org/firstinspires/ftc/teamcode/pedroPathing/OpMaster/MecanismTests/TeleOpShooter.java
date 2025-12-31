@@ -164,11 +164,11 @@ public class TeleOpShooter extends OpMode {
 
 //  TL: CANNON      {GPAD_2}
         if (gamepad2.right_trigger > 0.0){
-            mecanism.shoot(0.35);
+            //mecanism.shoot(0.35);
         } if (gamepad2.left_trigger > 0.0){
-            mecanism.shoot(0.45);
+            //mecanism.shoot(0.45);
         } else {
-            mecanism.shoot(0);
+            //mecanism.shoot(0);
         }
 
 //  TL: CAMBIO DE MODO [GPP] [PGP] [PPG]    {GPAD_2}

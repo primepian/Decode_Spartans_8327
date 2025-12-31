@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Tests.TestColorSensorMecanism
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
+@Disabled
 @Autonomous()
 public class AutoBarrelBluA1 extends OpMode {
     Mecanismos mecanism = new Mecanismos();
@@ -181,14 +182,14 @@ public class AutoBarrelBluA1 extends OpMode {
                 if (!follower.isBusy()) {
                     follower.followPath(iii2shoot, true);
                     timeStamp = actualTime;
-                    mecanism.shoot(0.45);
+                    //mecanism.shoot(0.45);
                     setPathState(5);
                 }
                 break;
             case 5:
 
                 if (!follower.isBusy() && actualTime >= timeStamp + 3) {
-                    mecanism.shoot(0);
+                    //mecanism.shoot(0);
                     follower.followPath(shoot2ii, true);
                     setPathState(6);
                 }
@@ -205,13 +206,13 @@ public class AutoBarrelBluA1 extends OpMode {
                     mecanism.intake( 0);
                     follower.followPath(ii2shoot, true);
                     timeStamp = actualTime;
-                    mecanism.shoot(0.45);
+                    //mecanism.shoot(0.45);
                     setPathState(8);
                 }
                 break;
             case 8:
                 if (!follower.isBusy() && actualTime >= timeStamp + 3) {
-                    mecanism.shoot(0);
+                    //mecanism.shoot(0);
                     follower.followPath(shoot2i, true);
                     setPathState(9);
                 }
@@ -229,13 +230,13 @@ public class AutoBarrelBluA1 extends OpMode {
                     mecanism.intake( 0);
                     follower.followPath(i2shoot, true);
                     timeStamp = actualTime;
-                    mecanism.shoot(0.45);
+                    //mecanism.shoot(0.45);
                     setPathState(11);
                 }
                 break;
             case 11:
                 if (!follower.isBusy()  && actualTime >= timeStamp + 3) {
-                    mecanism.shoot(0);
+                    //mecanism.shoot(0);
                     follower.followPath(park, true);
                     setPathState(12);
                 }

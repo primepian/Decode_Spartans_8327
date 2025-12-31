@@ -56,7 +56,7 @@ public class AutoBlueA2 extends OpMode {
                 follower.followPath(startpath);
                 setPathState(1);
                 timeStamp = actualTime;
-                mecanism.shoot(0.45);
+                //mecanism.shoot(0.45);
                 break;
             case 1:
             /* You could check for
@@ -67,7 +67,7 @@ public class AutoBlueA2 extends OpMode {
                 if (!follower.isBusy() && actualTime >= timeStamp + 1)
                     mecanism.intake(1.0);
                 if (!follower.isBusy() && actualTime >= timeStamp + 5) {
-                    mecanism.shoot(0);
+                    //mecanism.shoot(0);
                     follower.followPath(park,true);
                     setPathState(2);
                 }

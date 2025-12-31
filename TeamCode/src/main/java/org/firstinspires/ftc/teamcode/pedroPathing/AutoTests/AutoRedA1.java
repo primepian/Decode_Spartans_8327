@@ -114,7 +114,7 @@ public class AutoRedA1 extends OpMode {
                 follower.followPath(startpath);
                 setPathState(1);
                 timeStamp = actualTime;
-                mecanism.shoot(0.45);
+                //mecanism.shoot(0.45);
                 break;
             case 1:
             /* You could check for
@@ -124,7 +124,7 @@ public class AutoRedA1 extends OpMode {
             */
 
                 if (!follower.isBusy() && actualTime >= timeStamp + 3) {
-                    mecanism.shoot(0);
+                    //mecanism.shoot(0);
                     follower.followPath(shoot2iii, true);
                     setPathState(2);
                 }
@@ -147,14 +147,14 @@ public class AutoRedA1 extends OpMode {
                 if (!follower.isBusy()) {
                     follower.followPath(iii2shoot, true);
                     timeStamp = actualTime;
-                    mecanism.shoot(0.45);
+                    //mecanism.shoot(0.45);
                     setPathState(4);
                 }
                 break;
             case 5:
 
                 if (!follower.isBusy() && actualTime >= timeStamp + 3) {
-                    mecanism.shoot(0);
+                    //mecanism.shoot(0);
                     follower.followPath(shoot2ii, true);
                     setPathState(5);
                 }
@@ -171,13 +171,13 @@ public class AutoRedA1 extends OpMode {
                     mecanism.intake(0.0);
                     follower.followPath(ii2shoot, true);
                     timeStamp = actualTime;
-                    mecanism.shoot(0.45);
+                    //mecanism.shoot(0.45);
                     setPathState(7);
                 }
                 break;
             case 8:
                 if (!follower.isBusy() && actualTime >= timeStamp + 3) {
-                    mecanism.shoot(0);
+                    //mecanism.shoot(0);
                     follower.followPath(shoot2i, true);
                     setPathState(8);
                 }
@@ -194,13 +194,13 @@ public class AutoRedA1 extends OpMode {
                     mecanism.intake(0);
                     follower.followPath(i2shoot, true);
                     timeStamp = actualTime;
-                    mecanism.shoot(0.45);
+                    //mecanism.shoot(0.45);
                     setPathState(10);
                 }
                 break;
             case 11:
                 if (!follower.isBusy()  && actualTime >= timeStamp + 3) {
-                    mecanism.shoot(0);
+                    //mecanism.shoot(0);
                     follower.followPath(park, true);
                     setPathState(11);
                 }
