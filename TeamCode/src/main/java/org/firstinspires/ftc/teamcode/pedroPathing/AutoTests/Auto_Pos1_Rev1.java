@@ -33,24 +33,26 @@ public class Auto_Pos1_Rev1 extends OpMode{
     private final Pose startingPose_CP = new Pose(64.000, 66.000);                            //TL:Path #1
     private final Pose search_pose = new Pose(55.000, 101.000, Math.toRadians(66));           //TL:Path #1
 
-    private final Pose shoot_Pose = new Pose(57.000, 105.000, Math.toRadians(145));           //TL:Path #2 fixme: 55.000, 101.000, 139
+    private final Pose shoot_Pose = new Pose(57.000, 105.000, Math.toRadians(145));           //TL:Path #2 TODO: Shoot
 
     private final Pose fst_itk_pose_CP = new Pose(49.000, 84.000);                            //TL:Path #3
-    private final Pose fst_itk_pose = new Pose(44.000, 80.000, Math.toRadians(180));          //TL:Path #3 fixme: 40.000, 84.000
+    private final Pose fst_itk_pose = new Pose(44.000, 80.000, Math.toRadians(180));          //TL:Path #3
+
+    private final Pose fst_itk = new Pose(17.000, 80.000, Math.toRadians(180));               //TL:Path #4
+
+    /*private final Pose hatch_CP = new Pose(32.000, 79.000);
+    private final Pose hatch = new Pose(11.000, 75.000, Math.toRadians(90));*/
+
+    private final Pose snd_shoot_CP = new Pose(48.000, 77.000);                               //TL:Path #5 TODO: with shoot
+
+    private final Pose snd_itk_pose_CP = new Pose(57.000, 60.000);                            //TL:Path #6
+    private final Pose snd_itk_pose = new Pose(44.000, 56.000, Math.toRadians(180));          //TL:Path #6
 
     //fixme:
 
-    private final Pose fst_itk = new Pose(17.000, 80.000, Math.toRadians(180));               //TL:Path #4 fixme: 9.000, 80,000
+    private final Pose snd_itk = new Pose(17.000, 56.000, Math.toRadians(180));               //TL:Path #7
 
-    /*private final Pose hatch_CP = new Pose(32.000, 79.000);                                   //TL:Path #5
-    private final Pose hatch = new Pose(11.000, 75.000, Math.toRadians(90));                   //TL:Path #5 fixme: 15.000, 75.000*/
-
-    private final Pose snd_shoot_CP = new Pose(48.000, 77.000);                               //TL:Path #6
-
-    //fixme:
-
-    private final Pose snd_itk_pose_CP = new Pose(57.000, 60.000);                            //TL:Path #7
-    private final Pose snd_itk_pose = new Pose(44.000, 56.000, Math.toRadians(180));          //TL:Path #7
+    private final Pose trd_shoot_CP = new Pose(60.000, 53.000);                               //TL:Path #8 TODO: with shoot
 
 
     private Path start_path;
@@ -58,8 +60,8 @@ public class Auto_Pos1_Rev1 extends OpMode{
 
     public void buildPaths() {
 
-        start_path = new Path(new BezierCurve(startingPose, startingPose_CP, search_pose));                 //TL:Path #1
-        start_path.setLinearHeadingInterpolation(startingPose.getHeading(), search_pose.getHeading());      //TL:Path #1
+        start_path = new Path(new BezierCurve(startingPose, startingPose_CP, search_pose));
+        start_path.setLinearHeadingInterpolation(startingPose.getHeading(), search_pose.getHeading());
 
         snd_path = follower.pathBuilder()
                 .addPath(new BezierLine(search_pose, shoot_Pose))
@@ -71,14 +73,12 @@ public class Auto_Pos1_Rev1 extends OpMode{
                 .setLinearHeadingInterpolation(shoot_Pose.getHeading(), fst_itk_pose.getHeading())
                 .build();
 
-        //fixme:
-
         fth_path = follower.pathBuilder()
                 .addPath(new BezierLine(fst_itk_pose, fst_itk))
                 .setLinearHeadingInterpolation(fst_itk_pose.getHeading(), fst_itk.getHeading())
                 .build();
 
-        /*fvth_path = follower.pathBuilder()                                                          //TL:Path #5
+        /*fvth_path = follower.pathBuilder()
                 .addPath(new BezierCurve(fst_itk, hatch_CP, hatch))
                 .setLinearHeadingInterpolation(fst_itk.getHeading(), hatch.getHeading())
                 .build();*/
@@ -99,6 +99,16 @@ public class Auto_Pos1_Rev1 extends OpMode{
                 .build();
 
         //fixme:
+
+        svnth_path = follower.pathBuilder()
+                .addPath(new BezierLine(snd_itk_pose, snd_itk))
+                .setLinearHeadingInterpolation(snd_itk_pose.getHeading(), snd_itk.getHeading())
+                .build();
+
+        egth_path = follower.pathBuilder()
+                .addPath(new BezierCurve(snd_itk, trd_shoot_CP, shoot_Pose))
+                .setLinearHeadingInterpolation(snd_itk.getHeading(), shoot_Pose.getHeading())
+                .build();
     }
 
     public void autonomousPathUpdate() {
