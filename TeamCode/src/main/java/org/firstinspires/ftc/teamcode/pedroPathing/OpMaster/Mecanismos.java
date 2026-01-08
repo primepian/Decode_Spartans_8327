@@ -84,16 +84,16 @@ public class Mecanismos {
 
     public final long OUTTAKE_HOLD_TIME_MS = 2000;
     public long lastIntakeTime = 0;
-    public static final long INTAKE_COOLDOWN_MS = 500;
+    public static final long INTAKE_COOLDOWN_MS = 400;
 //Tl:       COSOS CHISTOSOS
     public double slowModeMultiplier = 0.3; //Modo slow
     public boolean invertedDrive;
     public boolean RBflag;
 
-//note    AprilTag search
+//note    AprilTag search.
     public final double DESIRED_DISTANCE =  40;
-    public final double SPEED_GAIN  =  0.02  ;
-    public final double TURN_GAIN   =  0.01  ;
+    public final double SPEED_GAIN  =  0.02;
+    public final double TURN_GAIN   =  0.01;
     public final double MAX_AUTO_SPEED = 0.5;
     public final double MAX_AUTO_TURN  = 0.3;
 
@@ -121,6 +121,7 @@ public class Mecanismos {
         cannonR = hwMap.get(DcMotor.class, "CannonR");
 
         cannonL = hwMap.get(DcMotor.class, "CannonL");
+        cannonL.setDirection(DcMotorSimple.Direction.REVERSE);
         colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
         barril = hwMap.get(Servo.class,"servo");
         colorSensor.setGain(10);

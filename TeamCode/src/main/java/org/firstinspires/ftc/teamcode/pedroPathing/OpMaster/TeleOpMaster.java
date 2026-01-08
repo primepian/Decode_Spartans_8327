@@ -180,15 +180,16 @@ public class TeleOpMaster extends OpMode {
         if (gamepad2.dpad_down) {
             mecanism.PPG = mecanism.PGP = mecanism.GPP = false;
         }
-//TL  ---------- EMPTY -> G28 ----------
-        mecanism.G28();
-//TL --------------- CANNON / AUTOMATIC --------------
+//tl:---------- CANNON / BARREL -----------
+
         if (gamepad2.right_trigger > 0.1f && !mecanism.isShooting && (mecanism.PPG || mecanism.PGP || mecanism.GPP)) {
             mecanism.shootPow(1.0); //fixme
             mecanism.isShooting = true;
             mecanism.shootStep = 0;
             mecanism.shootStartTime = System.currentTimeMillis();
         }
+
+        mecanism.G28();
         mecanism.shootingandIntake(telemetry);
         mecanism.telem(telemetry);
     }
