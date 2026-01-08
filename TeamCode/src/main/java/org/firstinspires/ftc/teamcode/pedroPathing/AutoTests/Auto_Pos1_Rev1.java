@@ -54,6 +54,8 @@ public class Auto_Pos1_Rev1 extends OpMode{
 
     private final Pose trd_shoot_CP = new Pose(60.000, 53.000);                               //TL:Path #8 TODO: with shoot
 
+    private final Pose trd_itk_pose_CP = new Pose(66.000, 29.000);                            //TL:Path #9
+    private final Pose trd_itk_pose = new Pose(44.000, 32.000, Math.toRadians(180));          //TL:Path #9
 
     private Path start_path;
     private PathChain snd_path, trd_path, fth_path, fvth_path, sxth_path, svnth_path, egth_path, nnth_path;
@@ -108,6 +110,11 @@ public class Auto_Pos1_Rev1 extends OpMode{
         egth_path = follower.pathBuilder()
                 .addPath(new BezierCurve(snd_itk, trd_shoot_CP, shoot_Pose))
                 .setLinearHeadingInterpolation(snd_itk.getHeading(), shoot_Pose.getHeading())
+                .build();
+
+        nnth_path = follower.pathBuilder()
+                .addPath(new BezierCurve(shoot_Pose, trd_itk_pose_CP, trd_itk_pose))
+                .setLinearHeadingInterpolation(shoot_Pose.getHeading(), trd_itk_pose.getHeading())
                 .build();
     }
 
