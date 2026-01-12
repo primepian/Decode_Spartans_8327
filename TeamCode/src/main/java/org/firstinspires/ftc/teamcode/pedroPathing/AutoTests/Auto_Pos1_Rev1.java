@@ -57,8 +57,14 @@ public class Auto_Pos1_Rev1 extends OpMode{
     private final Pose trd_itk_pose_CP = new Pose(66.000, 29.000);                            //TL:Path #9
     private final Pose trd_itk_pose = new Pose(44.000, 32.000, Math.toRadians(180));          //TL:Path #9
 
+    private final Pose trd_itk = new Pose(17.000, 32.000, Math.toRadians(180));               //TL:Path #10
+
+    private final Pose fth_shoot_CP = new Pose(60.000, 45.000);                               //TL:Path #11 TODO: with shoot
+
+    private final Pose park_pose = new Pose(16.000, 103.000, Math.toRadians(180));            //TL:Path #12
+
     private Path start_path;
-    private PathChain snd_path, trd_path, fth_path, fvth_path, sxth_path, svnth_path, egth_path, nnth_path;
+    private PathChain snd_path, trd_path, fth_path, fvth_path, sxth_path, svnth_path, egth_path, nnth_path, tenth_path, elvnth_path, twlfth_path;
 
     public void buildPaths() {
 
@@ -116,26 +122,44 @@ public class Auto_Pos1_Rev1 extends OpMode{
                 .addPath(new BezierCurve(shoot_Pose, trd_itk_pose_CP, trd_itk_pose))
                 .setLinearHeadingInterpolation(shoot_Pose.getHeading(), trd_itk_pose.getHeading())
                 .build();
+
+        tenth_path = follower.pathBuilder()
+                .addPath(new BezierLine(trd_itk_pose, trd_itk))
+                .setLinearHeadingInterpolation(trd_itk_pose.getHeading(), trd_itk.getHeading())
+                .build();
+
+        elvnth_path = follower.pathBuilder()
+                .addPath(new BezierCurve(trd_itk, fth_shoot_CP, shoot_Pose))
+                .setLinearHeadingInterpolation(trd_itk.getHeading(), shoot_Pose.getHeading())
+                .build();
+
+        twlfth_path = follower.pathBuilder()
+                .addPath(new BezierLine(shoot_Pose, park_pose))
+                .setLinearHeadingInterpolation(shoot_Pose.getHeading(), park_pose.getHeading())
+                .build();
     }
 
     public void autonomousPathUpdate() {
         double actual_time = pathTimer.getElapsedTimeSeconds();
 
         switch (pathState) {
-            case 0:
+            case 0: //start to obelisk
                 follower.followPath(start_path);
                 time_Stamp = actual_time;
                 setPathState(1);
                 break;
-            case 1:
-                if (!follower.isBusy() && actual_time >= time_Stamp + 3) { //&& actual_time >= time_Stamp + 3
+            case 1://obelisk to shoot
+                if (mecanism.DESIRED_TAG_ID == 21){mecanism.GPP = true;}
+                if (mecanism.DESIRED_TAG_ID == 22){mecanism.PGP = true;}
+                if (mecanism.DESIRED_TAG_ID == 23){mecanism.PPG = true;}
+                if ((!follower.isBusy() && actual_time >= time_Stamp + 3) || (!follower.isBusy() && (mecanism.PPG || mecanism.GPP || mecanism.PGP) )) {
                     follower.followPath(snd_path,true);
-                    time_Stamp = actual_time;
+                    mecanism.shoot();
                     setPathState(2);
                 }
                 break;
             case 2:
-                if (!follower.isBusy() && actual_time >= time_Stamp + 1) {
+                if (!follower.isBusy() && !mecanism.isShooting) {
                     follower.followPath(trd_path, true);
                     setPathState(3);
                 }
@@ -143,7 +167,7 @@ public class Auto_Pos1_Rev1 extends OpMode{
             case 3:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(0.3);
-                    mecanism.intake(0.7);
+                    mecanism.intake(0.7);                                                      //TL:INTAKE
                     follower.followPath(fth_path, true);
                     setPathState(4);
                 }
@@ -161,7 +185,52 @@ public class Auto_Pos1_Rev1 extends OpMode{
                     follower.followPath(sxth_path, true);
                     setPathState(6);
                 }
+                break;
             case 6:
+                if (!follower.isBusy()) {
+                    follower.setMaxPower(0.3);
+                    mecanism.intake(0.7);                                                      //TL:INTAKE
+                    follower.followPath(svnth_path, true);
+                    setPathState(7);
+                }
+                break;
+            case 7:
+                if (!follower.isBusy()) {
+                    follower.setMaxPower(1);
+                    mecanism.intake(0);
+                    follower.followPath(egth_path, true);
+                    setPathState(8);
+                }
+                break;
+            case 8:
+                if (!follower.isBusy()) {
+                    follower.followPath(nnth_path, true);
+                    setPathState(9);
+                }
+                break;
+            case 9:
+                if (!follower.isBusy()) {
+                    follower.setMaxPower(0.3);
+                    mecanism.intake(0.7);                                                      //TL:INTAKE
+                    follower.followPath(tenth_path, true);
+                    setPathState(10);
+                }
+                break;
+            case 10:
+                if (!follower.isBusy()) {
+                    follower.setMaxPower(1);
+                    mecanism.intake(0);
+                    follower.followPath(elvnth_path, true);
+                    setPathState(11);
+                }
+                break;
+            case 11:
+                if (!follower.isBusy()) {
+                    follower.followPath(twlfth_path, true);
+                    setPathState(12);
+                }
+                break;
+            case 12:
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }
@@ -186,7 +255,7 @@ public class Auto_Pos1_Rev1 extends OpMode{
 
         //TL: APRIL TAG DETECTION
 
-        /*List<AprilTagDetection> currentDetections = mecanism.aprilTag.getDetections();
+        List<AprilTagDetection> currentDetections = mecanism.aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
                 if ((detection.id == 21)) {
@@ -204,7 +273,7 @@ public class Auto_Pos1_Rev1 extends OpMode{
             } else {
                 telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
             }
-        }*/
+        }
 
         // These loop the movements of the robot, these must be called continuously in order to work
         follower.update();
