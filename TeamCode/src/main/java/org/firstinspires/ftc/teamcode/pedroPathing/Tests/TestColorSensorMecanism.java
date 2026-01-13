@@ -42,9 +42,9 @@ public class TestColorSensorMecanism {
          PURPLE =  <.25, <.25, >.25
          */
 
-        if (normRed < 0.075 && normGreen > 0.11 && normBlue < 0.20) {
+        if (normRed < 0.04 && normGreen > 0.1 && normBlue < 0.1) {
             return DetectedColor.GREEN;
-        } else if (normRed < 0.25 && normGreen < 0.25 && normBlue > 0.16) {
+        } else if (normRed < 0.09 && normGreen < 0.09 && normBlue > 0.08) {
             return DetectedColor.PURPLE;
         } else {
             return DetectedColor.UNKNOWN;
