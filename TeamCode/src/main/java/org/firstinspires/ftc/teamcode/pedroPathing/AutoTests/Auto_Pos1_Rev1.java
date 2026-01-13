@@ -152,43 +152,44 @@ public class Auto_Pos1_Rev1 extends OpMode{
                 if (mecanism.DESIRED_TAG_ID == 21){mecanism.GPP = true;}
                 if (mecanism.DESIRED_TAG_ID == 22){mecanism.PGP = true;}
                 if (mecanism.DESIRED_TAG_ID == 23){mecanism.PPG = true;}
-                if ((!follower.isBusy() && actual_time >= time_Stamp + 3) || (!follower.isBusy() && (mecanism.PPG || mecanism.GPP || mecanism.PGP) )) {
+                if ((!follower.isBusy() && actual_time >= time_Stamp + 3)) { // || (!follower.isBusy() && (mecanism.PPG || mecanism.GPP || mecanism.PGP) )
                     follower.followPath(snd_path,true);
-                    mecanism.shoot();
+                    //mecanism.shoot();
                     setPathState(2);
                 }
                 break;
             case 2:
-                if (!follower.isBusy() && !mecanism.isShooting) {
+                if (!follower.isBusy()) { // && !mecanism.isShooting
                     follower.followPath(trd_path, true);
                     setPathState(3);
                 }
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.3);
+                    follower.setMaxPower(0.5);
                     mecanism.intake(0.7);                                                      //TL:INTAKE
                     follower.followPath(fth_path, true);
                     setPathState(4);
                 }
                 break;
             case 4:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() || (!follower.isBusy() && (mecanism.PPG || mecanism.GPP || mecanism.PGP) )) {
                     follower.setMaxPower(1);
                     mecanism.intake(0);
                     follower.followPath(fvth_path, true);
+                    mecanism.shoot();
                     setPathState(5);
                 }
                 break;
             case 5:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && !mecanism.isShooting) {
                     follower.followPath(sxth_path, true);
                     setPathState(6);
                 }
                 break;
             case 6:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.3);
+                    follower.setMaxPower(0.5);
                     mecanism.intake(0.7);                                                      //TL:INTAKE
                     follower.followPath(svnth_path, true);
                     setPathState(7);
@@ -210,7 +211,7 @@ public class Auto_Pos1_Rev1 extends OpMode{
                 break;
             case 9:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.3);
+                    follower.setMaxPower(0.5);
                     mecanism.intake(0.7);                                                      //TL:INTAKE
                     follower.followPath(tenth_path, true);
                     setPathState(10);
@@ -285,6 +286,8 @@ public class Auto_Pos1_Rev1 extends OpMode{
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.addData("pathTimer: ", pathTimer);
+        telemetry.addData("DESIRED_TAG_ID: ", mecanism.DESIRED_TAG_ID);
+
         telemetry.update();
     }
 
