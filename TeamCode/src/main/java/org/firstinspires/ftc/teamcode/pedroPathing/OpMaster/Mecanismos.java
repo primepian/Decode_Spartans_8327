@@ -58,12 +58,13 @@ public class Mecanismos {
         GREEN,
         UNKNOWN,
     }
-    public static final double  Ain = 0.607;
-    public static final double  Bin = 0.528;
-    public static final double  Cin = 0.45;
-    public static final double  Aout = 0.712;
-    public static final double  Bout = 0.643;
-    public static final double  Cout = 0.567;
+    public static final double  Ain = 0.6;
+    public static final double  Bin = 0.52;
+    public static final double  Cin = 0.448;
+
+    public static final double  Aout = 0.705;
+    public static final double  Bout = 0.40;
+    public static final double  Cout = 0.56;
     public static final double  pateador_off = 0.3;
     public static final double  pateador_on = 0.26;
     char actualPos = 'a';
@@ -84,7 +85,7 @@ public class Mecanismos {
 
     public final long OUTTAKE_HOLD_TIME_MS = 2000;
     public long lastIntakeTime = 0;
-    public long INTAKE_COOLDOWN_MS = 300;
+    public long INTAKE_COOLDOWN_MS = 100;
     //Tl:       COSOS CHISTOSOS
     public double slowModeMultiplier = 0.3; //Modo slow
     public boolean invertedDrive;
@@ -116,7 +117,7 @@ public class Mecanismos {
     public void initAll(HardwareMap hwMap){
         pateador = hwMap.get(Servo.class, "pateador");
         intake = hwMap.get(DcMotor.class, "Intake");
-        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake_S = hwMap.get(CRServo.class, "Intake_S");
         cannonR = hwMap.get(DcMotor.class, "CannonR");
 
@@ -151,7 +152,7 @@ public class Mecanismos {
             isShooting = false;
         }
         if (A != 0 && B != 0 && C != 0){
-            barril.setPosition(Aout);
+            barril.setPosition(0.5);
             actualPos = 'a';
         }
     }
@@ -192,7 +193,7 @@ public class Mecanismos {
                 if (System.currentTimeMillis() - shootStartTime >= 500) {
                     pateador.setPosition(pateador_on); //fixme
                 }
-                if (System.currentTimeMillis() - shootStartTime >= 1000) {
+                if (System.currentTimeMillis() - shootStartTime >= 1200) {
                     pateador.setPosition(pateador_off); //fixme
                 }
                 if (System.currentTimeMillis() - shootStartTime >= OUTTAKE_HOLD_TIME_MS) {
@@ -313,9 +314,9 @@ public class Mecanismos {
          PURPLE =  <.25, <.25, >.25
          */
 
-        if (normRed < 0.075 && normGreen > 0.11 && normBlue < 0.20) {
+        if (normRed < 0.04 && normGreen > 0.1 && normBlue < 0.1) {
             return TestColorSensorMecanism.DetectedColor.GREEN;
-        } else if (normRed < 0.25 && normGreen < 0.25 && normBlue > 0.16) {
+        } else if (normRed < 0.09 && normGreen < 0.09 && normBlue > 0.1) {
             return TestColorSensorMecanism.DetectedColor.PURPLE;
         } else {
             return TestColorSensorMecanism.DetectedColor.UNKNOWN;
