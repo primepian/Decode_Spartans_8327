@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
-@Disabled
+
 public class TestColorSensor extends OpMode {
     TestColorSensorMecanism mecanism = new TestColorSensorMecanism();
     TestColorSensorMecanism.DetectedColor detectedColor;
