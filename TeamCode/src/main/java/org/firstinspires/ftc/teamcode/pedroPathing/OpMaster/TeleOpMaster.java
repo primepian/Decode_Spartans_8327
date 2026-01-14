@@ -141,6 +141,7 @@ public class TeleOpMaster extends OpMode {
         }   //tl: Automatic Shoot Positioning
 
 //  Tl: CHOOSE TEAM FOR SHOOTING POSE   {GPAD_2}
+
         if (gamepad2.left_stick_button)  {mecanism.DESIRED_TAG_ID = 20;}    //NOTE: BLUE TEAM
         if (gamepad2.right_stick_button) {mecanism.DESIRED_TAG_ID = 24;}    //NOTE: RED TEAM
 
@@ -189,6 +190,15 @@ public class TeleOpMaster extends OpMode {
         if (gamepad2.right_trigger > 0.1f){
             mecanism.shoot();
         }
+        if (gamepad2.left_trigger > 0.1f){
+            mecanism.shootFar();
+        }
+        if (gamepad2.right_bumper){
+            mecanism.shootPow(0);
+        }
+        if (gamepad2.a){mecanism.A = 0;}
+        if (gamepad2.b){mecanism.B = 0;}
+        if (gamepad2.x){mecanism.C = 0;}
 
         mecanism.G28();
         mecanism.shootingandIntake(telemetry);
