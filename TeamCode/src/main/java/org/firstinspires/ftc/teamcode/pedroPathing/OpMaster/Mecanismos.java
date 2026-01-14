@@ -63,8 +63,8 @@ public class Mecanismos {
     public static final double  Cin = 0.448;
 
     public static final double  Aout = 0.705;
-    public static final double  Bout = 0.40;
-    public static final double  Cout = 0.56;
+    public static final double  Bout = 0.4;
+    public static final double  Cout = 0.552;
     public static final double  pateador_off = 0.3;
     public static final double  pateador_on = 0.26;
     char actualPos = 'a';
@@ -83,16 +83,16 @@ public class Mecanismos {
     public int shootStep = 0;
     public long shootStartTime = 0;
 
-    public final long OUTTAKE_HOLD_TIME_MS = 2000;
+    public final long OUTTAKE_HOLD_TIME_MS = 1500;
     public long lastIntakeTime = 0;
-    public long INTAKE_COOLDOWN_MS = 100;
+    public long INTAKE_COOLDOWN_MS = 20;
     //Tl:       COSOS CHISTOSOS
-    public double slowModeMultiplier = 0.3; //Modo slow
+    public double slowModeMultiplier = 0.2; //Modo slow
     public boolean invertedDrive;
     public boolean RBflag;
 
     //note    AprilTag search.
-    public final double DESIRED_DISTANCE =  40;
+    public final double DESIRED_DISTANCE =  50;
     public final double SPEED_GAIN  =  0.02;
     public final double TURN_GAIN   =  0.01;
     public final double MAX_AUTO_SPEED = 0.5;
@@ -190,7 +190,7 @@ public class Mecanismos {
                 double targetPos = (chamber == 'a') ? Aout : (chamber == 'b') ? Bout : Cout;
                 barril.setPosition(targetPos);
                 actualPos = chamber;
-                if (System.currentTimeMillis() - shootStartTime >= 500) {
+                if (System.currentTimeMillis() - shootStartTime >= 660) {
                     pateador.setPosition(pateador_on); //fixme
                 }
                 if (System.currentTimeMillis() - shootStartTime >= 1200) {
@@ -259,9 +259,17 @@ public class Mecanismos {
             }
         }
     }
-    public void shoot(){
+    public void shootFar(){
         if (!isShooting && (PPG || PGP || GPP)) {
             shootPow(1.0); //fixme
+            isShooting = true;
+            shootStep = 0;
+            shootStartTime = System.currentTimeMillis();
+        }
+    }
+    public void shoot(){
+        if (!isShooting && (PPG || PGP || GPP)) {
+            shootPow(0.90); //fixme
             isShooting = true;
             shootStep = 0;
             shootStartTime = System.currentTimeMillis();
@@ -314,7 +322,7 @@ public class Mecanismos {
          PURPLE =  <.25, <.25, >.25
          */
 
-        if (normRed < 0.04 && normGreen > 0.1 && normBlue < 0.1) {
+        if (normRed < 0.08 && normGreen > 0.1 && normBlue < 0.19) {
             return TestColorSensorMecanism.DetectedColor.GREEN;
         } else if (normRed < 0.09 && normGreen < 0.09 && normBlue > 0.1) {
             return TestColorSensorMecanism.DetectedColor.PURPLE;
