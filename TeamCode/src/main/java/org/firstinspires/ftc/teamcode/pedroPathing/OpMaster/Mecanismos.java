@@ -44,7 +44,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Mecanismos {
     //Tl:========= INTAKE =========
     public DcMotor intake;
-    public  CRServo intake_S;
+    public CRServo intake_Srvo_R;
+    public CRServo intake_Srvo_L;
     //TL:======== CANNON ===========
     public DcMotor cannonR;
     public DcMotor cannonL;
@@ -85,9 +86,9 @@ public class Mecanismos {
 
     public final long OUTTAKE_HOLD_TIME_MS = 1500;
     public long lastIntakeTime = 0;
-    public long INTAKE_COOLDOWN_MS = 20;
+    public long INTAKE_COOLDOWN_MS = 300;
     //Tl:       COSOS CHISTOSOS
-    public double slowModeMultiplier = 0.2; //Modo slow
+    public double slowModeMultiplier = 0.25; //Modo slow
     public boolean invertedDrive;
     public boolean RBflag;
 
@@ -118,7 +119,9 @@ public class Mecanismos {
         pateador = hwMap.get(Servo.class, "pateador");
         intake = hwMap.get(DcMotor.class, "Intake");
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intake_S = hwMap.get(CRServo.class, "Intake_S");
+        intake_Srvo_R = hwMap.get(CRServo.class, "Intake_Srvo_R");
+        intake_Srvo_L = hwMap.get(CRServo.class, "Intake_Srvo_L");
+        intake_Srvo_L.setDirection(DcMotorSimple.Direction.REVERSE);
         cannonR = hwMap.get(DcMotor.class, "CannonR");
 
         cannonL = hwMap.get(DcMotor.class, "CannonL");
@@ -141,7 +144,8 @@ public class Mecanismos {
 
     public void intake(double pow){
         intake.setPower(pow);
-        intake_S.setPower(pow);
+        intake_Srvo_R.setPower(pow);
+        intake_Srvo_L.setPower(pow);
     }
 
     //TL: BARRREL STUFF
@@ -260,7 +264,7 @@ public class Mecanismos {
         }
     }
     public void shootFar(){
-        if (!isShooting && (PPG || PGP || GPP)) {
+        if (!isShooting) {
             shootPow(1.0); //fixme
             isShooting = true;
             shootStep = 0;
@@ -268,8 +272,8 @@ public class Mecanismos {
         }
     }
     public void shoot(){
-        if (!isShooting && (PPG || PGP || GPP)) {
-            shootPow(0.90); //fixme
+        if (!isShooting) {
+            shootPow(0.95); //fixme
             isShooting = true;
             shootStep = 0;
             shootStartTime = System.currentTimeMillis();
@@ -320,11 +324,7 @@ public class Mecanismos {
 
         if (normRed < 0.08 && normGreen > 0.1 && normBlue < 0.19) {
             return TestColorSensorMecanism.DetectedColor.GREEN;
-        } else if (normRed < 0.43 && normGreen > 0.74 && normBlue < 0.75) {
-            return TestColorSensorMecanism.DetectedColor.GREEN;
-        } else if (normRed < 0.09 && normGreen < 0.09 && normBlue > 0.1) {
-            return TestColorSensorMecanism.DetectedColor.PURPLE;
-        } else if (normRed < 0.71 && normGreen < 1.35 && normBlue > 0.8) {
+        }else if (normRed < 0.09 && normGreen < 0.09 && normBlue > 0.1) {
             return TestColorSensorMecanism.DetectedColor.PURPLE;
         }else {
             return TestColorSensorMecanism.DetectedColor.UNKNOWN;
