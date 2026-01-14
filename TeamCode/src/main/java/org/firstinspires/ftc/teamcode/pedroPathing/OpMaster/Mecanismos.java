@@ -317,16 +317,16 @@ public class Mecanismos {
         telemetry.addData("blue", normBlue);
 
         //TODO colors
-        /*
-         GREEN = <.5, >.3, <.5
-         PURPLE =  <.25, <.25, >.25
-         */
 
         if (normRed < 0.08 && normGreen > 0.1 && normBlue < 0.19) {
             return TestColorSensorMecanism.DetectedColor.GREEN;
+        } else if (normRed < 0.43 && normGreen > 0.74 && normBlue < 0.75) {
+            return TestColorSensorMecanism.DetectedColor.GREEN;
         } else if (normRed < 0.09 && normGreen < 0.09 && normBlue > 0.1) {
             return TestColorSensorMecanism.DetectedColor.PURPLE;
-        } else {
+        } else if (normRed < 0.71 && normGreen < 1.35 && normBlue > 0.8) {
+            return TestColorSensorMecanism.DetectedColor.PURPLE;
+        }else {
             return TestColorSensorMecanism.DetectedColor.UNKNOWN;
         }
     }
