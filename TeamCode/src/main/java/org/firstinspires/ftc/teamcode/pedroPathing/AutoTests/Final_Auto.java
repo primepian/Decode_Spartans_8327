@@ -11,6 +11,7 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -19,8 +20,9 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
 
-@Autonomous(name = "Auto_Pos1_Rev1", group = "Autonomous")
-public class Auto_Pos1_Rev1 extends OpMode{
+@Disabled
+@Autonomous(name = "Final_Auto", group = "Autonomous")
+public class Final_Auto extends OpMode{
     Mecanismos mecanism = new Mecanismos();
 
     private Follower follower;
@@ -38,33 +40,36 @@ public class Auto_Pos1_Rev1 extends OpMode{
     private final Pose fst_itk_pose_CP = new Pose(49.000, 84.000);                            //TL:Path #3
     private final Pose fst_itk_pose = new Pose(44.000, 80.000, Math.toRadians(180));          //TL:Path #3
 
-    private final Pose fst_itk = new Pose(17.000, 80.000, Math.toRadians(180));               //TL:Path #4
+    private final Pose fst_itk_1 = new Pose(35.000, 80.000, Math.toRadians(180));             //TL:Path #4
 
-    /*private final Pose hatch_CP = new Pose(32.000, 79.000);
-    private final Pose hatch = new Pose(11.000, 75.000, Math.toRadians(90));*/
+    private final Pose fst_itk_2 = new Pose(30.000, 80.000, Math.toRadians(180));             //TL:Path #5
 
-    private final Pose snd_shoot_CP = new Pose(48.000, 77.000);                               //TL:Path #5 TODO: with shoot
+    private final Pose fst_itk_3 = new Pose(24.000, 80.000, Math.toRadians(180));             //TL:Path #6
 
-    private final Pose snd_itk_pose_CP = new Pose(57.000, 60.000);                            //TL:Path #6
-    private final Pose snd_itk_pose = new Pose(44.000, 56.000, Math.toRadians(180));          //TL:Path #6
+    private final Pose snd_shoot_CP = new Pose(49.000, 81.000);                               //TL:Path #7 TODO: With SHOOT
 
-    //fixme:
+    private final Pose snd_itk_pose_CP = new Pose(57.000, 60.000);                            //TL:Path #8
+    private final Pose snd_itk_pose = new Pose(44.000, 56.000, Math.toRadians(180));          //TL:Path #8
 
-    private final Pose snd_itk = new Pose(17.000, 56.000, Math.toRadians(180));               //TL:Path #7
+    private final Pose snd_itk_1 = new Pose(35.000, 56.000, Math.toRadians(180));             //TL:Path #9
 
-    private final Pose trd_shoot_CP = new Pose(60.000, 53.000);                               //TL:Path #8 TODO: with shoot
+    private final Pose snd_itk_2 = new Pose(30.000, 56.000, Math.toRadians(180));             //TL:Path #10
 
-    private final Pose trd_itk_pose_CP = new Pose(66.000, 29.000);                            //TL:Path #9
-    private final Pose trd_itk_pose = new Pose(44.000, 32.000, Math.toRadians(180));          //TL:Path #9
+    private final Pose snd_itk_3 = new Pose(24.000, 56.000, Math.toRadians(180));             //TL:Path #11
 
-    private final Pose trd_itk = new Pose(17.000, 32.000, Math.toRadians(180));               //TL:Path #10
+    private final Pose trd_shoot_CP = new Pose(54.000, 53.000);                               //TL:Path #12 TODO: With SHOOT
 
-    private final Pose fth_shoot_CP = new Pose(60.000, 45.000);                               //TL:Path #11 TODO: with shoot
+    private final Pose trd_itk_pose = new Pose(44.000, 32.000, Math.toRadians(180));          //TL:Path #13
 
-    private final Pose park_pose = new Pose(16.000, 103.000, Math.toRadians(180));            //TL:Path #12
+    private final Pose trd_itk_1 = new Pose(35.000, 32.000, Math.toRadians(180));             //TL:Path #14
+
+    private final Pose trd_itk_2 = new Pose(30.000, 32.000, Math.toRadians(180));             //TL:Path #15
+
+    private final Pose trd_itk_3 = new Pose(24.000, 32.000, Math.toRadians(180));             //TL:Path #16
+
 
     private Path start_path;
-    private PathChain snd_path, trd_path, fth_path, fvth_path, sxth_path, svnth_path, egth_path, nnth_path, tenth_path, elvnth_path, twlfth_path;
+    private PathChain snd_path, trd_path, fth_path, fvth_path, sxth_path, svnth_path, egth_path, nnth_path, tenth_path, elvnth_path, twlfth_path, thirtnth_path, frtnth_path, fftnth_path, sxtnth_path, svntnth_path, eightnth_path, nntnth_path;
 
     public void buildPaths() {
 
@@ -82,61 +87,66 @@ public class Auto_Pos1_Rev1 extends OpMode{
                 .build();
 
         fth_path = follower.pathBuilder()
-                .addPath(new BezierLine(fst_itk_pose, fst_itk))
-                .setLinearHeadingInterpolation(fst_itk_pose.getHeading(), fst_itk.getHeading())
+                .addPath(new BezierLine(fst_itk_pose, fst_itk_1))
+                .setLinearHeadingInterpolation(fst_itk_pose.getHeading(), fst_itk_1.getHeading())
                 .build();
-
-        /*fvth_path = follower.pathBuilder()
-                .addPath(new BezierCurve(fst_itk, hatch_CP, hatch))
-                .setLinearHeadingInterpolation(fst_itk.getHeading(), hatch.getHeading())
-                .build();*/
 
         fvth_path = follower.pathBuilder()
-                .addPath(new BezierCurve(fst_itk, snd_shoot_CP, shoot_Pose))
-                .setLinearHeadingInterpolation(fst_itk.getHeading(), shoot_Pose.getHeading())
+                .addPath(new BezierLine(fst_itk_1, fst_itk_2))
+                .setLinearHeadingInterpolation(fst_itk_1.getHeading(), fst_itk_2.getHeading())
                 .build();
 
-        /*sxth_path = follower.pathBuilder()
-                .addPath(new BezierCurve(hatch, snd_shoot_CP, shoot_Pose))
-                .setLinearHeadingInterpolation(hatch.getHeading(), shoot_Pose.getHeading())
-                .build();*/
-
         sxth_path = follower.pathBuilder()
+                .addPath(new BezierLine(fst_itk_2, fst_itk_3))
+                .setLinearHeadingInterpolation(fst_itk_2.getHeading(), fst_itk_3.getHeading())
+                .build();
+
+        svnth_path = follower.pathBuilder()
+                .addPath(new BezierCurve(fst_itk_3, snd_shoot_CP, shoot_Pose))
+                .setLinearHeadingInterpolation(fst_itk_3.getHeading(), shoot_Pose.getHeading())
+                .build();
+
+        egth_path = follower.pathBuilder()
                 .addPath(new BezierCurve(shoot_Pose, snd_itk_pose_CP, snd_itk_pose))
                 .setLinearHeadingInterpolation(shoot_Pose.getHeading(), snd_itk_pose.getHeading())
                 .build();
 
-        //fixme:
-
-        svnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(snd_itk_pose, snd_itk))
-                .setLinearHeadingInterpolation(snd_itk_pose.getHeading(), snd_itk.getHeading())
-                .build();
-
-        egth_path = follower.pathBuilder()
-                .addPath(new BezierCurve(snd_itk, trd_shoot_CP, shoot_Pose))
-                .setLinearHeadingInterpolation(snd_itk.getHeading(), shoot_Pose.getHeading())
-                .build();
-
         nnth_path = follower.pathBuilder()
-                .addPath(new BezierCurve(shoot_Pose, trd_itk_pose_CP, trd_itk_pose))
-                .setLinearHeadingInterpolation(shoot_Pose.getHeading(), trd_itk_pose.getHeading())
+                .addPath(new BezierLine(snd_itk_pose, snd_itk_1))
+                .setLinearHeadingInterpolation(snd_itk_pose.getHeading(), snd_itk_1.getHeading())
                 .build();
 
         tenth_path = follower.pathBuilder()
-                .addPath(new BezierLine(trd_itk_pose, trd_itk))
-                .setLinearHeadingInterpolation(trd_itk_pose.getHeading(), trd_itk.getHeading())
+                .addPath(new BezierLine(snd_itk_1, snd_itk_2))
+                .setLinearHeadingInterpolation(snd_itk_1.getHeading(), snd_itk_2.getHeading())
                 .build();
 
         elvnth_path = follower.pathBuilder()
-                .addPath(new BezierCurve(trd_itk, fth_shoot_CP, shoot_Pose))
-                .setLinearHeadingInterpolation(trd_itk.getHeading(), shoot_Pose.getHeading())
+                .addPath(new BezierLine(snd_itk_2, snd_itk_3))
+                .setLinearHeadingInterpolation(snd_itk_2.getHeading(), snd_itk_3.getHeading())
                 .build();
 
         twlfth_path = follower.pathBuilder()
-                .addPath(new BezierLine(shoot_Pose, park_pose))
-                .setLinearHeadingInterpolation(shoot_Pose.getHeading(), park_pose.getHeading())
+                .addPath(new BezierCurve(snd_itk_3, trd_shoot_CP, shoot_Pose))
+                .setLinearHeadingInterpolation(snd_itk_3.getHeading(), shoot_Pose.getHeading())
                 .build();
+
+        thirtnth_path = follower.pathBuilder()
+                .addPath(new BezierLine(shoot_Pose, trd_itk_pose))
+                .setLinearHeadingInterpolation(shoot_Pose.getHeading(), trd_itk_pose.getHeading())
+                .build();
+
+        frtnth_path = follower.pathBuilder()
+                .addPath(new BezierLine(trd_itk_pose, trd_itk_1))
+                .setLinearHeadingInterpolation(trd_itk_pose.getHeading(), trd_itk_1.getHeading())
+                .build();
+
+        fftnth_path = follower.pathBuilder()
+                .addPath(new BezierLine(trd_itk_1, trd_itk_2))
+                .setLinearHeadingInterpolation(trd_itk_1.getHeading(), trd_itk_2.getHeading())
+                .build();
+
+        //sxtnth_path
     }
 
     public void autonomousPathUpdate() {
@@ -166,8 +176,8 @@ public class Auto_Pos1_Rev1 extends OpMode{
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.2); //fixme
-                    mecanism.intake(-0.5);                                                      //TL:INTAKE
+                    follower.setMaxPower(0.25); //fixme
+                    mecanism.intake(-0.9);                                                      //TL:INTAKE
                     follower.followPath(fth_path, true);
                     setPathState(4);
                 }
@@ -189,8 +199,8 @@ public class Auto_Pos1_Rev1 extends OpMode{
                 break;
             case 6:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.2); //fixme
-                    mecanism.intake(-0.5);                                                      //TL:INTAKE
+                    follower.setMaxPower(0.25); //fixme
+                    mecanism.intake(-0.9);                                                      //TL:INTAKE
                     follower.followPath(svnth_path, true);
                     setPathState(7);
                 }
@@ -212,8 +222,8 @@ public class Auto_Pos1_Rev1 extends OpMode{
                 break;
             case 9:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.2); //fixme
-                    mecanism.intake(-0.5);                                                      //TL:INTAKE
+                    follower.setMaxPower(0.25); //fixme
+                    mecanism.intake(-0.9);                                                      //TL:INTAKE
                     follower.followPath(tenth_path, true);
                     setPathState(10);
                 }
