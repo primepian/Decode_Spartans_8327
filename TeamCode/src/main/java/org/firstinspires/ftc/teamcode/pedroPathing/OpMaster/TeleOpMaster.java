@@ -167,24 +167,22 @@ public class TeleOpMaster extends OpMode {
         }
 
 //TL ---------- MODE SELECT ----------
-        if (gamepad2.dpad_right) {
+        if (gamepad1.dpad_right) {
             mecanism.PPG = true;
             mecanism.PGP = false;
             mecanism.GPP = false;
         }
-        if (gamepad2.dpad_up) {
+        if (gamepad1.dpad_up) {
             mecanism.PGP = true;
             mecanism.PPG = false;
             mecanism.GPP = false;
         }
-        if (gamepad2.dpad_left) {
+        if (gamepad1.dpad_left) {
             mecanism.GPP = true;
             mecanism.PPG = false;
             mecanism.PGP = false;
         }
-        if (gamepad2.dpad_down) {
-            mecanism.PPG = mecanism.PGP = mecanism.GPP = false;
-        }
+
 //tl:---------- CANNON / BARREL -----------
 
         if (gamepad2.right_trigger > 0.1f){
@@ -195,12 +193,11 @@ public class TeleOpMaster extends OpMode {
 //        }
         if (gamepad2.right_bumper){
             mecanism.shootPow(0);
+            mecanism.isShooting = false;
         } else if (gamepad2.left_trigger > 0.1f) {
             mecanism.shootPow(1.0);
         }
-        if (gamepad2.a){mecanism.A = 0;}
-        if (gamepad2.b){mecanism.B = 0;}
-        if (gamepad2.x){mecanism.C = 0;}
+
 
 
         boolean currentRB2 = gamepad2.left_bumper;
@@ -210,6 +207,13 @@ public class TeleOpMaster extends OpMode {
             else if (mecanism.actualPos == 'c' && mecanism.C == 0){mecanism.C = 1;}
         }
         mecanism.RB2flag = currentRB2;
+
+        if (gamepad2.dpad_down){mecanism.A = 1;}
+        if (gamepad2.dpad_right){mecanism.B = 1;}
+        if (gamepad2.dpad_left){mecanism.C = 1;}
+        if (gamepad2.a){mecanism.A = 0;}
+        if (gamepad2.b){mecanism.B = 0;}
+        if (gamepad2.x){mecanism.C = 0;}
 
         mecanism.G28();
         mecanism.shootingandIntake(telemetry);

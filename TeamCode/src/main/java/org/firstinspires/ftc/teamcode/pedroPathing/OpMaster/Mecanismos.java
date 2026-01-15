@@ -58,13 +58,13 @@ public class Mecanismos {
         GREEN,
         UNKNOWN,
     }
-    public static final double  Ain = 0.59;
-    public static final double  Bin = 0.52;
-    public static final double  Cin = 0.44;
+    public static final double  Ain = 0.57;
+    public static final double  Bin = 0.495;
+    public static final double  Cin = 0.42;
 
-    public static final double  Aout = 0.703;
-    public static final double  Bout = 0.4;
-    public static final double  Cout = 0.555;
+    public static final double  Aout = 0.46;
+    public static final double  Bout = 0.38;
+    public static final double  Cout = 0.53;
     public static final double  pateador_off = 0.3;
     public static final double  pateador_on = 0.26;
     char actualPos = 'a';
