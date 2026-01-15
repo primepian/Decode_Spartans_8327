@@ -12,40 +12,38 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.OpMaster.Mecanismos;
 
-@Autonomous()
+import java.time.Duration;
+
+import kotlinx.coroutines.Delay;
+
+@Autonomous(group = "Tests")
 @Disabled
-public class AutoBlueA1 extends OpMode {
-    Mecanismos mecanism = new Mecanismos();
+public class AutoRedV1 extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
 
     private int pathState;
 
-    public double timeStamp;
-
-    private final Pose startPose = new Pose(32, 136.5, Math.toRadians(0));      //PT: Start Pose of robot.
-    private final Pose startCP = new Pose(35, 125);                             //CP: CONTROL POINT FOR STP-SHP.
-//    private final Pose obeliskPose = new Pose(60, 132, Math.toRadians(55));         //PT: ROBOT IS SEEING THE OBELISK.
-    private final Pose shootPose = new Pose(48, 130, Math.toRadians(180));      //PT: Robot is horizontally seeing the blue goal.
-    private final Pose pickIIIPose = new Pose(40, 84, Math.toRadians(180));     //PT: Top (First Set) Blue.
-    private final Pose pickedIIIPose = new Pose(14, 84, Math.toRadians(180));   //PT: Top (First Set) Blue already picked.
-    private final Pose release = new Pose(10, 70, Math.toRadians(90));          //PT: Release Gate
-    private final Pose releaseCP = new Pose(40, 80);
-    private final Pose releaseCP2 = new Pose(40, 70);
-    private final Pose pickIIPose = new Pose(40, 60, Math.toRadians(180));      //PT: Middle (Second Set) Blue.
-    private final Pose pickedIIPose = new Pose(14, 60, Math.toRadians(180));    //PT: Middle (Second Set) Blue already picked.
-    private final Pose pickIPose = new Pose(40, 35, Math.toRadians(180));       //PT: Low (First Set) Blue.
-    private final Pose pickedIPose = new Pose(14, 35, Math.toRadians(180));     //PT: Low (First Set) Blue already picked.
-    private final Pose parkPose = new Pose(14, 110, Math.toRadians(0));         //PT: Robot tangent to blue ramp.
+    private final Pose startPose = new Pose(32, 135.5, Math.toRadians(270)).mirror(); //PT: Start Pose of robot.
+    private final Pose controlPoint = new Pose(35, 118).mirror(); //CP: CONTROL POINT FOR STP-SHP.
+    //    private final Pose obeliskPose = new Pose(48, 120, Math.toRadians(50)); //PT: ROBOT IS SEEING THE OBELISK.
+    private final Pose shootPose = new Pose(48, 120, Math.toRadians(150)).mirror(); //PT: Robot is diagonally seeing the blue goal.
+    private final Pose pickupIIIPose = new Pose(48, 84, Math.toRadians(180)).mirror(); //PT: Top (First Set) Blue.
+    private final Pose pickedIIIPose = new Pose(17, 84, Math.toRadians(180)).mirror(); //PT: Top (First Set) Blue already picked.
+    private final Pose pickupIIPose = new Pose(48, 60, Math.toRadians(180)).mirror(); //PT: Middle (Second Set) Blue.
+    private final Pose pickedIIPose = new Pose(17, 60, Math.toRadians(180)).mirror(); //PT: Middle (Second Set) Blue already picked.
+    private final Pose controlPoint2 = new Pose(60, 60).mirror(); //CP: CONTROL POINT FOR III TO SHP.
+    private final Pose pickupIPose = new Pose(45, 35, Math.toRadians(180)).mirror(); //PT: Low (First Set) Blue.
+    private final Pose pickedIPose = new Pose(18, 35, Math.toRadians(180)).mirror(); //PT: Low (First Set) Blue already picked.
+    private final Pose parkPose = new Pose(15, 85, Math.toRadians(0)).mirror();//PT: Robot tangent to blue ramp.
 
     private Path startpath;
-    private PathChain shoot2iii, pickiii, iii2release, iii2shoot, shoot2ii, pickii, ii2shoot, shoot2i, picki, i2shoot, park; //obelisk2IIIBlue
+    private PathChain shoot2iii, pickiii, iii2shoot, shoot2ii, pickii, ii2shoot, shoot2i, picki, i2shoot, park; //obelisk2IIIBlue
 
     public void buildPaths() {
-        startpath = new Path(new BezierCurve(startPose, startCP, shootPose));
+        startpath = new Path(new BezierCurve(startPose, controlPoint, shootPose));
         startpath.setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading());
 
 //        obelisk2IIIBlue = follower.pathBuilder()
@@ -54,48 +52,43 @@ public class AutoBlueA1 extends OpMode {
 //                .build();
 
         shoot2iii = follower.pathBuilder()
-                .addPath(new BezierLine(shootPose, pickIIIPose))
-                .setLinearHeadingInterpolation(shootPose.getHeading(), pickIIIPose.getHeading())
+                .addPath(new BezierLine(shootPose, pickupIIIPose))
+                .setLinearHeadingInterpolation(shootPose.getHeading(), pickupIIIPose.getHeading())
                 .build();
 
         pickiii = follower.pathBuilder()
-                .addPath(new BezierLine(pickIIIPose, pickedIIIPose))
-                .setLinearHeadingInterpolation(pickIIIPose.getHeading(), pickedIIIPose.getHeading())
-                .build();
-
-        iii2release = follower.pathBuilder()
-                .addPath(new BezierCurve(pickIIIPose, releaseCP, releaseCP2, release))
-                .setLinearHeadingInterpolation(pickIIIPose.getHeading(), release.getHeading())
+                .addPath(new BezierLine(pickupIIIPose, pickedIIIPose))
+                .setLinearHeadingInterpolation(pickupIIIPose.getHeading(), pickedIIIPose.getHeading())
                 .build();
 
         iii2shoot = follower.pathBuilder()
-                .addPath(new BezierLine(release, shootPose))
-                .setLinearHeadingInterpolation(release.getHeading(), shootPose.getHeading())
+                .addPath(new BezierLine(pickedIIIPose, shootPose))
+                .setLinearHeadingInterpolation(pickedIIIPose.getHeading(), shootPose.getHeading())
                 .build();
 
         shoot2ii = follower.pathBuilder()
-                .addPath(new BezierLine(shootPose, pickIIPose))
-                .setLinearHeadingInterpolation(shootPose.getHeading(), pickIIPose.getHeading())
+                .addPath(new BezierLine(shootPose, pickupIIPose))
+                .setLinearHeadingInterpolation(shootPose.getHeading(), pickupIIPose.getHeading())
                 .build();
 
         pickii = follower.pathBuilder()
-                .addPath(new BezierLine(pickIIPose, pickedIIPose))
-                .setLinearHeadingInterpolation(pickIIPose.getHeading(), pickedIIPose.getHeading())
+                .addPath(new BezierLine(pickupIIPose, pickedIIPose))
+                .setLinearHeadingInterpolation(pickupIIPose.getHeading(), pickedIIPose.getHeading())
                 .build();
 
         ii2shoot = follower.pathBuilder()
-                .addPath(new BezierCurve(pickedIIPose, pickIIPose, shootPose))
+                .addPath(new BezierCurve(pickedIIPose, controlPoint2, shootPose))
                 .setLinearHeadingInterpolation(pickedIIPose.getHeading(), shootPose.getHeading())
                 .build();
 
         shoot2i = follower.pathBuilder()
-                .addPath(new BezierLine(shootPose, pickIPose))
-                .setLinearHeadingInterpolation(shootPose.getHeading(), pickIPose.getHeading())
+                .addPath(new BezierLine(shootPose, pickupIPose))
+                .setLinearHeadingInterpolation(shootPose.getHeading(), pickupIPose.getHeading())
                 .build();
 
         picki = follower.pathBuilder()
-                .addPath(new BezierLine(pickIPose, pickedIPose))
-                .setLinearHeadingInterpolation(pickIPose.getHeading(), pickedIPose.getHeading())
+                .addPath(new BezierLine(pickupIPose, pickedIPose))
+                .setLinearHeadingInterpolation(pickupIPose.getHeading(), pickedIPose.getHeading())
                 .build();
 
         i2shoot = follower.pathBuilder()
@@ -110,15 +103,21 @@ public class AutoBlueA1 extends OpMode {
     }
 
     public void autonomousPathUpdate() {
+        double real_time;
+        real_time = pathTimer.getElapsedTimeSeconds();
 
-        double actualTime = pathTimer.getElapsedTimeSeconds();
+        double new_requerid_time;
+        //new_requerid_time = real_time + 3;
 
         switch (pathState) {
+
             case 0:
                 follower.followPath(startpath);
                 setPathState(1);
-                timeStamp = actualTime;
-                //mecanism.shoot(0.45);
+
+                /*if (real_time > 7) {
+                    setPathState(1);
+                }*/
                 break;
             case 1:
             /* You could check for
@@ -127,93 +126,75 @@ public class AutoBlueA1 extends OpMode {
             - Robot Position: "if(follower.getPose().getX() > 36) {}"
             */
 
-                if (!follower.isBusy() && actualTime >= timeStamp + 3) {
-                    //mecanism.shoot(0);
+                if (!follower.isBusy()) {
                     follower.followPath(shoot2iii, true);
-                    setPathState(2);
+                    //setPathState(2);
+                    new_requerid_time = real_time + 3;
+                    if (real_time > new_requerid_time) {
+                        setPathState(2);
+                    }
                 }
+
+
                 break;
+
             case 2:
                 if (!follower.isBusy()) {
-                    mecanism.intake(1.0);
                     follower.followPath(pickiii, true);
                     setPathState(3);
-                  }
-              break;
+                }
+                break;
             case 3:
                 if (!follower.isBusy()) {
-                    mecanism.intake(0);
-                    follower.followPath(iii2release, true);
+                    follower.followPath(iii2shoot, true);
                     setPathState(4);
                 }
                 break;
             case 4:
                 if (!follower.isBusy()) {
-                    follower.followPath(iii2shoot, true);
-                    timeStamp = actualTime;
-                    //mecanism.shoot(0.45);
+                    follower.followPath(shoot2ii, true);
                     setPathState(5);
                 }
                 break;
             case 5:
-
-                if (!follower.isBusy() && actualTime >= timeStamp + 3) {
-                    //mecanism.shoot(0);
-                    follower.followPath(shoot2ii, true);
+                if (!follower.isBusy()) {
+                    follower.followPath(pickii, true);
                     setPathState(6);
                 }
                 break;
             case 6:
                 if (!follower.isBusy()) {
-                    mecanism.intake(1.0);
-                    follower.followPath(pickii, true);
+                    follower.followPath(ii2shoot, true);
                     setPathState(7);
                 }
                 break;
             case 7:
                 if (!follower.isBusy()) {
-                    mecanism.intake(0.0);
-                    follower.followPath(ii2shoot, true);
-                    timeStamp = actualTime;
-                    //mecanism.shoot(0.45);
+                    follower.followPath(shoot2i, true);
                     setPathState(8);
                 }
                 break;
             case 8:
-                if (!follower.isBusy() && actualTime >= timeStamp + 3) {
-                    //mecanism.shoot(0);
-                    follower.followPath(shoot2i, true);
+                if (!follower.isBusy()) {
+                    follower.followPath(picki, true);
                     setPathState(9);
                 }
                 break;
             case 9:
                 if (!follower.isBusy()) {
-                    mecanism.intake(1.0);
-
-                    follower.followPath(picki, true);
+                    follower.followPath(i2shoot, true);
                     setPathState(10);
                 }
                 break;
             case 10:
                 if (!follower.isBusy()) {
-                    mecanism.intake(0);
-                    follower.followPath(i2shoot, true);
-                    timeStamp = actualTime;
-                    //mecanism.shoot(0.45);
+                    follower.followPath(park, true);
                     setPathState(11);
                 }
                 break;
             case 11:
-                if (!follower.isBusy()  && actualTime >= timeStamp + 3) {
-                    //mecanism.shoot(0);
-                    follower.followPath(park, true);
-                    setPathState(12);
-                }
-                break;
-            case 12:
                 if (!follower.isBusy()) {
-                    setPathState(-1
-                    );
+                    setPathState(-1);
                 }
                 break;
         }
@@ -253,7 +234,6 @@ public class AutoBlueA1 extends OpMode {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
-        mecanism.initAll(hardwareMap);
 
 
         follower = Constants.createFollower(hardwareMap);
@@ -271,4 +251,5 @@ public class AutoBlueA1 extends OpMode {
         opmodeTimer.resetTimer();
         setPathState(0);
     }
+
 }

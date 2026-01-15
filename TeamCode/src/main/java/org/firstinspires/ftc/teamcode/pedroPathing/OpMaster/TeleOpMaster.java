@@ -134,7 +134,7 @@ public class TeleOpMaster extends OpMode {
 
             follower.setTeleOpDrive(
                     mecanism.drive,
-                    -gamepad1.left_stick_x * 0.3,
+                    -gamepad1.left_stick_x * 0.2,
                     mecanism.turn,
                     true
             );
@@ -154,7 +154,7 @@ public class TeleOpMaster extends OpMode {
 
 //  TL: INTAKE      {GPAD_1}
         if (gamepad1.right_trigger > 0.0){
-            mecanism.intake( -0.7);
+            mecanism.intake( -0.9);
         } else if (gamepad1.b){
             mecanism.intake( 0.5);
         } else {
@@ -190,15 +190,26 @@ public class TeleOpMaster extends OpMode {
         if (gamepad2.right_trigger > 0.1f){
             mecanism.shoot();
         }
-        if (gamepad2.left_trigger > 0.1f){
-            mecanism.shootFar();
-        }
+//        if (gamepad2.left_trigger > 0.1f){
+//            mecanism.shootFar();
+//        }
         if (gamepad2.right_bumper){
             mecanism.shootPow(0);
+        } else if (gamepad2.left_trigger > 0.1f) {
+            mecanism.shootPow(1.0);
         }
         if (gamepad2.a){mecanism.A = 0;}
         if (gamepad2.b){mecanism.B = 0;}
         if (gamepad2.x){mecanism.C = 0;}
+
+
+        boolean currentRB2 = gamepad2.left_bumper;
+        if (currentRB2 && !mecanism.RB2flag){
+            if (mecanism.actualPos == 'a' && mecanism.A == 0){mecanism.A = 1;}
+            else if (mecanism.actualPos == 'b' && mecanism.B == 0){mecanism.B = 1;}
+            else if (mecanism.actualPos == 'c' && mecanism.C == 0){mecanism.C = 1;}
+        }
+        mecanism.RB2flag = currentRB2;
 
         mecanism.G28();
         mecanism.shootingandIntake(telemetry);
