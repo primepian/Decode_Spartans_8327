@@ -35,7 +35,7 @@ public class Final_Auto extends OpMode{
     private final Pose startingPose_CP = new Pose(64.000, 66.000);                            //TL:Path #1
     private final Pose search_pose = new Pose(55.000, 101.000, Math.toRadians(66));           //TL:Path #1
 
-    private final Pose shoot_Pose = new Pose(57.000, 105.000, Math.toRadians(145));           //TL:Path #2 TODO: Shoot
+    private final Pose shoot_Pose = new Pose(48.000, 96.000, Math.toRadians(130));           //TL:Path #2 TODO: Shoot fixme:57.000, 105.000, Math.toRadians(145)
 
     private final Pose fst_itk_pose_CP = new Pose(49.000, 84.000);                            //TL:Path #3
     private final Pose fst_itk_pose = new Pose(44.000, 80.000, Math.toRadians(180));          //TL:Path #3
@@ -66,6 +66,10 @@ public class Final_Auto extends OpMode{
     private final Pose trd_itk_2 = new Pose(30.000, 32.000, Math.toRadians(180));             //TL:Path #15
 
     private final Pose trd_itk_3 = new Pose(24.000, 32.000, Math.toRadians(180));             //TL:Path #16
+
+    private final Pose frth_shoot_CP = new Pose(46.000, 91.000);                              //TL:Path #17 TODO: With SHOOT
+
+    private final Pose parking_pose = new Pose(16.000, 103.000, Math.toRadians(180));         //TL:Path #18
 
 
     private Path start_path;
@@ -146,7 +150,20 @@ public class Final_Auto extends OpMode{
                 .setLinearHeadingInterpolation(trd_itk_1.getHeading(), trd_itk_2.getHeading())
                 .build();
 
-        //sxtnth_path
+        sxtnth_path = follower.pathBuilder()
+                .addPath(new BezierLine(trd_itk_2, trd_itk_3))
+                .setLinearHeadingInterpolation(trd_itk_2.getHeading(), trd_itk_3.getHeading())
+                .build();
+
+        svntnth_path = follower.pathBuilder()
+                .addPath(new BezierCurve(trd_itk_3, frth_shoot_CP, shoot_Pose))
+                .setLinearHeadingInterpolation(trd_itk_3.getHeading(), shoot_Pose.getHeading())
+                .build();
+
+        eightnth_path = follower.pathBuilder()
+                .addPath(new BezierLine(shoot_Pose, parking_pose))
+                .setLinearHeadingInterpolation(shoot_Pose.getHeading(), parking_pose.getHeading())
+                .build();
     }
 
     public void autonomousPathUpdate() {
@@ -162,7 +179,7 @@ public class Final_Auto extends OpMode{
                 if (mecanism.DESIRED_TAG_ID == 21){mecanism.GPP = true;}
                 if (mecanism.DESIRED_TAG_ID == 22){mecanism.PGP = true;}
                 if (mecanism.DESIRED_TAG_ID == 23){mecanism.PPG = true;}
-                if ((!follower.isBusy() && actual_time >= time_Stamp + 3) || (!follower.isBusy() && (mecanism.PPG || mecanism.GPP || mecanism.PGP) )) { // || (!follower.isBusy() && (mecanism.PPG || mecanism.GPP || mecanism.PGP) )
+                if ((!follower.isBusy() && actual_time >= time_Stamp + 3) || (!follower.isBusy() && (mecanism.PPG || mecanism.GPP || mecanism.PGP) )) {
                     follower.followPath(snd_path,true);
                     mecanism.shoot();                                                               //TL:SHOOT
                     setPathState(2);
@@ -177,76 +194,113 @@ public class Final_Auto extends OpMode{
             case 3:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(0.25); //fixme
-                    mecanism.intake(-0.9);                                                      //TL:INTAKE
-                    follower.followPath(fth_path, true);
+                    mecanism.intake(-0.9);
+                    follower.followPath(fth_path, true);                                    //TL:FIRST INTAKE, 1
                     setPathState(4);
                 }
                 break;
             case 4:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(1);
-                    mecanism.intake(0);
-                    follower.followPath(fvth_path, true);
-                    mecanism.shoot();                                                               //TL:SHOOT
+                    follower.followPath(fvth_path, true);                                   //TL:FIRST INTAKE, 2
                     setPathState(5);
                 }
                 break;
             case 5:
-                if (!follower.isBusy() && !mecanism.isShooting) {
-                    follower.followPath(sxth_path, true);
+                if (!follower.isBusy()) {
+                    follower.followPath(sxth_path, true);                                   //TL:FIRST INTAKE, 3
                     setPathState(6);
                 }
                 break;
             case 6:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.25); //fixme
-                    mecanism.intake(-0.9);                                                      //TL:INTAKE
+                    follower.setMaxPower(1);
+                    mecanism.intake(0);
                     follower.followPath(svnth_path, true);
+                    mecanism.shoot();                                                               //TODO:SHOOT
                     setPathState(7);
                 }
                 break;
             case 7:
-                if (!follower.isBusy()) {
-                    follower.setMaxPower(1);
-                    mecanism.intake(0);
+                if (!follower.isBusy() && !mecanism.isShooting) {
                     follower.followPath(egth_path, true);
-                    mecanism.shoot();                                                               //TL:SHOOT
                     setPathState(8);
                 }
                 break;
             case 8:
-                if (!follower.isBusy() && !mecanism.isShooting) {
-                    follower.followPath(nnth_path, true);
+                if (!follower.isBusy()) {
+                    follower.setMaxPower(0.25);
+                    mecanism.intake(-0.9);
+                    follower.followPath(nnth_path, true);                                   //TL:SECOND INTAKE, 1
                     setPathState(9);
                 }
                 break;
             case 9:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.25); //fixme
-                    mecanism.intake(-0.9);                                                      //TL:INTAKE
-                    follower.followPath(tenth_path, true);
+                    follower.followPath(tenth_path, true);                                  //TL:SECOND INTAKE, 2
                     setPathState(10);
                 }
                 break;
             case 10:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(1);
-                    mecanism.intake(0);
-                    follower.followPath(elvnth_path, true);
-                    mecanism.shoot();                                                               //TL:SHOOT
+                    follower.followPath(elvnth_path, true);                                 //TL:SECOND INTAKE, 3
                     setPathState(11);
                 }
                 break;
             case 11:
-                if (!follower.isBusy() && !mecanism.isShooting) {
+                if (!follower.isBusy()) {
+                    follower.setMaxPower(1);
+                    mecanism.intake(0);
                     follower.followPath(twlfth_path, true);
+                    mecanism.shoot();                                                               //TODO:SHOOT
                     setPathState(12);
                 }
                 break;
             case 12:
+                if (!follower.isBusy() && !mecanism.isShooting) {
+                    follower.followPath(thirtnth_path, true);
+                    setPathState(13);
+                }
+                break;
+            case 13:
+                if (!follower.isBusy()) {
+                    follower.setMaxPower(0.25);
+                    mecanism.intake(-0.9);
+                    follower.followPath(frtnth_path, true);                                 //TL:THIRD INTAKE, 1
+                    setPathState(14);
+                }
+                break;
+            case 14:
+                if (!follower.isBusy()) {
+                    follower.followPath(fftnth_path, true);                                 //TL:THIRD INTAKE, 2
+                    setPathState(15);
+                }
+                break;
+            case 15:
+                if (!follower.isBusy()) {
+                    follower.followPath(sxtnth_path, true);                                 //TL:THIRD INTAKE, 3
+                    setPathState(16);
+                }
+                break;
+            case 16:
+                if (!follower.isBusy()) {
+                    follower.setMaxPower(1);
+                    mecanism.intake(0);
+                    follower.followPath(svntnth_path, true);
+                    mecanism.shoot();                                                               //TODO:SHOOT
+                    setPathState(17);
+                }
+                break;
+            case 17:
+                if (!follower.isBusy() && !mecanism.isShooting) {
+                    follower.followPath(eightnth_path, true);
+                    setPathState(18);
+                }
+                break;
+            case 18:
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }
+                break;
         }
     }
 

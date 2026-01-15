@@ -237,6 +237,7 @@ public class Auto_Pos1_Rev1 extends OpMode{
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }
+                break;
         }
     }
 
