@@ -44,8 +44,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Mecanismos {
     //Tl:========= INTAKE =========
     public DcMotor intake;
-    public CRServo intake_Srvo_R;
-    public CRServo intake_Srvo_L;
+    public  CRServo intake_S;
     //TL:======== CANNON ===========
     public DcMotor cannonR;
     public DcMotor cannonL;
@@ -59,13 +58,13 @@ public class Mecanismos {
         GREEN,
         UNKNOWN,
     }
-    public static final double  Ain = 0.6;
-    public static final double  Bin = 0.52;
-    public static final double  Cin = 0.448;
+    public static final double  Ain = 0.57;
+    public static final double  Bin = 0.495;
+    public static final double  Cin = 0.42;
 
-    public static final double  Aout = 0.705;
-    public static final double  Bout = 0.4;
-    public static final double  Cout = 0.552;
+    public static final double  Aout = 0.46;
+    public static final double  Bout = 0.38;
+    public static final double  Cout = 0.53;
     public static final double  pateador_off = 0.3;
     public static final double  pateador_on = 0.26;
     char actualPos = 'a';
@@ -86,14 +85,15 @@ public class Mecanismos {
 
     public final long OUTTAKE_HOLD_TIME_MS = 1500;
     public long lastIntakeTime = 0;
-    public long INTAKE_COOLDOWN_MS = 300;
+    public long INTAKE_COOLDOWN_MS = 500;
     //Tl:       COSOS CHISTOSOS
-    public double slowModeMultiplier = 0.25; //Modo slow
+    public double slowModeMultiplier = 0.3; //Modo slow
     public boolean invertedDrive;
     public boolean RBflag;
+    public boolean RB2flag;
 
     //note    AprilTag search.
-    public final double DESIRED_DISTANCE =  50;
+    public final double DESIRED_DISTANCE =  48;
     public final double SPEED_GAIN  =  0.02;
     public final double TURN_GAIN   =  0.01;
     public final double MAX_AUTO_SPEED = 0.5;
@@ -119,9 +119,6 @@ public class Mecanismos {
         pateador = hwMap.get(Servo.class, "pateador");
         intake = hwMap.get(DcMotor.class, "Intake");
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intake_Srvo_R = hwMap.get(CRServo.class, "Intake_Srvo_R");
-        intake_Srvo_L = hwMap.get(CRServo.class, "Intake_Srvo_L");
-        intake_Srvo_L.setDirection(DcMotorSimple.Direction.REVERSE);
         cannonR = hwMap.get(DcMotor.class, "CannonR");
 
         cannonL = hwMap.get(DcMotor.class, "CannonL");
@@ -137,15 +134,13 @@ public class Mecanismos {
                 .addProcessor(aprilTag)
                 .build();
     }
+
     public void shootPow(double power){
         cannonR.setPower(power);
         cannonL.setPower(power);
     }
-
     public void intake(double pow){
         intake.setPower(pow);
-        intake_Srvo_R.setPower(pow);
-        intake_Srvo_L.setPower(pow);
     }
 
     //TL: BARRREL STUFF
@@ -160,7 +155,6 @@ public class Mecanismos {
             actualPos = 'a';
         }
     }
-
     public void shootingandIntake(Telemetry telemetry) {
         if (isShooting) {
             String sequence = PPG ? "PPG" : PGP ? "PGP" : "GPP";
@@ -190,11 +184,12 @@ public class Mecanismos {
             if (chamber == '\0') { //note:  skipear si no hay artefactos
                 shootStep++;
                 shootStartTime = System.currentTimeMillis();
+                shootPow(0.85);
             } else { //note: changes the barrel pos
                 double targetPos = (chamber == 'a') ? Aout : (chamber == 'b') ? Bout : Cout;
                 barril.setPosition(targetPos);
                 actualPos = chamber;
-                if (System.currentTimeMillis() - shootStartTime >= 660) {
+                if (System.currentTimeMillis() - shootStartTime >= 800) {
                     pateador.setPosition(pateador_on); //fixme
                 }
                 if (System.currentTimeMillis() - shootStartTime >= 1200) {
@@ -206,7 +201,7 @@ public class Mecanismos {
                     else C = 0;
 
                     shootStep++;
-
+                    shootPow(0.85);
                     if (shootStep >= 3) {
                         shootPow(0);
                         isShooting = false;
@@ -273,7 +268,7 @@ public class Mecanismos {
     }
     public void shoot(){
         if (!isShooting) {
-            shootPow(0.95); //fixme
+            shootPow(.95); //fixme
             isShooting = true;
             shootStep = 0;
             shootStartTime = System.currentTimeMillis();
@@ -316,17 +311,13 @@ public class Mecanismos {
         normGreen = colors.green / colors.alpha;
         normBlue = colors.blue / colors.alpha;
 
-        telemetry.addData("red", normRed);
-        telemetry.addData("green", normGreen);
-        telemetry.addData("blue", normBlue);
-
         //TODO colors
 
         if (normRed < 0.08 && normGreen > 0.1 && normBlue < 0.19) {
             return TestColorSensorMecanism.DetectedColor.GREEN;
-        }else if (normRed < 0.09 && normGreen < 0.09 && normBlue > 0.1) {
+        } else if (normRed < 0.09 && normGreen < 0.09 && normBlue > 0.1) {
             return TestColorSensorMecanism.DetectedColor.PURPLE;
-        }else {
+        } else {
             return TestColorSensorMecanism.DetectedColor.UNKNOWN;
         }
     }
@@ -341,6 +332,8 @@ public class Mecanismos {
         telemetry.addData("B: ",B);
         telemetry.addData("C: ",C);
         telemetry.addLine("");
+
+        telemetry.addData("POWER", cannonL.getPower());
 
         telemetry.addData("Inverted Drive: ",invertedDrive);
         telemetry.update();
