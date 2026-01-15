@@ -20,7 +20,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
 
-@Disabled
+
 @Autonomous(name = "Final_Auto", group = "Autonomous")
 public class Final_Auto extends OpMode{
     Mecanismos mecanism = new Mecanismos();
@@ -193,8 +193,8 @@ public class Final_Auto extends OpMode{
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.25); //fixme
-                    mecanism.intake(-0.9);
+                    follower.setMaxPower(0.15); //fixme
+                    mecanism.intake(-0.5);
                     follower.followPath(fth_path, true);                                    //TL:FIRST INTAKE, 1
                     setPathState(4);
                 }
@@ -228,8 +228,8 @@ public class Final_Auto extends OpMode{
                 break;
             case 8:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.25);
-                    mecanism.intake(-0.9);
+                    follower.setMaxPower(0.15);
+                    mecanism.intake(-0.5);
                     follower.followPath(nnth_path, true);                                   //TL:SECOND INTAKE, 1
                     setPathState(9);
                 }
@@ -263,8 +263,8 @@ public class Final_Auto extends OpMode{
                 break;
             case 13:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.25);
-                    mecanism.intake(-0.9);
+                    follower.setMaxPower(0.15);
+                    mecanism.intake(-0.5);
                     follower.followPath(frtnth_path, true);                                 //TL:THIRD INTAKE, 1
                     setPathState(14);
                 }
@@ -319,6 +319,7 @@ public class Final_Auto extends OpMode{
     public void loop() {
         mecanism.G28();
         mecanism.shootingandIntake(telemetry);
+        mecanism.telem(telemetry);
 
         //TL: APRIL TAG DETECTION
 
