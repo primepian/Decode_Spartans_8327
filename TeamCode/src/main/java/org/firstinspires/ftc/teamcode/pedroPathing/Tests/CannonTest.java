@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 @TeleOp
-//@Disabled
+@Disabled
 public class CannonTest extends LinearOpMode {
     DcMotor CannonR;
     DcMotor CannonL;
