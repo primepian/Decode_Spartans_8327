@@ -8,6 +8,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -17,6 +18,7 @@ import java.time.Duration;
 import kotlinx.coroutines.Delay;
 
 @Autonomous(group = "Tests")
+@Disabled
 public class AutoRedV1 extends OpMode {
 
     private Follower follower;

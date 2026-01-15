@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 
-@TeleOp
+@TeleOp (group = "test")
 public class elevador extends OpMode {
     CRServo elevaA;
     CRServo elevaB;
