@@ -187,19 +187,12 @@ public class TeleOpMaster extends OpMode {
 
         if (gamepad2.right_trigger > 0.1f){
             mecanism.shoot();
-        }
-//        if (gamepad2.left_trigger > 0.1f){
-//            mecanism.shootFar();
-//        }
+        } //NOTE: DISPARAR
         if (gamepad2.right_bumper){
             mecanism.shootPow(0);
             mecanism.isShooting = false;
-        } else if (gamepad2.left_trigger > 0.1f) {
-            mecanism.shootPow(1.0);
-        }
-
-
-
+        } //NOTE: APAGAR CAÑON
+//  NOTE: [RB] TO
         boolean currentRB2 = gamepad2.left_bumper;
         if (currentRB2 && !mecanism.RB2flag){
             if (mecanism.actualPos == 'a' && mecanism.A == 0){mecanism.A = 1;}
@@ -208,12 +201,27 @@ public class TeleOpMaster extends OpMode {
         }
         mecanism.RB2flag = currentRB2;
 
-        if (gamepad2.dpad_down){mecanism.A = 1;}
+        if (gamepad2.left_trigger > 0.1f) {
+            mecanism.shootPow(1.0);
+        } //NOTE: ALL TO 1
+        if (gamepad2.dpad_up) {
+            mecanism.A = 0;
+            mecanism.B = 0;
+            mecanism.C = 0;
+        } //NOTE: ALL TO 0
+
+        //NOTE: DPADS TO 1
+        if (gamepad2.dpad_up){mecanism.A = 1;}
         if (gamepad2.dpad_right){mecanism.B = 1;}
         if (gamepad2.dpad_left){mecanism.C = 1;}
+        //NOTE: a,b,x TO 0
         if (gamepad2.a){mecanism.A = 0;}
         if (gamepad2.b){mecanism.B = 0;}
         if (gamepad2.x){mecanism.C = 0;}
+
+        if (gamepad2.back){
+            mecanism.shootPow(-1);
+        }
 
         mecanism.G28();
         mecanism.shootingandIntake(telemetry);
