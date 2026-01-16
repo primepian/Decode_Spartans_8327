@@ -85,7 +85,7 @@ public class Mecanismos {
 
     public final long OUTTAKE_HOLD_TIME_MS = 1500;
     public long lastIntakeTime = 0;
-    public long INTAKE_COOLDOWN_MS = 500;
+    public long INTAKE_COOLDOWN_MS = 600;
     //Tl:       COSOS CHISTOSOS
     public double slowModeMultiplier = 0.3; //Modo slow
     public boolean invertedDrive;
@@ -151,7 +151,7 @@ public class Mecanismos {
             isShooting = false;
         }
         if (A != 0 && B != 0 && C != 0){
-            barril.setPosition(0.5);
+            barril.setPosition(0.52);
             actualPos = 'a';
         }
     }
@@ -184,15 +184,15 @@ public class Mecanismos {
             if (chamber == '\0') { //note:  skipear si no hay artefactos
                 shootStep++;
                 shootStartTime = System.currentTimeMillis();
-                shootPow(0.85);
+                shootPow(0.8);
             } else { //note: changes the barrel pos
                 double targetPos = (chamber == 'a') ? Aout : (chamber == 'b') ? Bout : Cout;
                 barril.setPosition(targetPos);
                 actualPos = chamber;
-                if (System.currentTimeMillis() - shootStartTime >= 800) {
+                if (System.currentTimeMillis() - shootStartTime >= 600) {
                     pateador.setPosition(pateador_on); //fixme
                 }
-                if (System.currentTimeMillis() - shootStartTime >= 1200) {
+                if (System.currentTimeMillis() - shootStartTime >= 1000) {
                     pateador.setPosition(pateador_off); //fixme
                 }
                 if (System.currentTimeMillis() - shootStartTime >= OUTTAKE_HOLD_TIME_MS) {
@@ -201,7 +201,7 @@ public class Mecanismos {
                     else C = 0;
 
                     shootStep++;
-                    shootPow(0.85);
+                    shootPow(0.8);
                     if (shootStep >= 3) {
                         shootPow(0);
                         isShooting = false;
