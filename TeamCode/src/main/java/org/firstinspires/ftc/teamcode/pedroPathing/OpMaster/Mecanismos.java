@@ -70,9 +70,9 @@ public class Mecanismos {
     char actualPos = 'a';
     //NOTE: 0 = empty || 1 = PURPLE |
     // | 2 = GREEN
-    int A = 0;
-    int B = 0;
-    int C = 0;
+    public int A = 0;
+    public int B = 0;
+    public int C = 0;
     //TL: MODES
     public boolean PPG = false;
     public boolean PGP = false;

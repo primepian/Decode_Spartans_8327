@@ -35,7 +35,7 @@ public class Final_Auto extends OpMode{
     private final Pose startingPose_CP = new Pose(64.000, 66.000);                            //TL:Path #1
     private final Pose search_pose = new Pose(55.000, 101.000, Math.toRadians(66));           //TL:Path #1
 
-    private final Pose shoot_Pose = new Pose(48.000, 96.000, Math.toRadians(130));           //TL:Path #2 TODO: Shoot fixme:57.000, 105.000, Math.toRadians(145)
+    private final Pose shoot_Pose = new Pose(48.000, 96.000, Math.toRadians(130));            //TL:Path #2 TODO: Shoot fixme:57.000, 105.000, Math.toRadians(145)
 
     private final Pose fst_itk_pose_CP = new Pose(49.000, 84.000);                            //TL:Path #3
     private final Pose fst_itk_pose = new Pose(44.000, 80.000, Math.toRadians(180));          //TL:Path #3
@@ -44,7 +44,7 @@ public class Final_Auto extends OpMode{
 
     private final Pose fst_itk_2 = new Pose(30.000, 80.000, Math.toRadians(180));             //TL:Path #5
 
-    private final Pose fst_itk_3 = new Pose(24.000, 80.000, Math.toRadians(180));             //TL:Path #6
+    private final Pose fst_itk_3 = new Pose(20.000, 80.000, Math.toRadians(180));             //TL:Path #6
 
     private final Pose snd_shoot_CP = new Pose(49.000, 81.000);                               //TL:Path #7 TODO: With SHOOT
 
@@ -55,9 +55,11 @@ public class Final_Auto extends OpMode{
 
     private final Pose snd_itk_2 = new Pose(30.000, 56.000, Math.toRadians(180));             //TL:Path #10
 
-    private final Pose snd_itk_3 = new Pose(24.000, 56.000, Math.toRadians(180));             //TL:Path #11
+    private final Pose snd_itk_3 = new Pose(20.000, 56.000, Math.toRadians(180));             //TL:Path #11
 
     private final Pose trd_shoot_CP = new Pose(54.000, 53.000);                               //TL:Path #12 TODO: With SHOOT
+
+    //fixme:
 
     private final Pose trd_itk_pose = new Pose(44.000, 32.000, Math.toRadians(180));          //TL:Path #13
 
@@ -65,7 +67,7 @@ public class Final_Auto extends OpMode{
 
     private final Pose trd_itk_2 = new Pose(30.000, 32.000, Math.toRadians(180));             //TL:Path #15
 
-    private final Pose trd_itk_3 = new Pose(24.000, 32.000, Math.toRadians(180));             //TL:Path #16
+    private final Pose trd_itk_3 = new Pose(20.000, 32.000, Math.toRadians(180));             //TL:Path #16
 
     private final Pose frth_shoot_CP = new Pose(46.000, 91.000);                              //TL:Path #17 TODO: With SHOOT
 
@@ -180,6 +182,9 @@ public class Final_Auto extends OpMode{
                 if (mecanism.DESIRED_TAG_ID == 22){mecanism.PGP = true;}
                 if (mecanism.DESIRED_TAG_ID == 23){mecanism.PPG = true;}
                 if ((!follower.isBusy() && actual_time >= time_Stamp + 3) || (!follower.isBusy() && (mecanism.PPG || mecanism.GPP || mecanism.PGP) )) {
+                    if (mecanism.A == 0){mecanism.A = 1;}
+                    if (mecanism.B == 0){mecanism.B = 1;}
+                    if (mecanism.C == 0){mecanism.C = 2;}
                     follower.followPath(snd_path,true);
                     mecanism.shoot();                                                               //TL:SHOOT
                     setPathState(2);
@@ -193,7 +198,7 @@ public class Final_Auto extends OpMode{
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.15); //fixme
+                    follower.setMaxPower(0.23); //fixme
                     mecanism.intake(-0.5);
                     follower.followPath(fth_path, true);                                    //TL:FIRST INTAKE, 1
                     setPathState(4);
@@ -228,7 +233,7 @@ public class Final_Auto extends OpMode{
                 break;
             case 8:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.15);
+                    follower.setMaxPower(0.23);
                     mecanism.intake(-0.5);
                     follower.followPath(nnth_path, true);                                   //TL:SECOND INTAKE, 1
                     setPathState(9);
@@ -263,7 +268,7 @@ public class Final_Auto extends OpMode{
                 break;
             case 13:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.15);
+                    follower.setMaxPower(0.23);
                     mecanism.intake(-0.5);
                     follower.followPath(frtnth_path, true);                                 //TL:THIRD INTAKE, 1
                     setPathState(14);
