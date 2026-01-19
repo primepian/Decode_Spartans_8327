@@ -153,17 +153,19 @@ public class TeleOpMaster extends OpMode {
         mecanism.RBflag = currentRB;
 
 //  TL: INTAKE      {GPAD_1}
+        if (gamepad2.y){
+            mecanism.uman.setPosition(0.0);
+            mecanism.INTAKE_COOLDOWN_MS = 800;
+        }else{
+            mecanism.uman.setPosition(1.0);
+            mecanism.INTAKE_COOLDOWN_MS = 300;
+        }
         if (gamepad1.right_trigger > 0.0){
             mecanism.intake( -0.9);
         } else if (gamepad1.b){
             mecanism.intake( 0.5);
         } else {
             mecanism.intake( 0);
-        }
-        if (gamepad2.a){
-            mecanism.INTAKE_COOLDOWN_MS = 800;
-        }else {
-            mecanism.INTAKE_COOLDOWN_MS = 300;
         }
 
 //TL ---------- MODE SELECT ----------
@@ -203,7 +205,7 @@ public class TeleOpMaster extends OpMode {
 
         if (gamepad2.left_trigger > 0.1f) {
             mecanism.shootPow(1.0);
-        } //NOTE: ALL TO 1
+        }
         if (gamepad2.dpad_up) {
             mecanism.A = 0;
             mecanism.B = 0;

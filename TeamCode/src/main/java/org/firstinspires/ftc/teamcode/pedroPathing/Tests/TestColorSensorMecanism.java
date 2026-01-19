@@ -42,15 +42,11 @@ public class TestColorSensorMecanism {
          PURPLE =  <.25, <.25, >.25
          */
 
-        if (normRed < 0.08 && normGreen > 0.1 && normBlue < 0.19) {
+        if (normRed < 0.08 && normGreen > 0.1 && normBlue < 0.22) {
             return TestColorSensorMecanism.DetectedColor.GREEN;
-        } else if (normRed < 0.43 && normGreen > 0.74 && normBlue < 0.75) {
-            return TestColorSensorMecanism.DetectedColor.GREEN;
-        } else if (normRed < 0.09 && normGreen < 0.09 && normBlue > 0.1) {
+        } else if (normRed < 0.2 && normGreen < 0.22 && normBlue > 0.1) {
             return TestColorSensorMecanism.DetectedColor.PURPLE;
-        } else if (normRed < 0.71 && normGreen < 1.35 && normBlue > 0.8) {
-            return TestColorSensorMecanism.DetectedColor.PURPLE;
-        }else {
+        } else {
             return TestColorSensorMecanism.DetectedColor.UNKNOWN;
         }
     }

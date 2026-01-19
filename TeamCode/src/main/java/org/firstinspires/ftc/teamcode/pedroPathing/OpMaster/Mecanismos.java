@@ -44,7 +44,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Mecanismos {
     //Tl:========= INTAKE =========
     public DcMotor intake;
-    public  CRServo intake_S;
+    public  Servo uman;
     //TL:======== CANNON ===========
     public DcMotor cannonR;
     public DcMotor cannonL;
@@ -58,21 +58,21 @@ public class Mecanismos {
         GREEN,
         UNKNOWN,
     }
-    public static final double  Ain = 0.57;
-    public static final double  Bin = 0.495;
-    public static final double  Cin = 0.42;
+    public static final double  Ain = 0.86;
+    public static final double  Bin = 0.79;
+    public static final double  Cin = 0.72 ;
 
-    public static final double  Aout = 0.46;
-    public static final double  Bout = 0.38;
-    public static final double  Cout = 0.53;
-    public static final double  pateador_off = 0.3;
-    public static final double  pateador_on = 0.26;
+    public static final double  Aout = 0.96;
+    public static final double  Bout = 0.895;
+    public static final double  Cout = 0.83;
+    public static final double  pateador_off = 0.5;
+    public static final double  pateador_on = 0.46;
     char actualPos = 'a';
     //NOTE: 0 = empty || 1 = PURPLE |
     // | 2 = GREEN
-    int A = 0;
-    int B = 0;
-    int C = 0;
+    public int A = 0;
+    public int B = 0;
+    public int C = 0;
     //TL: MODES
     public boolean PPG = false;
     public boolean PGP = false;
@@ -83,9 +83,9 @@ public class Mecanismos {
     public int shootStep = 0;
     public long shootStartTime = 0;
 
-    public final long OUTTAKE_HOLD_TIME_MS = 1500;
+    public final long OUTTAKE_HOLD_TIME_MS = 1700;
     public long lastIntakeTime = 0;
-    public long INTAKE_COOLDOWN_MS = 600;
+    public long INTAKE_COOLDOWN_MS = 800;
     //Tl:       COSOS CHISTOSOS
     public double slowModeMultiplier = 0.3; //Modo slow
     public boolean invertedDrive;
@@ -115,6 +115,8 @@ public class Mecanismos {
     public double lastHeadingError = 0.0;
     public ElapsedTime timer = new ElapsedTime();  // Timer for delta time
 
+
+//TL: ============= INIT =================
     public void initAll(HardwareMap hwMap){
         pateador = hwMap.get(Servo.class, "pateador");
         intake = hwMap.get(DcMotor.class, "Intake");
@@ -125,6 +127,7 @@ public class Mecanismos {
         cannonL.setDirection(DcMotorSimple.Direction.REVERSE);
         colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
         barril = hwMap.get(Servo.class,"servo");
+        uman = hwMap.get(Servo.class, "uman");
         colorSensor.setGain(10);
 
         aprilTag = new AprilTagProcessor.Builder().build();
@@ -133,8 +136,8 @@ public class Mecanismos {
                 .setCamera(hwMap.get(WebcamName.class, "Webcam 1"))
                 .addProcessor(aprilTag)
                 .build();
+        uman.setPosition(1.0);
     }
-
     public void shootPow(double power){
         cannonR.setPower(power);
         cannonL.setPower(power);
@@ -142,8 +145,24 @@ public class Mecanismos {
     public void intake(double pow){
         intake.setPower(pow);
     }
+    public void shootFar(){
+        if (!isShooting) {
+            shootPow(1.0); //fixme
+            isShooting = true;
+            shootStep = 0;
+            shootStartTime = System.currentTimeMillis();
+        }
+    }
+    public void shoot(){
+        if (!isShooting) {
+            shootPow(.85); //fixme
+            isShooting = true;
+            shootStep = 0;
+            shootStartTime = System.currentTimeMillis();
+        }
+    }
 
-    //TL: BARRREL STUFF
+//TL: ============= BARRREL =============
     public void G28(){
         if (A == 0 && B == 0 && C == 0) {
             barril.setPosition(Ain);
@@ -151,10 +170,11 @@ public class Mecanismos {
             isShooting = false;
         }
         if (A != 0 && B != 0 && C != 0){
-            barril.setPosition(0.52);
+            barril.setPosition(0.74);
             actualPos = 'a';
         }
     }
+    //note: MAIN
     public void shootingandIntake(Telemetry telemetry) {
         if (isShooting) {
             String sequence = PPG ? "PPG" : PGP ? "PGP" : "GPP";
@@ -189,10 +209,10 @@ public class Mecanismos {
                 double targetPos = (chamber == 'a') ? Aout : (chamber == 'b') ? Bout : Cout;
                 barril.setPosition(targetPos);
                 actualPos = chamber;
-                if (System.currentTimeMillis() - shootStartTime >= 600) {
+                if (System.currentTimeMillis() - shootStartTime >= 800) {
                     pateador.setPosition(pateador_on); //fixme
                 }
-                if (System.currentTimeMillis() - shootStartTime >= 1000) {
+                if (System.currentTimeMillis() - shootStartTime >= 1200) {
                     pateador.setPosition(pateador_off); //fixme
                 }
                 if (System.currentTimeMillis() - shootStartTime >= OUTTAKE_HOLD_TIME_MS) {
@@ -258,23 +278,6 @@ public class Mecanismos {
             }
         }
     }
-    public void shootFar(){
-        if (!isShooting) {
-            shootPow(1.0); //fixme
-            isShooting = true;
-            shootStep = 0;
-            shootStartTime = System.currentTimeMillis();
-        }
-    }
-    public void shoot(){
-        if (!isShooting) {
-            shootPow(.95); //fixme
-            isShooting = true;
-            shootStep = 0;
-            shootStartTime = System.currentTimeMillis();
-        }
-    }
-
     private void advanceToPreferredEmpty() {
         if (actualPos == 'a') {
             if (B == 0) {
@@ -313,9 +316,9 @@ public class Mecanismos {
 
         //TODO colors
 
-        if (normRed < 0.08 && normGreen > 0.1 && normBlue < 0.19) {
+        if (normRed < 0.08 && normGreen > 0.1 && normBlue < 0.22) {
             return TestColorSensorMecanism.DetectedColor.GREEN;
-        } else if (normRed < 0.09 && normGreen < 0.09 && normBlue > 0.1) {
+        } else if (normRed < 0.2 && normGreen < 0.22 && normBlue > 0.1) {
             return TestColorSensorMecanism.DetectedColor.PURPLE;
         } else {
             return TestColorSensorMecanism.DetectedColor.UNKNOWN;

@@ -35,37 +35,37 @@ public class Final_Auto extends OpMode{
     private final Pose startingPose_CP = new Pose(64.000, 66.000);                            //TL:Path #1
     private final Pose search_pose = new Pose(55.000, 101.000, Math.toRadians(66));           //TL:Path #1
 
-    private final Pose shoot_Pose = new Pose(48.000, 96.000, Math.toRadians(130));           //TL:Path #2 TODO: Shoot fixme:57.000, 105.000, Math.toRadians(145)
+    private final Pose shoot_Pose = new Pose(53.000, 90.000, Math.toRadians(132));           //TL:Path #2 TODO: Shoot fixme:57.000, 105.000, Math.toRadians(145)
 
     private final Pose fst_itk_pose_CP = new Pose(49.000, 84.000);                            //TL:Path #3
-    private final Pose fst_itk_pose = new Pose(44.000, 80.000, Math.toRadians(180));          //TL:Path #3
+    private final Pose fst_itk_pose = new Pose(50.000, 78.000, Math.toRadians(180));          //TL:Path #3
 
-    private final Pose fst_itk_1 = new Pose(35.000, 80.000, Math.toRadians(180));             //TL:Path #4
+    private final Pose fst_itk_1 = new Pose(44.000, 78.000, Math.toRadians(180));             //TL:Path #4
 
-    private final Pose fst_itk_2 = new Pose(30.000, 80.000, Math.toRadians(180));             //TL:Path #5
+    private final Pose fst_itk_2 = new Pose(38.000, 78.000, Math.toRadians(180));             //TL:Path #5
 
-    private final Pose fst_itk_3 = new Pose(24.000, 80.000, Math.toRadians(180));             //TL:Path #6
+    private final Pose fst_itk_3 = new Pose(32.000, 78.000, Math.toRadians(180));             //TL:Path #6
 
     private final Pose snd_shoot_CP = new Pose(49.000, 81.000);                               //TL:Path #7 TODO: With SHOOT
 
     private final Pose snd_itk_pose_CP = new Pose(57.000, 60.000);                            //TL:Path #8
-    private final Pose snd_itk_pose = new Pose(44.000, 56.000, Math.toRadians(180));          //TL:Path #8
+    private final Pose snd_itk_pose = new Pose(56.000, 56.000, Math.toRadians(180));          //TL:Path #8
 
-    private final Pose snd_itk_1 = new Pose(35.000, 56.000, Math.toRadians(180));             //TL:Path #9
+    private final Pose snd_itk_1 = new Pose(47.000, 56.000, Math.toRadians(180));             //TL:Path #9
 
-    private final Pose snd_itk_2 = new Pose(30.000, 56.000, Math.toRadians(180));             //TL:Path #10
+    private final Pose snd_itk_2 = new Pose(42.000, 56.000, Math.toRadians(180));             //TL:Path #10
 
-    private final Pose snd_itk_3 = new Pose(24.000, 56.000, Math.toRadians(180));             //TL:Path #11
+    private final Pose snd_itk_3 = new Pose(36.000, 56.000, Math.toRadians(180));             //TL:Path #11
 
     private final Pose trd_shoot_CP = new Pose(54.000, 53.000);                               //TL:Path #12 TODO: With SHOOT
 
-    private final Pose trd_itk_pose = new Pose(44.000, 32.000, Math.toRadians(180));          //TL:Path #13
+    private final Pose trd_itk_pose = new Pose(56.000, 32.000, Math.toRadians(180));          //TL:Path #13
 
-    private final Pose trd_itk_1 = new Pose(35.000, 32.000, Math.toRadians(180));             //TL:Path #14
+    private final Pose trd_itk_1 = new Pose(47.000, 32.000, Math.toRadians(180));             //TL:Path #14
 
-    private final Pose trd_itk_2 = new Pose(30.000, 32.000, Math.toRadians(180));             //TL:Path #15
+    private final Pose trd_itk_2 = new Pose(42.000, 32.000, Math.toRadians(180));             //TL:Path #15
 
-    private final Pose trd_itk_3 = new Pose(24.000, 32.000, Math.toRadians(180));             //TL:Path #16
+    private final Pose trd_itk_3 = new Pose(36.000, 32.000, Math.toRadians(180));             //TL:Path #16
 
     private final Pose frth_shoot_CP = new Pose(46.000, 91.000);                              //TL:Path #17 TODO: With SHOOT
 
@@ -174,6 +174,9 @@ public class Final_Auto extends OpMode{
                 follower.followPath(start_path);
                 time_Stamp = actual_time;
                 setPathState(1);
+                if(mecanism.A == 0){mecanism.A = 1;}
+                if(mecanism.B == 0){mecanism.B = 1;}
+                if(mecanism.C == 0){mecanism.C = 2;}
                 break;
             case 1://obelisk to shoot
                 if (mecanism.DESIRED_TAG_ID == 21){mecanism.GPP = true;}
@@ -181,10 +184,13 @@ public class Final_Auto extends OpMode{
                 if (mecanism.DESIRED_TAG_ID == 23){mecanism.PPG = true;}
                 if ((!follower.isBusy() && actual_time >= time_Stamp + 3) || (!follower.isBusy() && (mecanism.PPG || mecanism.GPP || mecanism.PGP) )) {
                     follower.followPath(snd_path,true);
-                    mecanism.shoot();                                                               //TL:SHOOT
-                    setPathState(2);
+                    if (follower.getPose().getY() < 91){
+                        mecanism.shoot();                                                           //TL:SHOOT
+                        setPathState(2);
+                    }
                 }
                 break;
+                
             case 2:
                 if (!follower.isBusy() && !mecanism.isShooting) { // && !mecanism.isShooting
                     follower.followPath(trd_path, true);
@@ -193,31 +199,42 @@ public class Final_Auto extends OpMode{
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.15); //fixme
-                    mecanism.intake(-0.5);
+                    follower.setMaxPower(0.5); //fixme
+                    mecanism.intake(-1);
                     follower.followPath(fth_path, true);                                    //TL:FIRST INTAKE, 1
+                    time_Stamp = actual_time;
                     setPathState(4);
                 }
                 break;
             case 4:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && actual_time >= time_Stamp + 0.4) {
+                    mecanism.A = 1;
+                    mecanism.B = 0;
+                    mecanism.C = 0;
                     follower.followPath(fvth_path, true);                                   //TL:FIRST INTAKE, 2
+                    time_Stamp = actual_time;
                     setPathState(5);
                 }
                 break;
             case 5:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && actual_time >= time_Stamp + 0.4) {
+                    mecanism.B = 1;
+                    mecanism.C = 0;
                     follower.followPath(sxth_path, true);                                   //TL:FIRST INTAKE, 3
+                    time_Stamp = actual_time;
                     setPathState(6);
                 }
                 break;
             case 6:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && actual_time >= time_Stamp + 0.4) {
+                    mecanism.C = 2;
                     follower.setMaxPower(1);
                     mecanism.intake(0);
                     follower.followPath(svnth_path, true);
-                    mecanism.shoot();                                                               //TODO:SHOOT
-                    setPathState(7);
+                    if (follower.getPose().getY() > 89){
+                        mecanism.shoot();                                                           //TODO:SHOOT
+                        setPathState(7);
+                    }
                 }
                 break;
             case 7:
@@ -228,31 +245,42 @@ public class Final_Auto extends OpMode{
                 break;
             case 8:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.15);
-                    mecanism.intake(-0.5);
+                    follower.setMaxPower(0.5);
+                    mecanism.intake(-1);
                     follower.followPath(nnth_path, true);                                   //TL:SECOND INTAKE, 1
+                    time_Stamp = actual_time;
                     setPathState(9);
                 }
                 break;
             case 9:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && actual_time >= time_Stamp + 0.3) {
+                    mecanism.A = 1;
+                    mecanism.B = 0;
+                    mecanism.C = 0;
                     follower.followPath(tenth_path, true);                                  //TL:SECOND INTAKE, 2
+                    time_Stamp = actual_time;
                     setPathState(10);
                 }
                 break;
             case 10:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && actual_time >= time_Stamp + 0.3) {
+                    mecanism.B = 2;
+                    mecanism.C = 0;
                     follower.followPath(elvnth_path, true);                                 //TL:SECOND INTAKE, 3
+                    time_Stamp = actual_time;
                     setPathState(11);
                 }
                 break;
             case 11:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && actual_time >= time_Stamp + 0.3) {
+                    mecanism.C = 1;
                     follower.setMaxPower(1);
                     mecanism.intake(0);
                     follower.followPath(twlfth_path, true);
-                    mecanism.shoot();                                                               //TODO:SHOOT
-                    setPathState(12);
+                    if (follower.getPose().getY() > 89){
+                        mecanism.shoot();                                                           //TODO:SHOOT
+                        setPathState(12);
+                    }
                 }
                 break;
             case 12:
@@ -263,31 +291,43 @@ public class Final_Auto extends OpMode{
                 break;
             case 13:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.15);
-                    mecanism.intake(-0.5);
+                    follower.setMaxPower(0.3);
+                    mecanism.intake(-1);
                     follower.followPath(frtnth_path, true);                                 //TL:THIRD INTAKE, 1
+                    time_Stamp = actual_time;
                     setPathState(14);
                 }
                 break;
             case 14:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && actual_time >= time_Stamp + 0.2) {
+                    mecanism.A = 2;
+                    mecanism.B = 0;
+                    mecanism.C = 0;
                     follower.followPath(fftnth_path, true);                                 //TL:THIRD INTAKE, 2
+                    time_Stamp = actual_time;
                     setPathState(15);
                 }
                 break;
             case 15:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && actual_time >= time_Stamp + 0.2) {
+                    mecanism.B = 1;
+                    mecanism.C = 0;
                     follower.followPath(sxtnth_path, true);                                 //TL:THIRD INTAKE, 3
+                    time_Stamp = actual_time;
                     setPathState(16);
                 }
                 break;
             case 16:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && actual_time >= time_Stamp + 0.2
+                ) {
+                    mecanism.C = 1;
                     follower.setMaxPower(1);
                     mecanism.intake(0);
                     follower.followPath(svntnth_path, true);
-                    mecanism.shoot();                                                               //TODO:SHOOT
-                    setPathState(17);
+                    if (follower.getPose().getY() > 89){
+                        mecanism.shoot();                                                           //TODO:SHOOT
+                        setPathState(17);
+                    }
                 }
                 break;
             case 17:
