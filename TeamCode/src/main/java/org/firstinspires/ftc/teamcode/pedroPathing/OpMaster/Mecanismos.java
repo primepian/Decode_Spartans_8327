@@ -41,7 +41,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * servos:
  *  pateador = 0
  */
-// bhkbkbkb
+
 public class Mecanismos {
     //Tl:========= INTAKE =========
     public DcMotor intake;
@@ -86,7 +86,7 @@ public class Mecanismos {
     public int shootStep = 0;
     public long shootStartTime = 0;
 
-    public final long OUTTAKE_HOLD_TIME_MS = 1700;
+    public final long OUTTAKE_HOLD_TIME_MS = 1500;
     public long lastIntakeTime = 0;
     public long INTAKE_COOLDOWN_MS = 800;
     //Tl:       COSOS CHISTOSOS
@@ -117,7 +117,6 @@ public class Mecanismos {
     public final double Kd   =  0.01  ;
     public double lastHeadingError = 0.0;
     public ElapsedTime timer = new ElapsedTime();  // Timer for delta time
-
 
 //TL: ============= INIT =================
     public void initAll(HardwareMap hwMap){
@@ -152,6 +151,10 @@ public class Mecanismos {
     }
     public void intake(double pow){
         intake.setPower(pow);
+    }
+    public void intaker(double p){
+        intaker_L.setPosition(p);
+        intaker_R.setPosition(p);
     }
     public void shootFar(){
         if (!isShooting) {

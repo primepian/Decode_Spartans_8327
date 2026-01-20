@@ -168,6 +168,8 @@ public class Final_Auto extends OpMode{
 
     public void autonomousPathUpdate() {
         double actual_time = pathTimer.getElapsedTimeSeconds();
+        final double ON = 1;
+        final double OFF = 0;
 
         switch (pathState) {
             case 0: //start to obelisk
@@ -207,33 +209,45 @@ public class Final_Auto extends OpMode{
                 }
                 break;
             case 4:
-                if (!follower.isBusy() && actual_time >= time_Stamp + 0.4) {
-                    mecanism.A = 1;
-                    mecanism.B = 0;
-                    mecanism.C = 0;
-                    follower.followPath(fvth_path, true);                                   //TL:FIRST INTAKE, 2
-                    time_Stamp = actual_time;
-                    setPathState(5);
+                if (!follower.isBusy() && actual_time >= time_Stamp + 0.3) {
+                    mecanism.intaker(ON);
+                    if (actual_time >= time_Stamp + 0.5) {
+                        mecanism.intaker(OFF);
+                        mecanism.A = 1;
+                        mecanism.B = 0;
+                        mecanism.C = 0;
+                        follower.followPath(fvth_path, true);                                   //TL:FIRST INTAKE, 2
+                        time_Stamp = actual_time;
+                        setPathState(5);
+                    }
                 }
                 break;
             case 5:
-                if (!follower.isBusy() && actual_time >= time_Stamp + 0.4) {
-                    mecanism.B = 1;
-                    mecanism.C = 0;
-                    follower.followPath(sxth_path, true);                                   //TL:FIRST INTAKE, 3
-                    time_Stamp = actual_time;
-                    setPathState(6);
+                if (!follower.isBusy() && actual_time >= time_Stamp + 0.3) {
+                    mecanism.intaker(ON);
+                    if (actual_time >= time_Stamp + 0.5) {
+                        mecanism.intaker(OFF);
+                        mecanism.B = 1;
+                        mecanism.C = 0;
+                        follower.followPath(sxth_path, true);                                   //TL:FIRST INTAKE, 3
+                        time_Stamp = actual_time;
+                        setPathState(6);
+                    }
                 }
                 break;
             case 6:
-                if (!follower.isBusy() && actual_time >= time_Stamp + 0.4) {
-                    mecanism.C = 2;
-                    follower.setMaxPower(1);
-                    mecanism.intake(0);
-                    follower.followPath(svnth_path, true);
-                    if (follower.getPose().getY() > 89){
-                        mecanism.shoot();                                                           //TODO:SHOOT
-                        setPathState(7);
+                if (!follower.isBusy() && actual_time >= time_Stamp + 0.3) {
+                    mecanism.intaker(ON);
+                    if (actual_time >= time_Stamp + 6) {
+                        mecanism.intaker(OFF);
+                        mecanism.C = 2;
+                        follower.setMaxPower(1);
+                        mecanism.intake(0);
+                        follower.followPath(svnth_path, true);
+                         if (follower.getPose().getY() > 89) {
+                            mecanism.shoot();                                                           //TODO:SHOOT
+                            setPathState(7);
+                        }
                     }
                 }
                 break;
