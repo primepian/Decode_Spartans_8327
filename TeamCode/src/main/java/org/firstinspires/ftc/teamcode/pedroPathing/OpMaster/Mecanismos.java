@@ -47,7 +47,7 @@ public class Mecanismos {
     public  Servo uman;
     public  Servo intaker_L;
     public  Servo intaker_R;
-    //TL:======== CANNON ===========
+    //TL:======== CANNON ==========
     public DcMotor cannonR;
     public DcMotor cannonL;
     public DcMotor turret;
