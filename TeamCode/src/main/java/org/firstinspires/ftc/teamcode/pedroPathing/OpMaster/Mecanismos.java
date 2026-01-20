@@ -70,6 +70,10 @@ public class Mecanismos {
     public static final double  Cout = 0.83;
     public static final double  pateador_off = 0.5;
     public static final double  pateador_on = 0.46;
+    public static final double LON = 0.69;
+    public static final double LOFF = 0.34;
+    public static final double RON = 0.85;
+    public static final double ROFF = 0.905;
     char actualPos = 'a';
     //NOTE: 0 = empty || 1 = PURPLE |
     // | 2 = GREEN
@@ -143,18 +147,28 @@ public class Mecanismos {
                 .setCamera(hwMap.get(WebcamName.class, "Webcam 1"))
                 .addProcessor(aprilTag)
                 .build();
+
         uman.setPosition(1.0);
+        intakerOFF();
     }
-    public void shootPow(double power){
-        cannonR.setPower(power);
-        cannonL.setPower(power);
-    }
+
+//TL: ============== INTAKE ==============
     public void intake(double pow){
         intake.setPower(pow);
     }
-    public void intaker(double p){
-        intaker_L.setPosition(p);
-        intaker_R.setPosition(p);
+    public void intakerOFF(){
+        intaker_L.setPosition(LOFF);
+        intaker_R.setPosition(ROFF);
+    }
+    public void intakerON(){
+        intaker_L.setPosition(LON);
+        intaker_R.setPosition(RON);
+    }
+
+//TL: ============ CANNON ===============
+    public void shootPow(double power){
+        cannonR.setPower(power);
+        cannonL.setPower(power);
     }
     public void shootFar(){
         if (!isShooting) {

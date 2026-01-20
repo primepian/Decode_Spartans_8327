@@ -168,8 +168,7 @@ public class Final_Auto extends OpMode{
 
     public void autonomousPathUpdate() {
         double actual_time = pathTimer.getElapsedTimeSeconds();
-        final double ON = 1;
-        final double OFF = 0;
+
 
         switch (pathState) {
             case 0: //start to obelisk
@@ -210,9 +209,9 @@ public class Final_Auto extends OpMode{
                 break;
             case 4:
                 if (!follower.isBusy() && actual_time >= time_Stamp + 0.3) {
-                    mecanism.intaker(ON);
+                    mecanism.intakerON();
                     if (actual_time >= time_Stamp + 0.5) {
-                        mecanism.intaker(OFF);
+                        mecanism.intakerOFF();
                         mecanism.A = 1;
                         mecanism.B = 0;
                         mecanism.C = 0;
@@ -224,9 +223,9 @@ public class Final_Auto extends OpMode{
                 break;
             case 5:
                 if (!follower.isBusy() && actual_time >= time_Stamp + 0.3) {
-                    mecanism.intaker(ON);
+                    mecanism.intakerON();
                     if (actual_time >= time_Stamp + 0.5) {
-                        mecanism.intaker(OFF);
+                        mecanism.intakerOFF();
                         mecanism.B = 1;
                         mecanism.C = 0;
                         follower.followPath(sxth_path, true);                                   //TL:FIRST INTAKE, 3
@@ -237,9 +236,9 @@ public class Final_Auto extends OpMode{
                 break;
             case 6:
                 if (!follower.isBusy() && actual_time >= time_Stamp + 0.3) {
-                    mecanism.intaker(ON);
+                    mecanism.intakerON();
                     if (actual_time >= time_Stamp + 6) {
-                        mecanism.intaker(OFF);
+                        mecanism.intakerOFF();
                         mecanism.C = 2;
                         follower.setMaxPower(1);
                         mecanism.intake(0);

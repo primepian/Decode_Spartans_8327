@@ -153,20 +153,29 @@ public class TeleOpMaster extends OpMode {
         mecanism.RBflag = currentRB;
 
 //  TL: INTAKE      {GPAD_1}
-        if (gamepad2.y){
+        if (gamepad2.dpad_up){
             mecanism.uman.setPosition(0.0);
+            mecanism.intakerON();
             mecanism.INTAKE_COOLDOWN_MS = 800;
-        }else{
+        }//NOTE: HUMAN(SARAS)
+        else{
             mecanism.uman.setPosition(1.0);
+            mecanism.intakerOFF();
             mecanism.INTAKE_COOLDOWN_MS = 300;
         }
-        if (gamepad1.right_trigger > 0.0){
-            mecanism.intake( -0.9);
-        } else if (gamepad1.b){
-            mecanism.intake( 0.5);
-        } else {
-            mecanism.intake( 0);
+        if (gamepad2.dpad_down){
+            mecanism.intakerON();
+        }//NOTE: DESTAPACAÑOS
+        else{
+            mecanism.intakerOFF();
         }
+
+        if (gamepad1.right_trigger > 0.0){
+            mecanism.intake( -0.9);}//NOTE: TRAGATODO
+        else if (gamepad1.b){mecanism.intake( 0.5);
+        } //NOTE: ESCUPELUPE
+        else {
+            mecanism.intake( 0);}
 
 //TL ---------- MODE SELECT ----------
         if (gamepad1.dpad_right) {
@@ -194,7 +203,8 @@ public class TeleOpMaster extends OpMode {
             mecanism.shootPow(0);
             mecanism.isShooting = false;
         } //NOTE: APAGAR CAÑON
-//  NOTE: [RB] TO
+
+        //  NOTE: [LB] ACTUAL TO 1
         boolean currentRB2 = gamepad2.left_bumper;
         if (currentRB2 && !mecanism.RB2flag){
             if (mecanism.actualPos == 'a' && mecanism.A == 0){mecanism.A = 1;}
@@ -205,25 +215,17 @@ public class TeleOpMaster extends OpMode {
 
         if (gamepad2.left_trigger > 0.1f) {
             mecanism.shootPow(1.0);
-        }
-        if (gamepad2.dpad_up) {
+        }//NOTE: SHOOT POW 1
+
+        if (gamepad2.y) {
             mecanism.A = 0;
             mecanism.B = 0;
             mecanism.C = 0;
         } //NOTE: ALL TO 0
-
-        //NOTE: DPADS TO 1
-        if (gamepad2.dpad_up){mecanism.A = 1;}
-        if (gamepad2.dpad_right){mecanism.B = 1;}
-        if (gamepad2.dpad_left){mecanism.C = 1;}
         //NOTE: a,b,x TO 0
         if (gamepad2.a){mecanism.A = 0;}
         if (gamepad2.b){mecanism.B = 0;}
         if (gamepad2.x){mecanism.C = 0;}
-
-        if (gamepad2.back){
-            mecanism.shootPow(-1);
-        }
 
         mecanism.G28();
         mecanism.shootingandIntake(telemetry);
