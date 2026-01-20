@@ -45,7 +45,8 @@ public class Mecanismos {
     //Tl:========= INTAKE =========
     public DcMotor intake;
     public  Servo uman;
-    public  Servo intaker;
+    public  Servo intaker_L;
+    public  Servo intaker_R;
     //TL:======== CANNON ===========
     public DcMotor cannonR;
     public DcMotor cannonL;
@@ -123,7 +124,8 @@ public class Mecanismos {
         intake = hwMap.get(DcMotor.class, "Intake");
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         uman = hwMap.get(Servo.class, "uman");
-        intaker = hwMap.get(Servo.class, "intaker");
+        intaker_L = hwMap.get(Servo.class, "intakerL");
+        intaker_R = hwMap.get(Servo.class, "intakerR");
 
 
         cannonR = hwMap.get(DcMotor.class, "CannonR");
