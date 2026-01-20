@@ -41,6 +41,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * servos:
  *  pateador = 0
  */
+// bhkbkbkb
 public class Mecanismos {
     //Tl:========= INTAKE =========
     public DcMotor intake;
