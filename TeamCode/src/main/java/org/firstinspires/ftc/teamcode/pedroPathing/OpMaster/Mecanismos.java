@@ -45,6 +45,7 @@ public class Mecanismos {
     //Tl:========= INTAKE =========
     public DcMotor intake;
     public  Servo uman;
+    public  Servo intaker;
     //TL:======== CANNON ===========
     public DcMotor cannonR;
     public DcMotor cannonL;
@@ -121,13 +122,17 @@ public class Mecanismos {
         pateador = hwMap.get(Servo.class, "pateador");
         intake = hwMap.get(DcMotor.class, "Intake");
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        cannonR = hwMap.get(DcMotor.class, "CannonR");
+        uman = hwMap.get(Servo.class, "uman");
+        intaker = hwMap.get(Servo.class, "intaker");
 
+
+        cannonR = hwMap.get(DcMotor.class, "CannonR");
         cannonL = hwMap.get(DcMotor.class, "CannonL");
         cannonL.setDirection(DcMotorSimple.Direction.REVERSE);
+
         colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
         barril = hwMap.get(Servo.class,"servo");
-        uman = hwMap.get(Servo.class, "uman");
+
         colorSensor.setGain(10);
 
         aprilTag = new AprilTagProcessor.Builder().build();
