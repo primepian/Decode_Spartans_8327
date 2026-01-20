@@ -31,20 +31,20 @@ public class Final_Auto extends OpMode{
 
     private double time_Stamp;
 
-    private final Pose startingPose = new Pose(56.000, 9.000, Math.toRadians(90));            //TL:Path #1
+    private final Pose startingPose = new Pose(55.000, 8.000, Math.toRadians(90));            //TL:Path #1
     private final Pose startingPose_CP = new Pose(64.000, 66.000);                            //TL:Path #1
     private final Pose search_pose = new Pose(55.000, 101.000, Math.toRadians(66));           //TL:Path #1
 
     private final Pose shoot_Pose = new Pose(53.000, 90.000, Math.toRadians(132));           //TL:Path #2 TODO: Shoot fixme:57.000, 105.000, Math.toRadians(145)
 
     private final Pose fst_itk_pose_CP = new Pose(49.000, 84.000);                            //TL:Path #3
-    private final Pose fst_itk_pose = new Pose(50.000, 78.000, Math.toRadians(180));          //TL:Path #3
+    private final Pose fst_itk_pose = new Pose(50.000, 83.000, Math.toRadians(180));          //TL:Path #3
 
-    private final Pose fst_itk_1 = new Pose(44.000, 78.000, Math.toRadians(180));             //TL:Path #4
+    private final Pose fst_itk_1 = new Pose(38.000, 83.000, Math.toRadians(180));             //TL:Path #4
 
-    private final Pose fst_itk_2 = new Pose(38.000, 78.000, Math.toRadians(180));             //TL:Path #5
+    private final Pose fst_itk_2 = new Pose(32.000, 83.000, Math.toRadians(180));             //TL:Path #5
 
-    private final Pose fst_itk_3 = new Pose(32.000, 78.000, Math.toRadians(180));             //TL:Path #6
+    private final Pose fst_itk_3 = new Pose(21.000, 83.000, Math.toRadians(180));             //TL:Path #6
 
     private final Pose snd_shoot_CP = new Pose(49.000, 81.000);                               //TL:Path #7 TODO: With SHOOT
 
