@@ -8,6 +8,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -17,7 +18,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import java.util.List;
 
 
-@Autonomous(name = "Final_Auto", group = "Autonomous")
+@Autonomous
+@Disabled
 public class Final_Auto_B extends OpMode{
     Mecanismos mecanism = new Mecanismos();
 
@@ -199,29 +201,29 @@ public class Final_Auto_B extends OpMode{
                     follower.setMaxPower(0.23); //fixme
                     mecanism.intake(-0.5);
                     follower.followPath(fth_path, true);                                    //TL:FIRST INTAKE, 1
-                    mecanism.intake_S.setPosition(Servo_ON);
+//                    mecanism.intake_S.setPosition(Servo_ON);
                     setPathState(4);
                 }
                 break;
             case 4:
                 if (!follower.isBusy()) {
-                    mecanism.intake_S.setPosition(Servo_OFF);
+//                    mecanism.intake_S.setPosition(Servo_OFF);
                     follower.followPath(fvth_path, true);                                   //TL:FIRST INTAKE, 2
-                    mecanism.intake_S.setPosition(Servo_ON);
+//                    mecanism.intake_S.setPosition(Servo_ON);
                     setPathState(5);
                 }
                 break;
             case 5:
                 if (!follower.isBusy()) {
-                    mecanism.intake_S.setPosition(Servo_OFF);
+//                    mecanism.intake_S.setPosition(Servo_OFF);
                     follower.followPath(sxth_path, true);                                   //TL:FIRST INTAKE, 3
-                    mecanism.intake_S.setPosition(Servo_ON);
+//                    mecanism.intake_S.setPosition(Servo_ON);
                     setPathState(6);
                 }
                 break;
             case 6:
                 if (!follower.isBusy()) {
-                    mecanism.intake_S.setPosition(Servo_OFF);
+//                    mecanism.intake_S.setPosition(Servo_OFF);
                     follower.setMaxPower(1);
                     mecanism.intake(0);
                     follower.followPath(svnth_path, true);

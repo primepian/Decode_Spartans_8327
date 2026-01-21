@@ -21,7 +21,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import java.util.List;
 
 
-@Autonomous(name = "Final_Auto_C", group = "Autonomous")
+@Autonomous
+@Disabled
 public class Final_Auto_C extends OpMode{
     Mecanismos mecanism = new Mecanismos();
 

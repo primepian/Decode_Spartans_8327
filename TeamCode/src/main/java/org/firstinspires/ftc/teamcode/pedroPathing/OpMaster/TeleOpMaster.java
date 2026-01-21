@@ -154,12 +154,12 @@ public class TeleOpMaster extends OpMode {
 
 //  TL: INTAKE      {GPAD_1}
         if (gamepad2.dpad_up){
-            mecanism.uman.setPosition(0.0);
+            mecanism.uman.setPosition(0.18);
             mecanism.intakerON();
             mecanism.INTAKE_COOLDOWN_MS = 800;
         }//NOTE: HUMAN(SARAS)
         else{
-            mecanism.uman.setPosition(1.0);
+            mecanism.uman.setPosition(0.27);
             mecanism.intakerOFF();
             mecanism.INTAKE_COOLDOWN_MS = 300;
         }

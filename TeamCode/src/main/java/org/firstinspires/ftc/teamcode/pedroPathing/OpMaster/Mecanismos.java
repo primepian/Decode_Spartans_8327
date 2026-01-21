@@ -61,13 +61,13 @@ public class Mecanismos {
         GREEN,
         UNKNOWN,
     }
-    public static final double  Ain = 0.86;
-    public static final double  Bin = 0.79;
-    public static final double  Cin = 0.72 ;
+    public static final double  Ain = 0.92;
+    public static final double  Bin = 0.85;
+    public static final double  Cin = 0.78 ;
 
-    public static final double  Aout = 0.96;
-    public static final double  Bout = 0.895;
-    public static final double  Cout = 0.83;
+    public static final double  Aout = 0.81;
+    public static final double  Bout = 0.745;
+    public static final double  Cout = 0.67;
     public static final double  pateador_off = 0.5;
     public static final double  pateador_on = 0.46;
     public static final double LON = 0.69;
@@ -90,7 +90,7 @@ public class Mecanismos {
     public int shootStep = 0;
     public long shootStartTime = 0;
 
-    public final long OUTTAKE_HOLD_TIME_MS = 1500;
+    public final long OUTTAKE_HOLD_TIME_MS = 1450;
     public long lastIntakeTime = 0;
     public long INTAKE_COOLDOWN_MS = 800;
     //Tl:       COSOS CHISTOSOS
@@ -148,7 +148,7 @@ public class Mecanismos {
                 .addProcessor(aprilTag)
                 .build();
 
-        uman.setPosition(1.0);
+        uman.setPosition(0.27);
         intakerOFF();
     }
 
@@ -170,9 +170,9 @@ public class Mecanismos {
         cannonR.setPower(power);
         cannonL.setPower(power);
     }
-    public void shootFar(){
+    public void shootA(){
         if (!isShooting) {
-            shootPow(1.0); //fixme
+            shootPow(.8); //fixme
             isShooting = true;
             shootStep = 0;
             shootStartTime = System.currentTimeMillis();
@@ -195,7 +195,7 @@ public class Mecanismos {
             isShooting = false;
         }
         if (A != 0 && B != 0 && C != 0){
-            barril.setPosition(0.74);
+            barril.setPosition(0.79);
             actualPos = 'a';
         }
     }
@@ -248,6 +248,111 @@ public class Mecanismos {
                     shootStep++;
                     shootPow(0.8);
                     if (shootStep >= 3) {
+                        shootPow(0);
+                        isShooting = false;
+                        advanceToPreferredEmpty();
+                    }
+                    shootStartTime = System.currentTimeMillis();
+                }
+            }
+        } else {
+//TL --------- INTAKE MODE ------
+            // empty chambers return to home
+            if (A == 0 && B == 0 && C == 0) {
+                barril.setPosition(Ain);
+                actualPos = 'a';
+            }
+
+            TestColorSensorMecanism.DetectedColor detected = getDetectedColor(telemetry);
+
+            boolean canIntakeNow = System.currentTimeMillis() - lastIntakeTime >= INTAKE_COOLDOWN_MS;
+
+            if (canIntakeNow &&
+                    (detected == TestColorSensorMecanism.DetectedColor.PURPLE ||
+                            detected == TestColorSensorMecanism.DetectedColor.GREEN)) {
+
+                int value = detected == TestColorSensorMecanism.DetectedColor.PURPLE ? 1 : 2;
+
+                boolean actuallyLoaded = false;
+
+                if (actualPos == 'a' && A == 0) {
+                    A = value;
+                    actuallyLoaded = true;
+                } else if (actualPos == 'b' && B == 0) {
+                    B = value;
+                    actuallyLoaded = true;
+                } else if (actualPos == 'c' && C == 0) {
+                    C = value;
+                    actuallyLoaded = true;
+                }
+
+                if (actuallyLoaded) {
+                    advanceToPreferredEmpty();
+                    lastIntakeTime = System.currentTimeMillis(); // cooldown
+                }
+            }
+            int currentValue = switch (actualPos) {
+                case 'a' -> A;
+                case 'b' -> B;
+                case 'c' -> C;
+                default -> 0;
+            };
+
+            if (currentValue != 0 && (A == 0 || B == 0 || C == 0)) {
+                advanceToPreferredEmpty();
+            }
+        }
+    }
+    public void shootingandIntakeAuto(Telemetry telemetry) {
+        if (isShooting) {
+            intakerON();
+            String sequence = PPG ? "PPG" : PGP ? "PGP" : "GPP";
+
+            int neededValue = (sequence.charAt(shootStep) == 'P') ? 1 : 2;
+            telemetry.addData("VALUE: ", neededValue);
+
+            char chamber = '\0';
+            //note: Searches on the current pos if there is the shit we need
+            int currentVal = 0;
+            if (actualPos == 'a') currentVal = A;
+            else if (actualPos == 'b') currentVal = B;
+            else if (actualPos == 'c') currentVal = C;
+
+            if (currentVal == neededValue) {
+                chamber = actualPos;
+            } else {
+                if (A == neededValue) chamber = 'a';
+                else if (B == neededValue) chamber = 'b';
+                else if (C == neededValue) chamber = 'c';
+            }
+            if ((neededValue != A && neededValue != B && neededValue != C) && (A != 0 || B != 0 || C != 0)) {//note: no hay valor requerido pero si hay artefactos
+                if (A != 0) chamber = 'a';
+                else if (B != 0) chamber = 'b';
+                else chamber = 'c';
+            }
+            if (chamber == '\0') { //note:  skipear si no hay artefactos
+                shootStep++;
+                shootStartTime = System.currentTimeMillis();
+                shootPow(0.7);
+            } else { //note: changes the barrel pos
+                double targetPos = (chamber == 'a') ? Aout : (chamber == 'b') ? Bout : Cout;
+                barril.setPosition(targetPos);
+                actualPos = chamber;
+                if (System.currentTimeMillis() - shootStartTime >= 700) {
+                    pateador.setPosition(pateador_on); //fixme
+                }
+                if (System.currentTimeMillis() - shootStartTime >= 1100) {
+                    pateador.setPosition(pateador_off); //fixme
+                }
+                if (System.currentTimeMillis() - shootStartTime >= OUTTAKE_HOLD_TIME_MS) {
+                    if (chamber == 'a') A = 0;
+                    else if (chamber == 'b') B = 0;
+                    else C = 0;
+
+                    shootStep++;
+                    shootPow(0.7);
+                    if (shootStep >= 3) {
+                        intakerOFF();
                         shootPow(0);
                         isShooting = false;
                         advanceToPreferredEmpty();
