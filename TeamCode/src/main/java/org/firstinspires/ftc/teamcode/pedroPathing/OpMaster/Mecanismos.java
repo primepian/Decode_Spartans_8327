@@ -61,7 +61,7 @@ public class Mecanismos {
         GREEN,
         UNKNOWN,
     }
-    public static final double  Ain = 0.92;
+    public static final double  Ain = 0.915;
     public static final double  Bin = 0.85;
     public static final double  Cin = 0.78 ;
 

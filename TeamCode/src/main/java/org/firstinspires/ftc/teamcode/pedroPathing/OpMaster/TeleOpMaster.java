@@ -158,6 +158,7 @@ public class TeleOpMaster extends OpMode {
             mecanism.intakerON();
             mecanism.INTAKE_COOLDOWN_MS = 800;
         }
+
         else{
             mecanism.uman.setPosition(0.27);
             mecanism.intakerOFF();
