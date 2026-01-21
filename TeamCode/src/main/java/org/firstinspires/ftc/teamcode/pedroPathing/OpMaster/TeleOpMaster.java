@@ -153,7 +153,7 @@ public class TeleOpMaster extends OpMode {
         mecanism.RBflag = currentRB;
 
 //  TL: INTAKE      {GPAD_1}
-        if (gamepad2.dpad_up){
+        if (gamepad2.dpad_down){
             mecanism.uman.setPosition(0.18);
             mecanism.intakerON();
             mecanism.INTAKE_COOLDOWN_MS = 800;
@@ -163,7 +163,7 @@ public class TeleOpMaster extends OpMode {
             mecanism.intakerOFF();
             mecanism.INTAKE_COOLDOWN_MS = 300;
         }
-        if (gamepad2.dpad_down){
+        if (gamepad2.dpad_up){
             mecanism.intakerON();
         }//NOTE: DESTAPACAÑOS
         else{

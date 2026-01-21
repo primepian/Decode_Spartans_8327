@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.AutoTests;
 
-import static kotlinx.coroutines.DelayKt.delay;
-
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -9,10 +7,8 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.OpMaster.Mecanismos;
@@ -21,8 +17,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import java.util.List;
 
 
-@Autonomous(name = "Final_Auto", group = "Autonomous")
-public class Final_Auto extends OpMode{
+@Autonomous(name = "RED_Auto", group = "Autonomous")
+public class Red_Auto extends OpMode{
     Mecanismos mecanism = new Mecanismos();
 
     private Follower follower;
@@ -51,9 +47,9 @@ public class Final_Auto extends OpMode{
     private final Pose snd_itk_pose_CP = new Pose(57.000, 60.000);                            //TL:Path #8
     private final Pose snd_itk_pose = new Pose(56.000, 56.000, Math.toRadians(180));          //TL:Path #8
 
-    private final Pose snd_itk_1 = new Pose(35.000, 56.000, Math.toRadians(180));             //TL:Path #9
+    private final Pose snd_itk_1 = new Pose(40.000, 56.000, Math.toRadians(180));             //TL:Path #9
 
-    private final Pose snd_itk_2 = new Pose(30.000, 56.000, Math.toRadians(180));             //TL:Path #10
+    private final Pose snd_itk_2 = new Pose(35.000, 56.000, Math.toRadians(180));             //TL:Path #10
 
     private final Pose snd_itk_3 = new Pose(20.000, 56.000, Math.toRadians(180));             //TL:Path #11
 
@@ -272,45 +268,72 @@ public class Final_Auto extends OpMode{
                 break;
             case 11:
                 if (!follower.isBusy()) {
-                    follower.setMaxPower(0.5);
+                    follower.setMaxPower(0.7);
                     mecanism.intake(-1);
                     follower.followPath(nnth_path, true);                                   //TL:SECOND INTAKE, 1
                     setPathState(12);
-                    time_Stamp = actual_time;
                 }
                 break;
             case 12:
-                if (!follower.isBusy() && actual_time >= time_Stamp + 0.3) {
-                    mecanism.A = 1;
-                    mecanism.B = 0;
-                    mecanism.C = 0;
-                    follower.followPath(tenth_path, true);                                  //TL:SECOND INTAKE, 2
-                    setPathState(13);
+                if (!follower.isBusy()) {
                     time_Stamp = actual_time;
+                    pathState = 13;
                 }
                 break;
             case 13:
-                if (!follower.isBusy() && actual_time >= time_Stamp + 0.3) {
-                    mecanism.B = 2;
-                    mecanism.C = 0;
-                    follower.followPath(elvnth_path, true);                                 //TL:SECOND INTAKE, 3
-                    setPathState(14);
-                    time_Stamp = actual_time;
-                }
-                break;
-            case 14:
-                if (!follower.isBusy() && actual_time >= time_Stamp + 0.3) {
-                    mecanism.C = 1;
-                    follower.setMaxPower(1);
-                    mecanism.intake(0);
-                    follower.followPath(twlfth_path, true);
-                    if (follower.getPose().getY() > 89){
-                        mecanism.shootA();                                                           //TODO:SHOOT
-                        setPathState(15);
+                if (actual_time >= time_Stamp + 0.7) {
+                    mecanism.intakerON();
+                    if (actual_time >= time_Stamp + 1.5) {
+                        mecanism.intakerOFF();
+                        mecanism.A = 1;
+                        mecanism.B = 0;
+                        mecanism.C = 0;
+                        follower.followPath(tenth_path, true);                                  //TL:SECOND INTAKE, 2
+                        setPathState(14);
                     }
                 }
                 break;
+            case 14:
+                if (!follower.isBusy()) {
+                    time_Stamp = actual_time;
+                    pathState = 15;
+                }
+                break;
             case 15:
+                if (actual_time >= time_Stamp + 0.7) {
+                    mecanism.intakerON();
+                    if (actual_time >= time_Stamp + 1.5) {
+                        mecanism.intakerOFF();
+                        mecanism.B = 2;
+                        mecanism.C = 0;
+                        follower.followPath(elvnth_path, true);                                 //TL:SECOND INTAKE, 3
+                        setPathState(16);
+                    }
+                }
+                break;
+            case 16:
+                if (!follower.isBusy()) {
+                    time_Stamp = actual_time;
+                    pathState = 17;
+                }
+                break;
+            case 17:
+                if (actual_time >= time_Stamp + 0.7) {
+                    mecanism.intakerON();
+                    if (actual_time >= time_Stamp + 1.5) {
+                        mecanism.intakerOFF();
+                        mecanism.C = 1;
+                        follower.setMaxPower(1);
+                        mecanism.intake(0);
+                        follower.followPath(twlfth_path, true);
+                         if (follower.getPose().getY() > 89) {
+                            mecanism.shootA();                                                           //TODO:SHOOT
+                            setPathState(18);
+                         }
+                    }
+                }
+                break;
+            case 18:
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }
