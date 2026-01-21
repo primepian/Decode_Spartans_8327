@@ -157,18 +157,19 @@ public class TeleOpMaster extends OpMode {
             mecanism.uman.setPosition(0.18);
             mecanism.intakerON();
             mecanism.INTAKE_COOLDOWN_MS = 800;
-        }//NOTE: HUMAN(SARAS)
+        }
         else{
             mecanism.uman.setPosition(0.27);
             mecanism.intakerOFF();
             mecanism.INTAKE_COOLDOWN_MS = 300;
-        }
-        if (gamepad2.dpad_up){
+        }//NOTE: HUMAN
+
+        if (gamepad2.dpad_up || (mecanism.A != 0 && mecanism.B != 0 && mecanism.C != 0)){
             mecanism.intakerON();
-        }//NOTE: DESTAPACAÑOS
-        else{
-            mecanism.intakerOFF();
         }
+        else {
+            mecanism.intakerOFF();
+        }//NOTE: DESTAPACAÑOS
 
         if (gamepad1.right_trigger > 0.0){
             mecanism.intake( -0.9);}//NOTE: TRAGATODO
