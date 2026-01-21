@@ -8,7 +8,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.OpMaster.Mecanismos;
@@ -17,8 +17,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import java.util.List;
 
 
-@Autonomous(name = "RED_Auto", group = "Autonomous")
-public class Red_Auto extends OpMode{
+@Autonomous(name = "BLUE_Auto", group = "Autonomous")
+public class Red_Auto_1 extends OpMode{
     Mecanismos mecanism = new Mecanismos();
 
     private Follower follower;
@@ -27,11 +27,10 @@ public class Red_Auto extends OpMode{
 
     private double time_Stamp;
 
-    private final Pose startingPose = new Pose(55.000, 8.000, Math.toRadians(90));            //TL:Path #1
-    private final Pose startingPose_CP = new Pose(64.000, 66.000);                            //TL:Path #1
+    private final Pose startingPose = new Pose(33.000, 135.000, Math.toRadians(-90));         //TL:Path #1
     private final Pose search_pose = new Pose(55.000, 101.000, Math.toRadians(66));           //TL:Path #1
 
-    private final Pose shoot_Pose = new Pose(53.000, 90.000, Math.toRadians(135));           //TL:Path #2 TODO: Shoot fixme:57.000, 105.000, Math.toRadians(145)
+    private final Pose shoot_Pose = new Pose(53.000, 90.000, Math.toRadians(135));            //TL:Path #2 TODO: Shoot
 
     private final Pose fst_itk_pose_CP = new Pose(49.000, 84.000);                            //TL:Path #3
     private final Pose fst_itk_pose = new Pose(50.000, 78.000, Math.toRadians(180));          //TL:Path #3
@@ -73,7 +72,7 @@ public class Red_Auto extends OpMode{
 
     public void buildPaths() {
 
-        start_path = new Path(new BezierCurve(startingPose.mirror(), startingPose_CP.mirror(), search_pose.mirror()));
+        start_path = new Path(new BezierLine(startingPose.mirror(), search_pose.mirror()));
         start_path.setLinearHeadingInterpolation(startingPose.getHeading(), search_pose.getHeading());
 
         snd_path = follower.pathBuilder()
@@ -186,7 +185,7 @@ public class Red_Auto extends OpMode{
                     }
                 }
                 break;
-                
+
             case 2:
                 if (!follower.isBusy() && !mecanism.isShooting) { // && !mecanism.isShooting
                     follower.followPath(trd_path, true);
@@ -256,9 +255,9 @@ public class Red_Auto extends OpMode{
                         if (follower.getPose().getY() > 89) {
                             mecanism.shootA();                                                           //TODO:SHOOT
                             setPathState(10);
-                            }
                         }
                     }
+                }
                 break;
             case 10:
                 if (!follower.isBusy() && !mecanism.isShooting) {
@@ -326,10 +325,10 @@ public class Red_Auto extends OpMode{
                         follower.setMaxPower(1);
                         mecanism.intake(0);
                         follower.followPath(twlfth_path, true);
-                         if (follower.getPose().getY() > 89) {
+                        if (follower.getPose().getY() > 89) {
                             mecanism.shootA();                                                           //TODO:SHOOT
                             setPathState(18);
-                         }
+                        }
                     }
                 }
                 break;

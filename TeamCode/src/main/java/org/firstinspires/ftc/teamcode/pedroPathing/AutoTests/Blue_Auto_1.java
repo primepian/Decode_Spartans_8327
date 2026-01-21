@@ -8,7 +8,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.OpMaster.Mecanismos;
@@ -17,8 +17,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import java.util.List;
 
 
-@Autonomous(name = "RED_Auto", group = "Autonomous")
-public class Red_Auto extends OpMode{
+@Autonomous(name = "BLUE_Auto", group = "Autonomous")
+public class Blue_Auto_1 extends OpMode{
     Mecanismos mecanism = new Mecanismos();
 
     private Follower follower;
@@ -27,11 +27,10 @@ public class Red_Auto extends OpMode{
 
     private double time_Stamp;
 
-    private final Pose startingPose = new Pose(55.000, 8.000, Math.toRadians(90));            //TL:Path #1
-    private final Pose startingPose_CP = new Pose(64.000, 66.000);                            //TL:Path #1
+    private final Pose startingPose = new Pose(33.000, 135.000, Math.toRadians(-90));         //TL:Path #1
     private final Pose search_pose = new Pose(55.000, 101.000, Math.toRadians(66));           //TL:Path #1
 
-    private final Pose shoot_Pose = new Pose(53.000, 90.000, Math.toRadians(135));           //TL:Path #2 TODO: Shoot fixme:57.000, 105.000, Math.toRadians(145)
+    private final Pose shoot_Pose = new Pose(53.000, 90.000, Math.toRadians(135));            //TL:Path #2 TODO: Shoot
 
     private final Pose fst_itk_pose_CP = new Pose(49.000, 84.000);                            //TL:Path #3
     private final Pose fst_itk_pose = new Pose(50.000, 78.000, Math.toRadians(180));          //TL:Path #3
@@ -73,91 +72,91 @@ public class Red_Auto extends OpMode{
 
     public void buildPaths() {
 
-        start_path = new Path(new BezierCurve(startingPose.mirror(), startingPose_CP.mirror(), search_pose.mirror()));
+        start_path = new Path(new BezierLine(startingPose, search_pose));
         start_path.setLinearHeadingInterpolation(startingPose.getHeading(), search_pose.getHeading());
 
         snd_path = follower.pathBuilder()
-                .addPath(new BezierLine(search_pose.mirror(), shoot_Pose.mirror()))
+                .addPath(new BezierLine(search_pose, shoot_Pose))
                 .setLinearHeadingInterpolation(search_pose.getHeading(), shoot_Pose.getHeading())
                 .build();
 
         trd_path = follower.pathBuilder()
-                .addPath(new BezierCurve(shoot_Pose.mirror(), fst_itk_pose_CP.mirror(), fst_itk_pose.mirror()))
+                .addPath(new BezierCurve(shoot_Pose, fst_itk_pose_CP, fst_itk_pose))
                 .setLinearHeadingInterpolation(shoot_Pose.getHeading(), fst_itk_pose.getHeading())
                 .build();
 
         fth_path = follower.pathBuilder()
-                .addPath(new BezierLine(fst_itk_pose.mirror(), fst_itk_1.mirror()))
+                .addPath(new BezierLine(fst_itk_pose, fst_itk_1))
                 .setLinearHeadingInterpolation(fst_itk_pose.getHeading(), fst_itk_1.getHeading())
                 .build();
 
         fvth_path = follower.pathBuilder()
-                .addPath(new BezierLine(fst_itk_1.mirror(), fst_itk_2.mirror()))
+                .addPath(new BezierLine(fst_itk_1, fst_itk_2))
                 .setLinearHeadingInterpolation(fst_itk_1.getHeading(), fst_itk_2.getHeading())
                 .build();
 
         sxth_path = follower.pathBuilder()
-                .addPath(new BezierLine(fst_itk_2.mirror(), fst_itk_3.mirror()))
+                .addPath(new BezierLine(fst_itk_2, fst_itk_3))
                 .setLinearHeadingInterpolation(fst_itk_2.getHeading(), fst_itk_3.getHeading())
                 .build();
 
         svnth_path = follower.pathBuilder()
-                .addPath(new BezierCurve(fst_itk_3.mirror(), snd_shoot_CP.mirror(), shoot_Pose.mirror()))
+                .addPath(new BezierCurve(fst_itk_3, snd_shoot_CP, shoot_Pose))
                 .setLinearHeadingInterpolation(fst_itk_3.getHeading(), shoot_Pose.getHeading())
                 .build();
 
         egth_path = follower.pathBuilder()
-                .addPath(new BezierCurve(shoot_Pose.mirror(), snd_itk_pose_CP.mirror(), snd_itk_pose.mirror()))
+                .addPath(new BezierCurve(shoot_Pose, snd_itk_pose_CP, snd_itk_pose))
                 .setLinearHeadingInterpolation(shoot_Pose.getHeading(), snd_itk_pose.getHeading())
                 .build();
 
         nnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(snd_itk_pose.mirror(), snd_itk_1.mirror()))
+                .addPath(new BezierLine(snd_itk_pose, snd_itk_1))
                 .setLinearHeadingInterpolation(snd_itk_pose.getHeading(), snd_itk_1.getHeading())
                 .build();
 
         tenth_path = follower.pathBuilder()
-                .addPath(new BezierLine(snd_itk_1.mirror(), snd_itk_2.mirror()))
+                .addPath(new BezierLine(snd_itk_1, snd_itk_2))
                 .setLinearHeadingInterpolation(snd_itk_1.getHeading(), snd_itk_2.getHeading())
                 .build();
 
         elvnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(snd_itk_2.mirror(), snd_itk_3.mirror()))
+                .addPath(new BezierLine(snd_itk_2, snd_itk_3))
                 .setLinearHeadingInterpolation(snd_itk_2.getHeading(), snd_itk_3.getHeading())
                 .build();
 
         twlfth_path = follower.pathBuilder()
-                .addPath(new BezierCurve(snd_itk_3.mirror(), trd_shoot_CP.mirror(), shoot_Pose.mirror()))
+                .addPath(new BezierCurve(snd_itk_3, trd_shoot_CP, shoot_Pose))
                 .setLinearHeadingInterpolation(snd_itk_3.getHeading(), shoot_Pose.getHeading())
                 .build();
 
         thirtnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(shoot_Pose.mirror(), trd_itk_pose.mirror()))
+                .addPath(new BezierLine(shoot_Pose, trd_itk_pose))
                 .setLinearHeadingInterpolation(shoot_Pose.getHeading(), trd_itk_pose.getHeading())
                 .build();
 
         frtnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(trd_itk_pose.mirror(), trd_itk_1.mirror()))
+                .addPath(new BezierLine(trd_itk_pose, trd_itk_1))
                 .setLinearHeadingInterpolation(trd_itk_pose.getHeading(), trd_itk_1.getHeading())
                 .build();
 
         fftnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(trd_itk_1.mirror(), trd_itk_2.mirror()))
+                .addPath(new BezierLine(trd_itk_1, trd_itk_2))
                 .setLinearHeadingInterpolation(trd_itk_1.getHeading(), trd_itk_2.getHeading())
                 .build();
 
         sxtnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(trd_itk_2.mirror(), trd_itk_3.mirror()))
+                .addPath(new BezierLine(trd_itk_2, trd_itk_3))
                 .setLinearHeadingInterpolation(trd_itk_2.getHeading(), trd_itk_3.getHeading())
                 .build();
 
         svntnth_path = follower.pathBuilder()
-                .addPath(new BezierCurve(trd_itk_3.mirror(), frth_shoot_CP.mirror(), shoot_Pose.mirror()))
+                .addPath(new BezierCurve(trd_itk_3, frth_shoot_CP, shoot_Pose))
                 .setLinearHeadingInterpolation(trd_itk_3.getHeading(), shoot_Pose.getHeading())
                 .build();
 
         eightnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(shoot_Pose.mirror(), parking_pose.mirror()))
+                .addPath(new BezierLine(shoot_Pose, parking_pose))
                 .setLinearHeadingInterpolation(shoot_Pose.getHeading(), parking_pose.getHeading())
                 .build();
     }
@@ -186,7 +185,7 @@ public class Red_Auto extends OpMode{
                     }
                 }
                 break;
-                
+
             case 2:
                 if (!follower.isBusy() && !mecanism.isShooting) { // && !mecanism.isShooting
                     follower.followPath(trd_path, true);
@@ -256,9 +255,9 @@ public class Red_Auto extends OpMode{
                         if (follower.getPose().getY() > 89) {
                             mecanism.shootA();                                                           //TODO:SHOOT
                             setPathState(10);
-                            }
                         }
                     }
+                }
                 break;
             case 10:
                 if (!follower.isBusy() && !mecanism.isShooting) {
@@ -326,10 +325,10 @@ public class Red_Auto extends OpMode{
                         follower.setMaxPower(1);
                         mecanism.intake(0);
                         follower.followPath(twlfth_path, true);
-                         if (follower.getPose().getY() > 89) {
+                        if (follower.getPose().getY() > 89) {
                             mecanism.shootA();                                                           //TODO:SHOOT
                             setPathState(18);
-                         }
+                        }
                     }
                 }
                 break;
