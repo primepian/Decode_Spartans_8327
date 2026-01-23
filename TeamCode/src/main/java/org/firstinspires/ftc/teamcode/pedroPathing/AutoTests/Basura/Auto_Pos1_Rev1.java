@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.AutoTests;
-
-import static kotlinx.coroutines.DelayKt.delay;
+package org.firstinspires.ftc.teamcode.pedroPathing.AutoTests.Basura;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
@@ -9,7 +7,6 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;

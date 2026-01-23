@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.AutoTests;
+package org.firstinspires.ftc.teamcode.pedroPathing.AutoTests.Basura;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
@@ -12,10 +12,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
-import java.time.Duration;
-
-import kotlinx.coroutines.Delay;
 
 @Autonomous(group = "Tests")
 @Disabled

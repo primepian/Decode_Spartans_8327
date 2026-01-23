@@ -55,7 +55,6 @@ public class TeleOpMaster extends OpMode {
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 //       start positions
-        mecanism.barril.setPosition(Mecanismos.Ain);
         mecanism.pateador.setPosition(Mecanismos.pateador_off); //fixme
 
         pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
@@ -146,51 +145,49 @@ public class TeleOpMaster extends OpMode {
         if (gamepad2.right_stick_button) {mecanism.DESIRED_TAG_ID = 24;}    //NOTE: RED TEAM
 
 //  TL: INVERT DRIVE    {GPAD_1}
-        boolean currentRB = gamepad1.right_bumper;
-        if (currentRB && !mecanism.RBflag) {
-            mecanism.invertedDrive = !mecanism.invertedDrive;
-        }
-        mecanism.RBflag = currentRB;
+//        boolean currentRB = gamepad1.right_bumper;
+//        if (currentRB && !mecanism.RBflag) {
+//            mecanism.invertedDrive = !mecanism.invertedDrive;
+//        }
+//        mecanism.RBflag = currentRB;
 
 //  TL: INTAKE      {GPAD_1}
         if (gamepad2.dpad_down){
             mecanism.uman.setPosition(0.18);
             mecanism.intakerON();
             mecanism.INTAKE_COOLDOWN_MS = 800;
-        }
-
+        }//NOTE: HUMAN
         else{
             mecanism.uman.setPosition(0.27);
             mecanism.intakerOFF();
             mecanism.INTAKE_COOLDOWN_MS = 300;
-        }//NOTE: HUMAN
-
-        if (gamepad2.dpad_up || (mecanism.A != 0 && mecanism.B != 0 && mecanism.C != 0)){
-            mecanism.intakerON();
         }
-        else {
+
+        if (gamepad1.right_bumper){
+            mecanism.intakerON();
+        } else {
             mecanism.intakerOFF();
         }//NOTE: DESTAPACAÑOS
 
         if (gamepad1.right_trigger > 0.0){
-            mecanism.intake( -0.9);}//NOTE: TRAGATODO
+            mecanism.intake( -0.7);}//NOTE: TRAGATODO
         else if (gamepad1.b){mecanism.intake( 0.5);
         } //NOTE: ESCUPELUPE
         else {
             mecanism.intake( 0);}
 
 //TL ---------- MODE SELECT ----------
-        if (gamepad1.dpad_right) {
+        if (gamepad2.dpad_right) {
             mecanism.PPG = true;
             mecanism.PGP = false;
             mecanism.GPP = false;
         }
-        if (gamepad1.dpad_up) {
+        if (gamepad2.dpad_up) {
             mecanism.PGP = true;
             mecanism.PPG = false;
             mecanism.GPP = false;
         }
-        if (gamepad1.dpad_left) {
+        if (gamepad2.dpad_left) {
             mecanism.GPP = true;
             mecanism.PPG = false;
             mecanism.PGP = false;
@@ -203,6 +200,7 @@ public class TeleOpMaster extends OpMode {
         } //NOTE: DISPARAR
         if (gamepad2.right_bumper){
             mecanism.shootPow(0);
+            mecanism.pateador.setPosition(Mecanismos.pateador_off);
             mecanism.isShooting = false;
         } //NOTE: APAGAR CAÑON
 
@@ -225,9 +223,9 @@ public class TeleOpMaster extends OpMode {
             mecanism.C = 0;
         } //NOTE: ALL TO 0
         //NOTE: a,b,x TO 0
-        if (gamepad2.a){mecanism.A = 0;}
-        if (gamepad2.b){mecanism.B = 0;}
-        if (gamepad2.x){mecanism.C = 0;}
+        if (gamepad2.a){mecanism.A = 1;}
+        if (gamepad2.b){mecanism.B = 1;}
+        if (gamepad2.x){mecanism.C = 1;}
 
         mecanism.G28();
         mecanism.shootingandIntake(telemetry);
