@@ -214,7 +214,7 @@ public class TeleOpMaster extends OpMode {
         mecanism.RB2flag = currentRB2;
 
         if (gamepad2.left_trigger > 0.1f) {
-            mecanism.shootPow(1.0);
+            mecanism.shootPow(0.95);
         }//NOTE: SHOOT POW 1
 
         if (gamepad2.y) {
@@ -223,9 +223,21 @@ public class TeleOpMaster extends OpMode {
             mecanism.C = 0;
         } //NOTE: ALL TO 0
         //NOTE: a,b,x TO 0
-        if (gamepad2.a){mecanism.A = 1;}
-        if (gamepad2.b){mecanism.B = 1;}
-        if (gamepad2.x){mecanism.C = 1;}
+        if (gamepad2.a){
+            Mecanismos.pow1 = 0.6;
+            Mecanismos.pow2 = 0.62;
+            Mecanismos.pow3 = 0.6;
+        }
+        if (gamepad2.b){
+            Mecanismos.pow1 = 0.7;
+            Mecanismos.pow2 = 0.75;
+            Mecanismos.pow3 = 0.7;
+        }
+        if (gamepad2.x){
+            Mecanismos.pow1 = 0.91;
+            Mecanismos.pow2 = 0.92;
+            Mecanismos.pow3 = 0.91;
+        }
 
         mecanism.G28();
         mecanism.shootingandIntake(telemetry);

@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.AutoTests;
+
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
-import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.OpMaster.Mecanismos;
@@ -16,16 +15,16 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import java.util.List;
 
 @Autonomous(group = "Emergencia")
-public class RED_EMERGENCIA extends OpMode{
+public class BLUE_EMERGENCIA extends OpMode{
     Mecanismos mecanism = new Mecanismos();
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private final Pose startingPose = new Pose(55.000, 8.000, Math.toRadians(90)).mirror();            //TL:Path #1
+    private final Pose startingPose = new Pose(55.000, 8.000, Math.toRadians(90));            //TL:Path #1
     private final Pose second = new Pose(62, 25, Math.toRadians(114)).mirror();           //TL:Path #2 TODO: Shoot fixme:57.000, 105.000, Math.toRadians(145)
-    private final Pose tird = new Pose(35, 8, Math.toRadians(90)).mirror();           //TL:Path #2 TODO: Shoot fixme:57.000, 105.000, Math.toRadians(145)
+    private final Pose tird = new Pose(35, 8, Math.toRadians(90));           //TL:Path #2 TODO: Shoot fixme:57.000, 105.000, Math.toRadians(145)
 
 
     private Path start_path;

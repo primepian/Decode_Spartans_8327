@@ -66,14 +66,18 @@ public class Mecanismos {
     public static final double  Cin = 0.338;
 
     public static final double  Aout = 0.375;
-    public static final double  Bout = 0.303;
+    public static final double  Bout = 0.302;
     public static final double  Cout = 0.228;
     public static final double  pateador_off = 0.5;
-    public static final double  pateador_on = 0.46;
+    public static final double  pateador_on = 0.455;
     public static final double LON = 0.69;
     public static final double LOFF = 0.34;
     public static final double RON = 0.85;
     public static final double ROFF = 0.905;
+
+    public static double pow1 = 0.7;
+    public static double pow2 = 0.7;
+    public static double pow3 = 0.7;
     char actualPos = 'a';
     //NOTE: 0 = empty || 1 = PURPLE |
     // | 2 = GREEN
@@ -90,7 +94,7 @@ public class Mecanismos {
     public int shootStep = 0;
     public long shootStartTime = 0;
 
-    public final long OUTTAKE_HOLD_TIME_MS = 1450;
+    public final long OUTTAKE_HOLD_TIME_MS = 1800;
     public long lastIntakeTime = 0;
     public long INTAKE_COOLDOWN_MS = 800;
     //Tl:       COSOS CHISTOSOS
@@ -100,7 +104,7 @@ public class Mecanismos {
     public boolean RB2flag;
 
     //note    AprilTag search.
-    public final double DESIRED_DISTANCE =  57;
+    public final double DESIRED_DISTANCE =  114;
     public final double SPEED_GAIN  =  0.02;
     public final double TURN_GAIN   =  0.01;
     public final double MAX_AUTO_SPEED = 0.5;
@@ -180,7 +184,7 @@ public class Mecanismos {
     }
     public void shoot(){
         if (!isShooting) {
-            shootPow(.85); //fixme
+            shootPow(pow1); //fixme
             isShooting = true;
             shootStep = 0;
             shootStartTime = System.currentTimeMillis();
@@ -235,7 +239,7 @@ public class Mecanismos {
                 if (System.currentTimeMillis() - shootStartTime >= 800) {
                     pateador.setPosition(pateador_on); //fixme
                 }
-                if (System.currentTimeMillis() - shootStartTime >= 1200) {
+                if (System.currentTimeMillis() - shootStartTime >= 1300) {
                     pateador.setPosition(pateador_off); //fixme
                 }
                 if (System.currentTimeMillis() - shootStartTime >= OUTTAKE_HOLD_TIME_MS) {
@@ -244,8 +248,8 @@ public class Mecanismos {
                     else C = 0;
 
                     shootStep++;
-                    if (shootStep == 1){shootPow(0.75);}
-                    else if (shootStep == 2){shootPow(0.7);}
+                    if (shootStep == 1){shootPow(pow2);}
+                    else if (shootStep == 2){shootPow(pow3);}
                     if (shootStep >= 3) {
                         shootPow(0);
                         isShooting = false;
@@ -302,6 +306,8 @@ public class Mecanismos {
             }
         }
     }
+
+
     public void shootingandIntakeMax(Telemetry telemetry) {
         if (isShooting) {
             intakerON();
@@ -407,7 +413,8 @@ public class Mecanismos {
             }
         }
     }
-    private void advanceToPreferredEmpty() {
+    private void advanceToPreferredEmpty()
+    {
         if (actualPos == 'a') {
             if (B == 0) {
                 barril.setPosition(Bin);
@@ -436,24 +443,24 @@ public class Mecanismos {
     }
 
 //TL: ============ Autonomus ===============
-    public void shoot3(){
+    public void shootFar(){
         if (!isShooting) {
-            shootPow(.78); //fixme
+            shootPow(.87); //fixme
             isShooting = true;
             shootStep = 0;
             shootStartTime = System.currentTimeMillis();
         }
     }
-    public void shoot0(){
+    public void shootNear(){
         if (!isShooting) {
-            shootPow(.73); //fixme
+            shootPow(.87); //fixme
             isShooting = true;
             shootStep = 0;
             shootStartTime = System.currentTimeMillis();
         }
     }
 
-    public void shootingandIntake3(Telemetry telemetry) {
+    public void shootingandIntakeFar(Telemetry telemetry) {
         if (isShooting) {
             intakerON();
             String sequence = PPG ? "PPG" : PGP ? "PGP" : "GPP";
@@ -487,10 +494,10 @@ public class Mecanismos {
                 double targetPos = (chamber == 'a') ? Aout : (chamber == 'b') ? Bout : Cout;
                 barril.setPosition(targetPos);
                 actualPos = chamber;
-                if (System.currentTimeMillis() - shootStartTime >= 700) {
+                if (System.currentTimeMillis() - shootStartTime >= 800) {
                     pateador.setPosition(pateador_on); //fixme
                 }
-                if (System.currentTimeMillis() - shootStartTime >= 1100) {
+                if (System.currentTimeMillis() - shootStartTime >= 1200) {
                     pateador.setPosition(pateador_off); //fixme
                 }
                 if (System.currentTimeMillis() - shootStartTime >= OUTTAKE_HOLD_TIME_MS) {
@@ -499,8 +506,8 @@ public class Mecanismos {
                     else C = 0;
 
                     shootStep++;
-                    if (shootStep == 1){shootPow(0.72);}
-                    else if (shootStep == 2){shootPow(0.72);}
+                    if (shootStep == 1){shootPow(0.9);}
+                    else if (shootStep == 2){shootPow(0.87);}
                     if (shootStep >= 3) {
                         intakerOFF();
                         shootPow(0);
@@ -558,7 +565,7 @@ public class Mecanismos {
             }
         }
     }
-    public void shootingandIntake0(Telemetry telemetry) {
+    public void shootingandIntakeNear(Telemetry telemetry) {
         if (isShooting) {
             intakerON();
             String sequence = PPG ? "PPG" : PGP ? "PGP" : "GPP";
@@ -592,10 +599,10 @@ public class Mecanismos {
                 double targetPos = (chamber == 'a') ? Aout : (chamber == 'b') ? Bout : Cout;
                 barril.setPosition(targetPos);
                 actualPos = chamber;
-                if (System.currentTimeMillis() - shootStartTime >= 700) {
+                if (System.currentTimeMillis() - shootStartTime >= 800) {
                     pateador.setPosition(pateador_on); //fixme
                 }
-                if (System.currentTimeMillis() - shootStartTime >= 1100) {
+                if (System.currentTimeMillis() - shootStartTime >= 1200) {
                     pateador.setPosition(pateador_off); //fixme
                 }
                 if (System.currentTimeMillis() - shootStartTime >= OUTTAKE_HOLD_TIME_MS) {
@@ -604,8 +611,8 @@ public class Mecanismos {
                     else C = 0;
 
                     shootStep++;
-                    if (shootStep == 1){shootPow(0.68);}
-                    else if (shootStep == 2){shootPow(0.68);}
+                    if (shootStep == 1){shootPow(0.9);}
+                    else if (shootStep == 2){shootPow(0.87);}
                     if (shootStep >= 3) {
                         intakerOFF();
                         shootPow(0);

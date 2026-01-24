@@ -18,7 +18,7 @@ import java.util.List;
 
 
 @Autonomous(group = "Blue")
-public class Blue_Up_Beta extends OpMode{
+public class Blue_Up extends OpMode{
     Mecanismos mecanism = new Mecanismos();
 
     private Follower follower;
@@ -42,17 +42,18 @@ public class Blue_Up_Beta extends OpMode{
 
     private final Pose snd_itk_pose = new Pose(45.000, 65.000, Math.toRadians(180));          //TL:Path #8
 
-    private final Pose snd_itk_1 = new Pose(33.000, 60.000, Math.toRadians(180));             //TL:Path #9
+    private final Pose snd_itk_1 = new Pose(33.000, 59.000, Math.toRadians(180));             //TL:Path #9
 
-    private final Pose snd_itk_2 = new Pose(26.000, 60.000, Math.toRadians(180));             //TL:Path #10
+    private final Pose snd_itk_2 = new Pose(28.000, 59.000, Math.toRadians(180));             //TL:Path #10
 
-    private final Pose snd_itk_3 = new Pose(18.000, 60.000, Math.toRadians(180));             //TL:Path #11
+    private final Pose snd_itk_3 = new Pose(18.000, 59.000, Math.toRadians(180));             //TL:Path #11
 
     private final Pose trd_shoot_CP = new Pose(54.000, 53.000);                               //TL:Path #12 TODO: With SHOOT
 
-    private final Pose end1 = new Pose(25.000, 66.000, Math.toRadians(180));                               //TL:Path #12 TODO: With SHOOT
+    private final Pose end1 = new Pose(25.000, 68.000, Math.toRadians(180));                               //TL:Path #12 TODO: With SHOOT
 
-    private final Pose end2 = new Pose(15.000, 66.000, Math.toRadians(180));                               //TL:Path #12 TODO: With SHOOT
+    private final Pose end2 = new Pose(15.000, 68.000, Math.toRadians(180));                               //TL:Path #12 TODO: With SHOOT
+
 
     private final Pose trd_itk_pose = new Pose(56.000, 32.000, Math.toRadians(180));          //TL:Path #13
 
@@ -195,7 +196,7 @@ public class Blue_Up_Beta extends OpMode{
                 break;
             case 28:
                 if (!follower.isBusy()){
-                    mecanism.shoot3();                                                           //TL:SHOOT
+                    mecanism.shootNear();                                                           //TL:SHOOT
                     setPathState(2);
                 }
                 break;
@@ -220,7 +221,7 @@ public class Blue_Up_Beta extends OpMode{
                 }
                 break;
             case 5:
-                if ((actual_time >= time_Stamp + 0.2) && (actual_time < 0.9)) {
+                if ((actual_time >= time_Stamp + 0.2) && (actual_time < 9)) {
                     mecanism.intakerON();
                 }
                 if (actual_time >= time_Stamp + 0.85) {
@@ -231,7 +232,7 @@ public class Blue_Up_Beta extends OpMode{
                 if (actual_time >= time_Stamp + 0.9){
                     mecanism.intakerOFF();
                 }
-                if (actual_time >= time_Stamp + 1.5){
+                if (actual_time >= time_Stamp + 1.75){
                     follower.followPath(fvth_path, true);                                   //TL:FIRST INTAKE, 2
                     setPathState(6);
                 }
@@ -253,7 +254,7 @@ public class Blue_Up_Beta extends OpMode{
                 if (actual_time >= time_Stamp + 0.9){
                     mecanism.intakerOFF();
                 }
-                if (actual_time >= time_Stamp + 1.5){
+                if (actual_time >= time_Stamp + 1.75){
                     follower.followPath(sxth_path, true);                                   //TL:FIRST INTAKE, 3
                     setPathState(8);
                 }
@@ -281,7 +282,7 @@ public class Blue_Up_Beta extends OpMode{
                     mecanism.shootPow(0.83)   ;
                 }
                 if (!follower.isBusy()) {
-                    mecanism.shoot3();                                                              //TODO:SHOOT
+                    mecanism.shootNear();                                                              //TODO:SHOOT
                     setPathState(10);
                 }
                 break;
@@ -352,7 +353,7 @@ public class Blue_Up_Beta extends OpMode{
                 }
                 break;
             case 17:
-                if (actual_time >= time_Stamp + 0.2) {
+                if (actual_time >= time_Stamp + 0.4) {
                     mecanism.intakerON();
                     mecanism.intake(0);
                     mecanism.C = 1;
@@ -363,7 +364,6 @@ public class Blue_Up_Beta extends OpMode{
                 break;
             case 18:
                 if (!follower.isBusy()) {
-                    follower.followPath(final_b);
                     setPathState(19);
                 }
                 break;
@@ -389,7 +389,7 @@ public class Blue_Up_Beta extends OpMode{
     @Override
     public void loop() {
         mecanism.G28();
-        mecanism.shootingandIntake3(telemetry);
+        mecanism.shootingandIntakeNear(telemetry);
 
         //TL: APRIL TAG DETECTION
 

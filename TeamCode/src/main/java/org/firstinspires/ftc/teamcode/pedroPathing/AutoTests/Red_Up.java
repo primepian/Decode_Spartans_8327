@@ -8,7 +8,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.OpMaster.Mecanismos;
@@ -16,9 +16,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
 
-
-@Autonomous(group = "Blue")
-public class Blue_Up_Alfa extends OpMode{
+@Autonomous(group = "Red")
+public class Red_Up extends OpMode{
     Mecanismos mecanism = new Mecanismos();
 
     private Follower follower;
@@ -27,44 +26,47 @@ public class Blue_Up_Alfa extends OpMode{
 
     private double time_Stamp;
 
-    private final Pose startingPose = new Pose(31, 135, Math.toRadians(90));            //TL:Path #1
-    private final Pose search_pose = new Pose(55.000, 101.000, Math.toRadians(66));           //TL:Path #1
+    private final Pose startingPose = new Pose(31, 135, Math.toRadians(90)).mirror();            //TL:Path #1
+    private final Pose search_pose = new Pose(55.000, 101.000, Math.toRadians(66)).mirror();           //TL:Path #1
 
-    private final Pose shoot_Pose = new Pose(50, 95.000, Math.toRadians(137.5));           //TL:Path #2 TODO: Shoot fixme:53.000, 90.000, Math.toRadians(135)
+    private final Pose shoot_Pose = new Pose(50, 95.000, Math.toRadians(137.5)).mirror();           //TL:Path #2 TODO: Shoot fixme:53.000, 90.000, Math.toRadians(135)
 
-    private final Pose fst_itk_pose = new Pose(45.000, 83.000, Math.toRadians(180));          //TL:Path #3
+    private final Pose fst_itk_pose = new Pose(45.000, 83.000, Math.toRadians(180)).mirror();          //TL:Path #3
 
-    private final Pose fst_itk_1 = new Pose(33.000, 83.000, Math.toRadians(180));             //TL:Path #4
+    private final Pose fst_itk_1 = new Pose(33.000, 83.000, Math.toRadians(180)).mirror();             //TL:Path #4
 
-    private final Pose fst_itk_2 = new Pose(28.000, 83.000, Math.toRadians(180));               //TL:Path #5
+    private final Pose fst_itk_2 = new Pose(28.000, 83.000, Math.toRadians(180)).mirror();               //TL:Path #5
 
-    private final Pose fst_itk_3 = new Pose(18.000, 83.000, Math.toRadians(180));             //TL:Path #6
+    private final Pose fst_itk_3 = new Pose(18.000, 83.000, Math.toRadians(180)).mirror();             //TL:Path #6
 
-    private final Pose snd_itk_pose = new Pose(45.000, 65.000, Math.toRadians(180));          //TL:Path #8
+    private final Pose snd_itk_pose = new Pose(45.000, 65.000, Math.toRadians(180)).mirror();          //TL:Path #8
 
-    private final Pose snd_itk_1 = new Pose(33.000, 60.000, Math.toRadians(180));             //TL:Path #9
 
-    private final Pose snd_itk_2 = new Pose(26.000, 60.000, Math.toRadians(180));             //TL:Path #10
+    private final Pose snd_itk_1 = new Pose(33.000, 60.000, Math.toRadians(180)).mirror();             //TL:Path #9
 
-    private final Pose snd_itk_3 = new Pose(18.000, 60.000, Math.toRadians(180));             //TL:Path #11
+    private final Pose snd_itk_2 = new Pose(28.000, 60.000, Math.toRadians(180)).mirror();             //TL:Path #10
 
-    private final Pose trd_shoot_CP = new Pose(54.000, 53.000);                               //TL:Path #12 TODO: With SHOOT
+    private final Pose snd_itk_3 = new Pose(18.000, 60.000, Math.toRadians(180)).mirror();             //TL:Path #11
 
-    private final Pose end1 = new Pose(25.000, 67.000, Math.toRadians(180));                               //TL:Path #12 TODO: With SHOOT
+    private final Pose trd_shoot_CP = new Pose(54.000, 53.000).mirror();                               //TL:Path #12 TODO: With SHOOT
 
-    private final Pose end2 = new Pose(15.000, 67.000, Math.toRadians(180));                               //TL:Path #12 TODO: With SHOOT
+    private final Pose end1 = new Pose(25.000, 66.000, Math.toRadians(180)).mirror();                   //TL:Path #12 TODO: With SHOOT
 
-    private final Pose trd_itk_pose = new Pose(56.000, 32.000, Math.toRadians(180));          //TL:Path #13
+    private final Pose end2 = new Pose(15.000, 66.000, Math.toRadians(180)).mirror();                   //TL:Path #12 TODO: With SHOOT
 
-    private final Pose trd_itk_1 = new Pose(47.000, 32.000, Math.toRadians(180));             //TL:Path #14
 
-    private final Pose trd_itk_2 = new Pose(42.000, 32.000, Math.toRadians(180));             //TL:Path #15
 
-    private final Pose trd_itk_3 = new Pose(36.000, 32.000, Math.toRadians(180));             //TL:Path #16
+    private final Pose trd_itk_pose = new Pose(56.000, 32.000, Math.toRadians(180)).mirror();          //TL:Path #13
 
-    private final Pose frth_shoot_CP = new Pose(46.000, 91.000);                              //TL:Path #17 TODO: With SHOOT
+    private final Pose trd_itk_1 = new Pose(47.000, 32.000, Math.toRadians(180)).mirror();             //TL:Path #14
 
-    private final Pose parking_pose = new Pose(16.000, 103.000, Math.toRadians(180));         //TL:Path #18
+    private final Pose trd_itk_2 = new Pose(42.000, 32.000, Math.toRadians(180)).mirror();             //TL:Path #15
+
+    private final Pose trd_itk_3 = new Pose(36.000, 32.000, Math.toRadians(180)).mirror();             //TL:Path #16
+
+    private final Pose frth_shoot_CP = new Pose(46.000, 91.000).mirror();                              //TL:Path #17 TODO: With SHOOT
+
+    private final Pose parking_pose = new Pose(16.000, 103.000, Math.toRadians(180)).mirror();         //TL:Path #18
 
 
     private Path start_path;
@@ -195,7 +197,7 @@ public class Blue_Up_Alfa extends OpMode{
                 break;
             case 28:
                 if (!follower.isBusy()){
-                    mecanism.shoot3();                                                           //TL:SHOOT
+                    mecanism.shootNear();                                                           //TL:SHOOT
                     setPathState(2);
                 }
                 break;
@@ -231,7 +233,7 @@ public class Blue_Up_Alfa extends OpMode{
                 if (actual_time >= time_Stamp + 0.9){
                     mecanism.intakerOFF();
                 }
-                if (actual_time >= time_Stamp + 1.5){
+                if (actual_time >= time_Stamp + 1.7){
                     follower.followPath(fvth_path, true);                                   //TL:FIRST INTAKE, 2
                     setPathState(6);
                 }
@@ -253,7 +255,7 @@ public class Blue_Up_Alfa extends OpMode{
                 if (actual_time >= time_Stamp + 0.9){
                     mecanism.intakerOFF();
                 }
-                if (actual_time >= time_Stamp + 1.5){
+                if (actual_time >= time_Stamp + 1.7){
                     follower.followPath(sxth_path, true);                                   //TL:FIRST INTAKE, 3
                     setPathState(8);
                 }
@@ -281,7 +283,7 @@ public class Blue_Up_Alfa extends OpMode{
                     mecanism.shootPow(0.83)   ;
                 }
                 if (!follower.isBusy()) {
-                    mecanism.shoot3();                                                              //TODO:SHOOT
+                    mecanism.shootNear();                                                              //TODO:SHOOT
                     setPathState(10);
                 }
                 break;
@@ -363,7 +365,6 @@ public class Blue_Up_Alfa extends OpMode{
                 break;
             case 18:
                 if (!follower.isBusy()) {
-                    follower.followPath(final_b);
                     setPathState(19);
                 }
                 break;
@@ -389,7 +390,7 @@ public class Blue_Up_Alfa extends OpMode{
     @Override
     public void loop() {
         mecanism.G28();
-        mecanism.shootingandIntake3(telemetry);
+        mecanism.shootingandIntakeNear(telemetry);
 
         //TL: APRIL TAG DETECTION
 
