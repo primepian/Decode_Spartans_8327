@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 @TeleOp (group = "test")
+@Disabled
 public class elevador extends OpMode {
     CRServo elevaA;
     CRServo elevaB;

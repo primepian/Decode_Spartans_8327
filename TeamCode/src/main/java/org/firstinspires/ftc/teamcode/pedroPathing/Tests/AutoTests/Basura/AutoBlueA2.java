@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.AutoTests.Basura;
+package org.firstinspires.ftc.teamcode.pedroPathing.Tests.AutoTests.Basura;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;

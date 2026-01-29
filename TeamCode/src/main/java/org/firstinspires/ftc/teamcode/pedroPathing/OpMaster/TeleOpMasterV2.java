@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.OpMaster.MecanismTests;
+package org.firstinspires.ftc.teamcode.pedroPathing.OpMaster;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -9,13 +9,11 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.OpMaster.Mecanismos;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
@@ -25,28 +23,29 @@ import java.util.function.Supplier;
  * DRIVE [JOYSTICKS]
  * SLOW MODE [L_TRIGGER]
  * INTAKE [R_TRIGGER]
+ * -INTAKE [B]
  * INVERT DRIVE [RIGHT BUMPER]
  * SEARCH APRILTAGS [LEFT BUMPER]
  *
  * =====GPAD 2======
  * BLUE APRILTAG [LEFT STICK BUTTON]
  * RED APRILTAG [RIGHT STICK BUTTON]
- * CANNON [RIGHT TRIGGER]
- * Turret [LEFT TRIGGER]
+ * CANNON NEAR [RIGHT TRIGGER]
+ * CANNON FAR [LEFT TRIGGER]
+ * SELECT PATTERN [DPADS]
+ * HUMAN MODE [A]
  */
 
 @Configurable
 @TeleOp
-@Disabled
-public class TeleOpShooter extends OpMode {
+public class TeleOpMasterV2 extends OpMode {
     Mecanismos mecanism = new Mecanismos();
+    Mecanismos.DetectedColor detectedColor;
     private Follower follower;
     public static Pose startingPose; //See ExampleAuto to understand how to use this
     private boolean automatedDrive;
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
-
-
     @Override
     public void init() {
         mecanism.initAll(hardwareMap);
@@ -54,7 +53,8 @@ public class TeleOpShooter extends OpMode {
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-
+//       start positions
+        mecanism.pateador.setPosition(Mecanismos.pateador_off); //fixme
 
         pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98))))
@@ -79,7 +79,8 @@ public class TeleOpShooter extends OpMode {
 
         if (!automatedDrive) {//  TL: DRIVE {GPAD_1}
             if (!mecanism.invertedDrive) {
-                if (gamepad1.left_trigger == 0.0 && !gamepad1.x) follower.setTeleOpDrive(
+                if (gamepad1.left_trigger == 0.0) follower.setTeleOpDrive(
+
                         -gamepad1.left_stick_y,
                         -gamepad1.left_stick_x,
                         -gamepad1.right_stick_x,
@@ -92,7 +93,7 @@ public class TeleOpShooter extends OpMode {
                         true // Robot Centric
                 );
             } else {
-                if (gamepad1.left_trigger == 0.0 && !gamepad1.x) follower.setTeleOpDrive(
+                if (gamepad1.left_trigger == 0.0) follower.setTeleOpDrive(
                         gamepad1.left_stick_y,
                         gamepad1.left_stick_x,
                         -gamepad1.right_stick_x,
@@ -105,7 +106,7 @@ public class TeleOpShooter extends OpMode {
                         true // Robot Centric
                 );
             }
-        }
+        } //tl: drive / inverted drive
 
         List<AprilTagDetection> currentDetections = mecanism.aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
@@ -120,67 +121,103 @@ public class TeleOpShooter extends OpMode {
             } else {
                 telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
             }
-        }
-// TL: TURN TURRET {GPAD_2}
-//        if (gamepad2.x && mecanism.targetFound) {
-//            double headingError = mecanism.desiredTag.ftcPose.bearing;
-//            //P
-//            mecanism.turretP = Range.clip(headingError * mecanism.Kp, -mecanism.MAX_AUTO_TURN, mecanism.MAX_AUTO_TURN);
-//            //D
-//            double deltaTime = mecanism.timer.seconds();
-//            if (deltaTime > 0) {
-//                double derivada = (headingError - mecanism.lastHeadingError) / deltaTime;
-//                mecanism.turretD = mecanism.Kd * derivada;
-//            } else {
-//                mecanism.turretD = 0;
-//            }
-//            //update...
-//            mecanism.lastHeadingError = headingError;
-//            mecanism.timer.reset();
-//
-//            mecanism.turret.setPower(mecanism.turretP + mecanism.turretD);
-//        }
+        } //tl: April Tags
+
+        if (gamepad1.left_bumper && mecanism.targetFound) {
+            double  rangeError      = (mecanism.desiredTag.ftcPose.range - mecanism.DESIRED_DISTANCE);
+            double  headingError    = mecanism.desiredTag.ftcPose.bearing;
+
+            mecanism.drive  = Range.clip(rangeError * mecanism.SPEED_GAIN, -mecanism.MAX_AUTO_SPEED, mecanism.MAX_AUTO_SPEED);
+            mecanism.turn   = Range.clip(headingError * mecanism.TURN_GAIN, -mecanism.MAX_AUTO_TURN, mecanism.MAX_AUTO_TURN) ;
+//mecanism.drive
+            follower.setTeleOpDrive(
+                    -gamepad1.left_stick_y,
+                    -gamepad1.left_stick_x * 0.2,
+                    mecanism.turn,
+                    true
+            );
+        }   //tl: Automatic Shoot Positioning
+
+        //  TL: INTAKE      {GPAD_1}
+        //  : DESTAPACAÑOS
+        if (gamepad1.right_trigger > 0.0){
+            mecanism.intake( -0.7);}//NOTE: TRAGATODO
+        else if (gamepad1.b){mecanism.intake( 0.5);
+        } //NOTE: ESCUPELUPE
+        else {
+            mecanism.intake( 0);}
 
 //  Tl: CHOOSE TEAM FOR SHOOTING POSE   {GPAD_2}
         if (gamepad2.left_stick_button)  {mecanism.DESIRED_TAG_ID = 20;}    //NOTE: BLUE TEAM
         if (gamepad2.right_stick_button) {mecanism.DESIRED_TAG_ID = 24;}    //NOTE: RED TEAM
 
-//  TL: INVERT DRIVE    {GPAD_1}
-        boolean currentRB = gamepad1.right_bumper;
-        if (currentRB && !mecanism.RBflag) {
-            mecanism.invertedDrive = !mecanism.invertedDrive;
+//TL ---------- MODE SELECT ----------
+        if (gamepad2.dpad_right) {
+            mecanism.PPG = true;
+            mecanism.PGP = false;
+            mecanism.GPP = false;
         }
-        mecanism.RBflag = currentRB;
-
-//  TL: INTAKE      {GPAD_1}
-        if (gamepad1.a){
-            mecanism.intake(1);
-        } if (gamepad1.b){
-            mecanism.intake(-1);
-        } else {
-            mecanism.intake(0);
+        if (gamepad2.dpad_up) {
+            mecanism.PGP = true;
+            mecanism.PPG = false;
+            mecanism.GPP = false;
         }
-
-//  TL: POS. SHOOT  {GPAD_1}
-//  TL: BARRIL      {GPAD_2}
-
-//  TL: CANNON      {GPAD_2}
-        if (gamepad2.right_trigger > 0.0){
-            //mecanism.shoot(0.35);
-        } if (gamepad2.left_trigger > 0.0){
-            //mecanism.shoot(0.45);
-        } else {
-            //mecanism.shoot(0);
+        if (gamepad2.dpad_left) {
+            mecanism.GPP = true;
+            mecanism.PPG = false;
+            mecanism.PGP = false;
         }
 
-//  TL: CAMBIO DE MODO [GPP] [PGP] [PPG]    {GPAD_2}
-//        if (gamepad2.dpad_right){mecanism.GPP = true;}
-//        if (gamepad2.dpad_up){mecanism.PGP = true;}
-//        if (gamepad2.dpad_left){mecanism.PPG = true;}
+//tl:---------- CANNON / BARREL -----------
+        if (gamepad2.right_trigger > 0.1f){
+            mecanism.shoot();
+        } //NOTE: DISPARAR
+        if (gamepad2.right_bumper){
+            mecanism.shootPow(0);
+            mecanism.pateador.setPosition(Mecanismos.pateador_off);
+            mecanism.isShooting = false;
+        } //NOTE: APAGAR CAÑON
+
+        //  NOTE: [LB] ACTUAL TO 1
+        boolean currentRB2 = gamepad2.left_bumper;
+        if (currentRB2 && !mecanism.RB2flag){
+            if (mecanism.actualPos == 'a' && mecanism.A == 0){mecanism.A = 1;}
+            else if (mecanism.actualPos == 'b' && mecanism.B == 0){mecanism.B = 1;}
+            else if (mecanism.actualPos == 'c' && mecanism.C == 0){mecanism.C = 1;}
+        }
+        mecanism.RB2flag = currentRB2;
+
+        if (gamepad2.left_trigger > 0.1f) {
+            mecanism.shootPow(Mecanismos.pow1);
+            
+        }//NOTE: SHOOT POW 1
+
+        //NOTE: a,b,x TO 0
+
+        if (gamepad2.a){
+            Mecanismos.pow1 = 50;
+            Mecanismos.pow2 = 50;
+            Mecanismos.pow3 = 50;
+        }
+        if (gamepad2.b){
+            Mecanismos.pow1 = 75;
+            Mecanismos.pow2 = 75;
+            Mecanismos.pow3 = 75;
+        }
+        if (gamepad2.x){
+            Mecanismos.pow1 = 100;
+            Mecanismos.pow2 = 100;
+            Mecanismos.pow3 = 100;
+        }
+        if (gamepad2.y){
+            mecanism.check = false;
+            mecanism.checkStep = 0;
+            mecanism.lastIntakeTime = System.currentTimeMillis();
+        }
 
 
-        telemetryM.addLine("");
+        mecanism.G28();
+        mecanism.shootingandIntake(telemetry);
         mecanism.telem(telemetry);
-
     }
 }

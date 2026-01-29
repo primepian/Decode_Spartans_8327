@@ -80,7 +80,7 @@ public class TeleOpMaster extends OpMode {
 
         if (!automatedDrive) {//  TL: DRIVE {GPAD_1}
             if (!mecanism.invertedDrive) {
-                if (gamepad1.left_trigger == 0.0 && !gamepad1.x) follower.setTeleOpDrive(
+                if (gamepad1.left_trigger == 0.0) follower.setTeleOpDrive(
 
                         -gamepad1.left_stick_y,
                         -gamepad1.left_stick_x,
@@ -94,7 +94,7 @@ public class TeleOpMaster extends OpMode {
                         true // Robot Centric
                 );
             } else {
-                if (gamepad1.left_trigger == 0.0 && !gamepad1.x) follower.setTeleOpDrive(
+                if (gamepad1.left_trigger == 0.0) follower.setTeleOpDrive(
                         gamepad1.left_stick_y,
                         gamepad1.left_stick_x,
                         -gamepad1.right_stick_x,
@@ -139,19 +139,14 @@ public class TeleOpMaster extends OpMode {
             );
         }   //tl: Automatic Shoot Positioning
 
-//  Tl: CHOOSE TEAM FOR SHOOTING POSE   {GPAD_2}
-
-        if (gamepad2.left_stick_button)  {mecanism.DESIRED_TAG_ID = 20;}    //NOTE: BLUE TEAM
-        if (gamepad2.right_stick_button) {mecanism.DESIRED_TAG_ID = 24;}    //NOTE: RED TEAM
-
-//  TL: INVERT DRIVE    {GPAD_1}
+        //  TL: INVERT DRIVE    {GPAD_1}
 //        boolean currentRB = gamepad1.right_bumper;
 //        if (currentRB && !mecanism.RBflag) {
 //            mecanism.invertedDrive = !mecanism.invertedDrive;
 //        }
 //        mecanism.RBflag = currentRB;
 
-//  TL: INTAKE      {GPAD_1}
+        //  TL: INTAKE      {GPAD_1}
         if (gamepad2.dpad_down){
             mecanism.uman.setPosition(0.18);
             mecanism.intakerON();
@@ -162,19 +157,21 @@ public class TeleOpMaster extends OpMode {
             mecanism.intakerOFF();
             mecanism.INTAKE_COOLDOWN_MS = 300;
         }
-
         if (gamepad1.right_bumper){
             mecanism.intakerON();
         } else {
             mecanism.intakerOFF();
         }//NOTE: DESTAPACAÑOS
-
         if (gamepad1.right_trigger > 0.0){
             mecanism.intake( -0.7);}//NOTE: TRAGATODO
         else if (gamepad1.b){mecanism.intake( 0.5);
         } //NOTE: ESCUPELUPE
         else {
             mecanism.intake( 0);}
+
+//  Tl: CHOOSE TEAM FOR SHOOTING POSE   {GPAD_2}
+        if (gamepad2.left_stick_button)  {mecanism.DESIRED_TAG_ID = 20;}    //NOTE: BLUE TEAM
+        if (gamepad2.right_stick_button) {mecanism.DESIRED_TAG_ID = 24;}    //NOTE: RED TEAM
 
 //TL ---------- MODE SELECT ----------
         if (gamepad2.dpad_right) {
@@ -194,7 +191,6 @@ public class TeleOpMaster extends OpMode {
         }
 
 //tl:---------- CANNON / BARREL -----------
-
         if (gamepad2.right_trigger > 0.1f){
             mecanism.shoot();
         } //NOTE: DISPARAR
@@ -214,7 +210,8 @@ public class TeleOpMaster extends OpMode {
         mecanism.RB2flag = currentRB2;
 
         if (gamepad2.left_trigger > 0.1f) {
-            mecanism.shootPow(0.95);
+            mecanism.shootPow(Mecanismos.pow1);
+            
         }//NOTE: SHOOT POW 1
 
         if (gamepad2.y) {
@@ -222,21 +219,50 @@ public class TeleOpMaster extends OpMode {
             mecanism.B = 0;
             mecanism.C = 0;
         } //NOTE: ALL TO 0
+
+        boolean currentBack = gamepad2.back;
+    if (currentBack && !mecanism.Backflag){
+            mecanism.Back = !mecanism.Back;
+        }
+        mecanism.Backflag = currentBack;
+
         //NOTE: a,b,x TO 0
-        if (gamepad2.a){
-            Mecanismos.pow1 = 0.6;
-            Mecanismos.pow2 = 0.62;
-            Mecanismos.pow3 = 0.6;
+        if (gamepad2.a && mecanism.Back){
+            Mecanismos.pow1 = 0.8;
+            Mecanismos.pow2 = 0.83;
+            Mecanismos.pow3 = 0.81;
         }
-        if (gamepad2.b){
-            Mecanismos.pow1 = 0.7;
-            Mecanismos.pow2 = 0.75;
-            Mecanismos.pow3 = 0.7;
+        boolean currentb = gamepad2.b;
+        if ((currentb && mecanism.bflag) && mecanism.Back){
+            Mecanismos.pow1 = Mecanismos.pow1 + 0.02;
+            Mecanismos.pow2 = Mecanismos.pow2 + 0.02;
+            Mecanismos.pow3 = Mecanismos.pow3 + 0.02;
         }
-        if (gamepad2.x){
-            Mecanismos.pow1 = 0.91;
-            Mecanismos.pow2 = 0.92;
-            Mecanismos.pow3 = 0.91;
+        mecanism.bflag = currentb;
+
+        boolean currentx = gamepad2.x;
+        if ((currentx && mecanism.cflag) && mecanism.Back){
+            Mecanismos.pow1 = Mecanismos.pow1 - 0.02;
+            Mecanismos.pow2 = Mecanismos.pow2 - 0.02;
+            Mecanismos.pow3 = Mecanismos.pow3 - 0.02;
+        }
+        mecanism.cflag = currentx;
+
+        //sin back
+        if (gamepad2.a && !mecanism.Back){
+            Mecanismos.pow1 = 0.68;
+            Mecanismos.pow2 = 0.65;
+            Mecanismos.pow3 = 0.65;
+        }
+        if (gamepad2.b && !mecanism.Back){
+            Mecanismos.pow1 = 0.8;
+            Mecanismos.pow2 = 0.82;
+            Mecanismos.pow3 = 0.81;
+        }
+        if (gamepad2.x && !mecanism.Back){
+            Mecanismos.pow1 = 0.86;
+            Mecanismos.pow2 = 0.87;
+            Mecanismos.pow3 = 0.87;
         }
 
         mecanism.G28();
