@@ -177,7 +177,6 @@ public class Blue_Down extends OpMode{
                 mecanism.A = 1;
                 mecanism.B = 1;
                 mecanism.C = 2;
-                mecanism.shootPow(.9);
                 break;
             case 1://obelisk to shoot
                 if (mecanism.DESIRED_TAG_ID == 21){mecanism.GPP = true;}
@@ -185,78 +184,48 @@ public class Blue_Down extends OpMode{
                 if (mecanism.DESIRED_TAG_ID == 23){mecanism.PPG = true;}
                 if ((!follower.isBusy() && actual_time >= time_Stamp + 3) || (!follower.isBusy() && (mecanism.PPG || mecanism.GPP || mecanism.PGP) )) {
                     follower.followPath(snd_path,true);
-                    setPathState(28);
+                    setPathState(50);
                 }
                 break;
-            case 28:
+            case 50:
                 if (!follower.isBusy()){
-                    mecanism.shootFar();                                                           //TL:SHOOT
+                    mecanism.shoot();                                                           //TL:SHOOT
                     setPathState(2);
                 }
                 break;
             case 2:
-                if (!follower.isBusy() && !mecanism.isShooting) { // && !mecanism.isShooting
+                if (!follower.isBusy() && !mecanism.isShooting) {
                     follower.followPath(trd_path, true);
-                    setPathState(29);
-                }
-                break;
-            case 29:
-                if (!follower.isBusy()) {
-                    time_Stamp = actual_time;
-                    pathState = 3;
+                    setPathState(3);
                 }
                 break;
             case 3:
-                if ((!follower.isBusy()) && (actual_time >= time_Stamp + 0.8)){
-                    follower.setMaxPower(0.4); //fixme
-                    mecanism.intake(-0.6);
-                    follower.followPath(fth_path, true);                                    //TL:FIRST INTAKE, 1
-                    setPathState(4);
+                if (!follower.isBusy()) {
+                    time_Stamp = actual_time;
+                    pathState = 4;
                 }
                 break;
             case 4:
-                if (!follower.isBusy()) {
-                    time_Stamp = actual_time;
-                    pathState = 5;
+                if ((!follower.isBusy()) && (actual_time >= time_Stamp + 0.5)){
+                    follower.setMaxPower(0.4);
+                    mecanism.intake(-0.6);
+                    follower.followPath(fth_path, true);                                    //TL:FIRST INTAKE, 1
+                    setPathState(5);
                 }
                 break;
             case 5:
-                if ((actual_time >= time_Stamp + 0.3) && (actual_time < .9)) {
-                    mecanism.intakerON();
-                }
-                if (actual_time >= time_Stamp + 0.85) {
-                    mecanism.A = 2;
-                    mecanism.B = 0;
-                    mecanism.C = 0;
-                }
-                if (actual_time >= time_Stamp + 0.9){
-                    mecanism.intakerOFF();
-                }
-                if (actual_time >= time_Stamp + 1.75){
-                    follower.followPath(fvth_path, true);                                   //TL:FIRST INTAKE, 2
-                    setPathState(6);
+                if (!follower.isBusy()) {
+                    time_Stamp = actual_time;
+                    pathState = 6;
                 }
                 break;
             case 6:
-                if (!follower.isBusy()) {
-                    time_Stamp = actual_time;
-                    pathState = 7;
-                }
-                break;
-            case 7:
-                if ((actual_time >= time_Stamp + 0.2) && (actual_time < 0.9)) {
-                    mecanism.intakerON();
-                }
-                if (actual_time >= time_Stamp + 0.85) {
-                    mecanism.B = 1;
+                if (actual_time >= time_Stamp + 0.2) {
+                    mecanism.A = 2;
+                    mecanism.B = 0;
                     mecanism.C = 0;
-                }
-                if (actual_time >= time_Stamp + 0.9){
-                    mecanism.intakerOFF();
-                }
-                if (actual_time >= time_Stamp + 1.75){
-                    follower.followPath(sxth_path, true);                                   //TL:FIRST INTAKE, 3
-                    setPathState(8);
+                    follower.followPath(fvth_path, true);                                   //TL:FIRST INTAKE, 2
+                    setPathState(7);
                 }
                 break;
             case 8:
@@ -267,41 +236,51 @@ public class Blue_Down extends OpMode{
                 break;
             case 9:
                 if (actual_time >= time_Stamp + 0.2) {
-                    mecanism.intakerON();
-                    if (actual_time >= time_Stamp + .85) {
-                        mecanism.C = 1;
-                    }
-                    follower.setMaxPower(1);
-                    mecanism.intake(0);
-                    follower.followPath(svnth_path, true);
-                    setPathState(27);
-                    mecanism.shootPow(0.85);
-                }
-                break;
-            case 27:
-                if (!follower.isBusy()) {
-                    mecanism.shootFar();                                                              //TODO:SHOOT
+                    mecanism.B = 1;
+                    mecanism.C = 0;
+                    follower.followPath(sxth_path, true);                                   //TL:FIRST INTAKE, 3
                     setPathState(10);
                 }
                 break;
             case 10:
+                if (!follower.isBusy()) {
+                    time_Stamp = actual_time;
+                    pathState = 11;
+                }
+                break;
+            case 11:
+                if (actual_time >= time_Stamp + 0.2) {
+                    mecanism.C = 1;
+                    follower.setMaxPower(1);
+                    mecanism.intake(0);
+                    follower.followPath(svnth_path, true);
+                    setPathState(12);
+                }
+                break;
+            case 12:
+                if (!follower.isBusy()) {
+                    mecanism.shoot();                                                              //TODO:SHOOT
+                    setPathState(13);
+                }
+                break;
+            case 13:
                 if (!follower.isBusy() && !mecanism.isShooting) {
                     mecanism.shootPow(0);
                     follower.followPath(trd_path, true);
-                    setPathState(30);
+                    setPathState(14);
                 }
                 break;
-            case 30:
+            case 14:
                 if (!follower.isBusy()) {
                     setPathState(-1);
 //                    time_Stamp = actual_time;
 //                    pathState = 11;
-//                    mecanism.intakerOFF();
+//
                 }
                 break;
 
 
-            case 11:
+            case 15:
                 if ((!follower.isBusy()) && (actual_time >= time_Stamp + 0.8)){
                     follower.setMaxPower(0.4); //fixme
                     mecanism.intake(-0.6);
@@ -309,15 +288,14 @@ public class Blue_Down extends OpMode{
                     setPathState(12);
                 }
                 break;
-            case 12:
+            case 16:
                 if (!follower.isBusy()) {
                     time_Stamp = actual_time;
                     pathState = 13;
                 }
                 break;
-            case 13:
+            case 17:
                 if ((actual_time >= time_Stamp + 0.3 && (actual_time < 0.9))){
-                    mecanism.intakerON();
                 }
                 if (actual_time >= time_Stamp + 0.85) {
                     mecanism.A = 1;
@@ -325,56 +303,54 @@ public class Blue_Down extends OpMode{
                     mecanism.C = 0;
                 }
                 if (actual_time >= time_Stamp + 0.9){
-                    mecanism.intakerOFF();
+
                 }
                 if (actual_time >= time_Stamp + 1.5){
                     follower.followPath(tenth_path, true);                                   //TL:SECOND INTAKE, 2
                     setPathState(14);
                 }
                 break;
-            case 14:
+            case 18:
                 if (!follower.isBusy()) {
                     time_Stamp = actual_time;
                     pathState = 15;
                 }
                 break;
-            case 15:
+            case 19:
                 if ((actual_time >= time_Stamp + 0.2) && (actual_time < 0.9)) {
-                    mecanism.intakerON();
                 }
                 if (actual_time >= time_Stamp + 0.85) {
                     mecanism.B = 2;
                     mecanism.C = 0;
                 }
                 if (actual_time >= time_Stamp + 0.9){
-                    mecanism.intakerOFF();
+
                 }
                 if (actual_time >= time_Stamp + 1.5){
                     follower.followPath(elvnth_path, true);                                   //TL:THIRD INTAKE, 3
                     setPathState(16);
                 }
                 break;
-            case 16:
+            case 20:
                 if (!follower.isBusy()) {
                     time_Stamp = actual_time;
                     pathState = 17;
                 }
                 break;
-            case 17:
+            case 21:
                 if (actual_time >= time_Stamp + 0.4) {
-                    mecanism.intakerON();
                     mecanism.intake(0);
                     mecanism.C = 1;
                     follower.setMaxPower(1.0);
                     setPathState(18);
                 }
                 break;
-            case 18:
+            case 22:
                 if (!follower.isBusy()) {
                     setPathState(19);
                 }
                 break;
-            case 19:
+            case 23:
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }
@@ -396,7 +372,7 @@ public class Blue_Down extends OpMode{
     @Override
     public void loop() {
         mecanism.G28();
-        mecanism.shootingandIntakeFar(telemetry);
+        mecanism.shootingandIntake(telemetry);
 
         //TL: APRIL TAG DETECTION
 

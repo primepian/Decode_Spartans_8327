@@ -24,20 +24,22 @@ import java.util.function.Supplier;
  * SLOW MODE [L_TRIGGER]
  * INTAKE [R_TRIGGER]
  * -INTAKE [B]
- * INVERT DRIVE [RIGHT BUMPER]
+ *
  * SEARCH APRILTAGS [LEFT BUMPER]
  *
  * =====GPAD 2======
  * BLUE APRILTAG [LEFT STICK BUTTON]
  * RED APRILTAG [RIGHT STICK BUTTON]
- * CANNON NEAR [RIGHT TRIGGER]
- * CANNON FAR [LEFT TRIGGER]
+ * CANNON NEAR [LEFT TRIGGER]
+ * CANNON FAR [RIGHT TRIGGER]
+ * CHECK [Y]
+ * POWERS [A,B,X]
  * SELECT PATTERN [DPADS]
- * HUMAN MODE [A]
+ *
  */
 
 @Configurable
-@TeleOp
+@TeleOp(name = "TeleOpMaster")
 public class TeleOpMasterV2 extends OpMode {
     Mecanismos mecanism = new Mecanismos();
     Mecanismos.DetectedColor detectedColor;
@@ -54,7 +56,7 @@ public class TeleOpMasterV2 extends OpMode {
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 //       start positions
-        mecanism.pateador.setPosition(Mecanismos.pateador_off); //fixme
+        mecanism.pateador.setPosition(Mecanismos.pateador_off);
 
         pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98))))
@@ -170,10 +172,16 @@ public class TeleOpMasterV2 extends OpMode {
 
 //tl:---------- CANNON / BARREL -----------
         if (gamepad2.right_trigger > 0.1f){
+            Mecanismos.pow1 = 60; //fixme
             mecanism.shoot();
         } //NOTE: DISPARAR
+        if (gamepad2.left_trigger > 0.1f) {
+            Mecanismos.pow1 = 35; //fixme
+            mecanism.shootNear();
+        }//NOTE: SHOOT NEAR
         if (gamepad2.right_bumper){
             mecanism.shootPow(0);
+            mecanism.cannon.setPower(0);
             mecanism.pateador.setPosition(Mecanismos.pateador_off);
             mecanism.isShooting = false;
         } //NOTE: APAGAR CAÑON
@@ -181,39 +189,28 @@ public class TeleOpMasterV2 extends OpMode {
         //  NOTE: [LB] ACTUAL TO 1
         boolean currentRB2 = gamepad2.left_bumper;
         if (currentRB2 && !mecanism.RB2flag){
-            if (mecanism.actualPos == 'a' && mecanism.A == 0){mecanism.A = 1;}
-            else if (mecanism.actualPos == 'b' && mecanism.B == 0){mecanism.B = 1;}
-            else if (mecanism.actualPos == 'c' && mecanism.C == 0){mecanism.C = 1;}
+            if (mecanism.actualPos == 'a'){mecanism.actualPos = 'b'; mecanism.barril.setPosition(Mecanismos.Bin);}
+            if (mecanism.actualPos == 'b'){mecanism.actualPos = 'c'; mecanism.barril.setPosition(Mecanismos.Cin);}
+            if (mecanism.actualPos == 'c'){mecanism.actualPos = 'a'; mecanism.barril.setPosition(Mecanismos.Ain);}
         }
         mecanism.RB2flag = currentRB2;
 
-        if (gamepad2.left_trigger > 0.1f) {
-            mecanism.shootPow(Mecanismos.pow1);
-            
-        }//NOTE: SHOOT POW 1
 
-        //NOTE: a,b,x TO 0
-
+        //NOTE: a,b,x TO set powers
         if (gamepad2.a){
-            Mecanismos.pow1 = 50;
-            Mecanismos.pow2 = 50;
-            Mecanismos.pow3 = 50;
+            Mecanismos.pow1 = 15;
         }
         if (gamepad2.b){
-            Mecanismos.pow1 = 75;
-            Mecanismos.pow2 = 75;
-            Mecanismos.pow3 = 75;
+            Mecanismos.pow1 = 30;
         }
         if (gamepad2.x){
-            Mecanismos.pow1 = 100;
-            Mecanismos.pow2 = 100;
-            Mecanismos.pow3 = 100;
+            Mecanismos.pow1 = 50;
         }
         if (gamepad2.y){
             mecanism.check = true;
             mecanism.checkStep = 0;
             mecanism.lastIntakeTime = System.currentTimeMillis();
-        }
+        } //note: check
 
 
         mecanism.G28();
