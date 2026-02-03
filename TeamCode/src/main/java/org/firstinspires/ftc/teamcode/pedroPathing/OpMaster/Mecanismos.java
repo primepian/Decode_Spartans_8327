@@ -47,6 +47,7 @@ public class Mecanismos {
 // TL:======== CANNON ==========
     public DcMotorEx cannonR;
     public DcMotorEx cannonL;
+    public DcMotorEx cannon;
     public DcMotor turret;
 // Tl:======== BARRIL ==========
     public Servo barril;
@@ -135,7 +136,7 @@ public class Mecanismos {
         barril = hwMap.get(Servo.class,"servo");
 //note: ---- intake
         pateador = hwMap.get(Servo.class, "pateador");
-        intake = hwMap.get(DcMotor.class, "Intake");
+        intake = hwMap.get(DcMotor.class, "Intake`");
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         uman = hwMap.get(Servo.class, "uman");
         intaker_L = hwMap.get(Servo.class, "intakerL");
@@ -143,6 +144,7 @@ public class Mecanismos {
 //note: ---- cannon
         cannonR = hwMap.get(DcMotorEx.class, "CannonR");
         cannonL = hwMap.get(DcMotorEx.class, "CannonL");
+        cannon = hwMap.get(DcMotorEx.class, "Cannon");
         cannonL.setDirection(DcMotorEx.Direction.REVERSE);
 
         cannonR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -191,6 +193,7 @@ public class Mecanismos {
     public void shoot(){
         if (!isShooting) {
             shootPow(pow1);
+            cannon.setPower(0.5);
             isShooting = true;
             shootStep = 0;
             shootStartTime = System.currentTimeMillis();
@@ -344,7 +347,8 @@ public class Mecanismos {
                     if (canIntakeNow && (detected == TestColorSensorMecanism.DetectedColor.PURPLE || detected == TestColorSensorMecanism.DetectedColor.GREEN)){
                         C = value;
                         actuallyLoaded = true;
-                    }else if ((System.currentTimeMillis()-lastIntakeTime >= INTAKE_COOLDOWN_MS + NO_INTAKE_COOLDOWN_MS)){
+                    }
+                    else if ((System.currentTimeMillis()-lastIntakeTime >= INTAKE_COOLDOWN_MS + NO_INTAKE_COOLDOWN_MS)){
                         C = 0;
                         actuallyLoaded = true;
                     }

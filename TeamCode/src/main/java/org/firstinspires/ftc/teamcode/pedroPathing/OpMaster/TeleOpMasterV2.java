@@ -210,7 +210,7 @@ public class TeleOpMasterV2 extends OpMode {
             Mecanismos.pow3 = 100;
         }
         if (gamepad2.y){
-            mecanism.check = false;
+            mecanism.check = true;
             mecanism.checkStep = 0;
             mecanism.lastIntakeTime = System.currentTimeMillis();
         }

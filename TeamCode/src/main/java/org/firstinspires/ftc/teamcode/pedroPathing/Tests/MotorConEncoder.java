@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode.pedroPathing.Tests;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name = "RPM Motor Control")
 public class MotorConEncoder extends LinearOpMode {
 
     DcMotorEx motor;
+    DcMotorEx motor2;
 
     static final double TICKS_PER_REV = 537.7;
     double targetRPM = 0;
@@ -17,21 +19,31 @@ public class MotorConEncoder extends LinearOpMode {
     public void runOpMode() {
 
 
-        motor = hardwareMap.get(DcMotorEx.class, "motor");
+        motor = hardwareMap.get(DcMotorEx.class, "CannonR");
+        motor2 = hardwareMap.get(DcMotorEx.class, "CannonL");
+        motor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
 
         while (opModeIsActive()) {
 
             if (gamepad1.a) power = 100;
-            if (gamepad1.b) power = 75;
-            if (gamepad1.x) power = 50;
+            if (gamepad1.dpad_up) power = 50;
             if (gamepad1.y) power = 0;
+
+            if (gamepad1.bWasReleased() && power <= 100){power ++;
+            telemetry.speak("nigger");}
+            if (gamepad1.xWasReleased() && power >= 0){power --;
+            telemetry.speak("");}
+
             targetRPM = (power * 312) / 100;
 
             setMotorRPM(targetRPM);
@@ -47,6 +59,7 @@ public class MotorConEncoder extends LinearOpMode {
     void setMotorRPM(double rpm) {
         double ticksPerSecond = (rpm * TICKS_PER_REV) / 60.0;
         motor.setVelocity(ticksPerSecond);
+        motor2.setVelocity(ticksPerSecond);
     }
 
     double getMotorRPM() {

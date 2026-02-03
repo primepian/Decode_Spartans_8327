@@ -71,7 +71,7 @@ public class RED_EMERGENCIA extends OpMode{
     @Override
     public void loop() {
         mecanism.G28();
-        mecanism.shootingandIntakeMax(telemetry);
+        mecanism.shootingandIntake(telemetry);
 
         //TL: APRIL TAG DETECTION
 
