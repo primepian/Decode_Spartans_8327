@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.OpMaster;
 
+import android.annotation.SuppressLint;
+
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
@@ -9,6 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.pedroPathing.Tests.TestColorSensorMecanism;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -51,6 +56,7 @@ public class Mecanismos {
 // Tl:======== BARRIL ==========
     public Servo barril;
     public Servo pateador;
+    public DistanceSensor distanceSens;
     NormalizedColorSensor colorSensor;
     public enum DetectedColor{
         PURPLE,
@@ -58,13 +64,13 @@ public class Mecanismos {
         UNKNOWN,
     }
 // Tl: ======== Posiciones =========
-    public static final double  Ain = 0.6;
-    public static final double  Bin = 0.516;
-    public static final double  Cin = 0.433;
+    public static final double  Ain = 0.588;
+    public static final double  Bin = 0.510;
+    public static final double  Cin = 0.425;
 
-    public static final double  Aout = 0.48;
-    public static final double  Bout = 0.4;
-    public static final double  Cout = 0.33;
+    public static final double  Aout = 0.465;
+    public static final double  Bout = 0.386;
+    public static final double  Cout = 0.315;
     public static final double  pateador_off = 0.55;
     public static final double  pateador_on = 0.6;
 
@@ -94,20 +100,18 @@ public class Mecanismos {
     public final long OUTTAKE_HOLD_TIME_MS = 1800;
     public long lastIntakeTime = 0;
     public long INTAKE_COOLDOWN_MS = 500;
-    public long NO_INTAKE_COOLDOWN_MS = 500;
+    public long NO_INTAKE_COOLDOWN_MS = 800;
+    public long distanceStartTime = 0;
 
     //Tl: ======== VARIABLES =========
     public double slowModeMultiplier = 0.3; //Modo slow
     public int checkStep = 0;
+    public char lastPos;
     public boolean invertedDrive;
     public boolean RBflag;
     public boolean RB2flag;
-    public boolean Backflag;
-
-    public boolean bflag;
-    public boolean cflag;
-    public boolean Back;
     public boolean check;
+    public boolean distanceChange;
 
     //Tl:    AprilTag search.
     public final double DESIRED_DISTANCE = 114;
@@ -149,6 +153,8 @@ public class Mecanismos {
 //note: ---- sensor
         colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
         colorSensor.setGain(10);
+        distanceSens = hwMap.get(DistanceSensor.class, "sensor_distance");
+        Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor) distanceSens;
 
         aprilTag = new AprilTagProcessor.Builder().build();
         aprilTag.setDecimation(2);
@@ -183,7 +189,7 @@ public class Mecanismos {
     public void shoot(){
         if (!isShooting) {
             shootPow(pow1);
-            cannon.setPower(0.5);
+            cannon.setPower(1);
             piringolaOFF();
             isShooting = true;
             shootStep = 0;
@@ -192,7 +198,7 @@ public class Mecanismos {
     public void shootNear(){
         if (!isShooting) {
             shootPow(pow1);
-            cannon.setPower(0.5);
+            cannon.setPower(1);
             piringolaON();
             isShooting = true;
             shootStep = 0;
@@ -204,13 +210,13 @@ public class Mecanismos {
 
 //TL: ============= BARRREL =============
     public void G28(){
-        if (A == 0 && B == 0 && C == 0) {
+        if ((A == 0 && B == 0 && C == 0) && !check) {
             barril.setPosition(Ain);
             actualPos = 'a';
             isShooting = false;
         }
         if (A != 0 && B != 0 && C != 0){
-            barril.setPosition(0.598);
+            barril.setPosition(0.445);
             actualPos = 'a';
         }
     }
@@ -278,7 +284,7 @@ public class Mecanismos {
                     actualPos = 'a';
                 }
 
-                TestColorSensorMecanism.DetectedColor detected = getDetectedColor(telemetry);
+                TestColorSensorMecanism.DetectedColor detected = getDetectedColor();
                 boolean canIntakeNow = System.currentTimeMillis() - lastIntakeTime >= INTAKE_COOLDOWN_MS;
                 if (canIntakeNow &&
                         (detected == TestColorSensorMecanism.DetectedColor.PURPLE ||
@@ -314,10 +320,35 @@ public class Mecanismos {
                 if (currentValue != 0 && (A == 0 || B == 0 || C == 0)) {
                     advanceToPreferredEmpty();
                 }
+                if (distanceSens.getDistance(DistanceUnit.CM) <= 4 && !distanceChange && (A==0 || B==0 || C==0) && canIntakeNow){
+                    distanceStartTime = System.currentTimeMillis();
+                    distanceChange = true;
+                    lastPos = actualPos;
+                }
+
+                if (distanceChange) {
+                    if (lastPos == actualPos) {
+                        if (System.currentTimeMillis() - distanceStartTime >= 300 &&
+                                (distanceSens.getDistance(DistanceUnit.CM) <= 4) && (detected == TestColorSensorMecanism.DetectedColor.UNKNOWN)) {
+                            if (actualPos == 'a') {
+                                A = 1;
+                                distanceChange = false;
+                            } else if (actualPos == 'b') {
+                                B = 1;
+                                distanceChange = false;
+                            } else if (actualPos == 'c') {
+                                C = 1;
+                                distanceChange = false;
+                            }
+                        }
+                    } else {
+                        distanceChange = false;
+                    }
+                }
             }
             else {
                 boolean canIntakeNow = System.currentTimeMillis() - lastIntakeTime >= INTAKE_COOLDOWN_MS;
-                TestColorSensorMecanism.DetectedColor detected = getDetectedColor(telemetry);
+                TestColorSensorMecanism.DetectedColor detected = getDetectedColor();
 
                 int value = detected == TestColorSensorMecanism.DetectedColor.PURPLE ? 1 : 2;
                 boolean actuallyLoaded = false;
@@ -356,7 +387,7 @@ public class Mecanismos {
                         actuallyLoaded = true;
                     }
                 }
-                if (shootStep >= 3) {
+                if (checkStep >= 3) {
                     check = false;
                     advanceToPreferredEmpty();
                 }
@@ -398,7 +429,7 @@ public class Mecanismos {
 
 
 
-    public TestColorSensorMecanism.DetectedColor getDetectedColor(Telemetry telemetry){
+    public TestColorSensorMecanism.DetectedColor getDetectedColor(){
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
 
         float normRed, normGreen, normBlue;
@@ -416,9 +447,9 @@ public class Mecanismos {
             return TestColorSensorMecanism.DetectedColor.UNKNOWN;
         }
     }
-
+    @SuppressLint("DefaultLocale")
     public void telem(Telemetry telemetry){
-        if (GPP){telemetry.addLine("PATTERN = GPP");telemetry.speak("puto");}
+        if (GPP){telemetry.addLine("PATTERN = GPP");}
         if (PGP) {telemetry.addLine("PATTERN = PGP");}
         if (PPG) {telemetry.addLine("PATTERN = PPG");}
         if (DESIRED_TAG_ID == 20){ telemetry.addLine("====BLUE TEAM====");}
@@ -428,8 +459,10 @@ public class Mecanismos {
         telemetry.addData("C: ",C);
         telemetry.addLine("");
         telemetry.addData("Actual Pos: ", actualPos);
-
         telemetry.addData("POW: ", pow1);
+        telemetry.addData("COLOR: ", getDetectedColor());
+        telemetry.addData("range", String.format("%.01f cm", distanceSens.getDistance(DistanceUnit.CM)));
+        if (check){telemetry.addLine("#################");}
 // speak
         telemetry.update();
     }

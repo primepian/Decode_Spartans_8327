@@ -13,9 +13,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
+import java.util.IllegalFormatCodePointException;
 import java.util.List;
 import java.util.function.Supplier;
 /*
@@ -172,11 +174,10 @@ public class TeleOpMasterV2 extends OpMode {
 
 //tl:---------- CANNON / BARREL -----------
         if (gamepad2.right_trigger > 0.1f){
-            Mecanismos.pow1 = 60; //fixme
             mecanism.shoot();
         } //NOTE: DISPARAR
         if (gamepad2.left_trigger > 0.1f) {
-            Mecanismos.pow1 = 35; //fixme
+            Mecanismos.pow1 = 30; //fixme
             mecanism.shootNear();
         }//NOTE: SHOOT NEAR
         if (gamepad2.right_bumper){
@@ -189,24 +190,26 @@ public class TeleOpMasterV2 extends OpMode {
         //  NOTE: [LB] ACTUAL TO 1
         boolean currentRB2 = gamepad2.left_bumper;
         if (currentRB2 && !mecanism.RB2flag){
-            if (mecanism.actualPos == 'a'){mecanism.actualPos = 'b'; mecanism.barril.setPosition(Mecanismos.Bin);}
-            if (mecanism.actualPos == 'b'){mecanism.actualPos = 'c'; mecanism.barril.setPosition(Mecanismos.Cin);}
-            if (mecanism.actualPos == 'c'){mecanism.actualPos = 'a'; mecanism.barril.setPosition(Mecanismos.Ain);}
+            if (mecanism.actualPos == 'a' && mecanism.A == 0){mecanism.A = 1;}
+            else if (mecanism.actualPos == 'b' && mecanism.B == 0){mecanism.B = 1;}
+            else if (mecanism.actualPos == 'c' && mecanism.C == 0){mecanism.C = 1;}
+            else if (mecanism.actualPos == 'a' && (mecanism.A == 1 || mecanism.A == 2)){mecanism.A = 0;}
+            else if (mecanism.actualPos == 'b' && (mecanism.B == 1 || mecanism.B == 2)){mecanism.B = 0;}
+            else if (mecanism.actualPos == 'c' && (mecanism.C == 1 || mecanism.C == 2)){mecanism.C = 0;}
         }
         mecanism.RB2flag = currentRB2;
 
-
         //NOTE: a,b,x TO set powers
         if (gamepad2.a){
-            Mecanismos.pow1 = 15;
+            Mecanismos.pow1 = 49;
         }
         if (gamepad2.b){
-            Mecanismos.pow1 = 30;
+            Mecanismos.pow1 = 43;
         }
         if (gamepad2.x){
-            Mecanismos.pow1 = 50;
+            Mecanismos.pow1 = 30;
         }
-        if (gamepad2.y){
+        if (gamepad2.yWasReleased()){
             mecanism.check = true;
             mecanism.checkStep = 0;
             mecanism.lastIntakeTime = System.currentTimeMillis();

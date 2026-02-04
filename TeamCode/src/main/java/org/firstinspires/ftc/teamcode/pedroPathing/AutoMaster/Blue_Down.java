@@ -25,21 +25,21 @@ public class Blue_Down extends OpMode{
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
+
     private double time_Stamp;
 
-    private final Pose startingPose = new Pose(55, 9, Math.toRadians(90));            //TL:Path #1
-    private final Pose search_pose = new Pose(63, 30, Math.toRadians(87));           //TL:Path #1
+    private final Pose startingPose = new Pose(55, 8, Math.toRadians(90));            //TL:Path #1
+    private final Pose search_pose = new Pose(60, 10, Math.toRadians(90));           //TL:Path #1
 
-    private final Pose shoot_Pose = new Pose(60, 20, Math.toRadians(115));           //TL:Path #2 TODO: Shoot fixme:53.000, 90.000, Math.toRadians(135)
+    private final Pose shoot_Pose = new Pose(60, 12, Math.toRadians(115));           //TL:Path #2
 
-    private final Pose fst_itk_pose = new Pose(45.000, 33, Math.toRadians(180));          //TL:Path #3
+    private final Pose fst_itk_pose = new Pose(48, 34, Math.toRadians(180));          //TL:Path #3
 
-    private final Pose fst_itk_1 = new Pose(33.000, 32, Math.toRadians(180));             //TL:Path #4
+    private final Pose fst_itk_1 = new Pose(37, 34, Math.toRadians(180));             //TL:Path #4
 
-    private final Pose fst_itk_2 = new Pose(28.500, 32, Math.toRadians(180));               //TL:Path #5
+    private final Pose fst_itk_2 = new Pose(32, 34, Math.toRadians(180));               //TL:Path #5
 
-    private final Pose fst_itk_3 = new Pose(18.000, 32, Math.toRadians(180));             //TL:Path #6
-
+    private final Pose fst_itk_3 = new Pose(15, 34, Math.toRadians(180));             //TL:Path #6
 
 
     private final Pose snd_itk_pose = new Pose(45.000, 55.000, Math.toRadians(180));          //TL:Path #8
@@ -207,7 +207,7 @@ public class Blue_Down extends OpMode{
                 break;
             case 4:
                 if ((!follower.isBusy()) && (actual_time >= time_Stamp + 0.5)){
-                    follower.setMaxPower(0.4);
+                    follower.setMaxPower(0.8);
                     mecanism.intake(-0.6);
                     follower.followPath(fth_path, true);                                    //TL:FIRST INTAKE, 1
                     setPathState(5);
@@ -220,7 +220,7 @@ public class Blue_Down extends OpMode{
                 }
                 break;
             case 6:
-                if (actual_time >= time_Stamp + 0.2) {
+                if (actual_time >= time_Stamp + 0.3) {
                     mecanism.A = 2;
                     mecanism.B = 0;
                     mecanism.C = 0;
@@ -235,7 +235,7 @@ public class Blue_Down extends OpMode{
                 }
                 break;
             case 9:
-                if (actual_time >= time_Stamp + 0.2) {
+                if (actual_time >= time_Stamp + 0.3) {
                     mecanism.B = 1;
                     mecanism.C = 0;
                     follower.followPath(sxth_path, true);                                   //TL:FIRST INTAKE, 3
@@ -249,7 +249,7 @@ public class Blue_Down extends OpMode{
                 }
                 break;
             case 11:
-                if (actual_time >= time_Stamp + 0.2) {
+                if (actual_time >= time_Stamp + 0.3) {
                     mecanism.C = 1;
                     follower.setMaxPower(1);
                     mecanism.intake(0);
@@ -371,6 +371,7 @@ public class Blue_Down extends OpMode{
      **/
     @Override
     public void loop() {
+        Mecanismos.pow1 = 49;
         mecanism.G28();
         mecanism.shootingandIntake(telemetry);
 

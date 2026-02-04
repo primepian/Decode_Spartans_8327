@@ -23,8 +23,7 @@ public class servoPos extends OpMode {
         boolean currentRB = gamepad1.right_bumper;
         boolean currentLB = gamepad1.left_bumper;
         boolean currentleft = gamepad1.dpad_left;
-        boolean currentright = gamepad1.dpad_right
-                ;
+        boolean currentright = gamepad1.dpad_right;
 
         if (currentRB && !RBflag && pos < 1.0){
             pos = pos + 0.01;

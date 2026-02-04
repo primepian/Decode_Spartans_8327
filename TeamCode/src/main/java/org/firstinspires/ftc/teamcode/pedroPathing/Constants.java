@@ -17,19 +17,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(12)
+            .mass(10)
 //NOTE: Automatic Tunners
-            .forwardZeroPowerAcceleration(-50.38070003)
-            .lateralZeroPowerAcceleration(-73.468493)
+            .forwardZeroPowerAcceleration(-47.334483)
+            .lateralZeroPowerAcceleration(-89.748467)
 //NOTE: Translational PID
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0, 0.05))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.045, 0, 0.003, 0.06))
 //            .translationalPIDFSwitch(4)
 //            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.4, 0, 0.005, 0.0006));
 //NOTE: Heading PID
-            .headingPIDFCoefficients(new PIDFCoefficients(0.8, 0, 0.27, 1))
-            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(2.5, 0, 0.07, 0.01))
+            .headingPIDFCoefficients(new PIDFCoefficients(0.9, 0, 0.03, 0.05))
+//            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(2.5, 0, 0.07, 0.01))
 //NOTE: Drive PID
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.05, 0, 0.002, 0, 0.1))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.07, 0, 0.002, 0, 0.03))
 //            .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.005, 0, 0.05, 0.6, 0.01))
             .drivePIDFSwitch(15)
 
@@ -46,8 +46,8 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(61.5480897)    //NOTE: FORWARD VELOCITY TUNNER
-            .yVelocity(38.2470323);  //NOTE: LATERAL VELOCITY TUNNER
+            .xVelocity(73.6157073)    //NOTE: FORWARD VELOCITY TUNNER
+            .yVelocity(62.7959363);  //NOTE: LATERAL VELOCITY TUNNER
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(133.1)
