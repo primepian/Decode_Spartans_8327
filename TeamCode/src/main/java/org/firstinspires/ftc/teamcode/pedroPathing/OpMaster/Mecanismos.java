@@ -65,15 +65,15 @@ public class Mecanismos {
         UNKNOWN,
     }
 // Tl: ======== Posiciones =========
-    public static final double  Ain = 0.604;
-    public static final double  Bin = 0.524;
-    public static final double  Cin = 0.447;
+    public static final double  Ain = 0.658;
+    public static final double  Bin = 0.585;
+    public static final double  Cin = 0.505;
 
-    public static final double  Aout = 0.488;
-    public static final double  Bout = 0.409;
-    public static final double  Cout = 0.337;
+    public static final double  Aout = 0.547;
+    public static final double  Bout = 0.466;
+    public static final double  Cout = 0.384;
 
-    public static final double  Chueco = 0.427;
+    public static final double  Chueco = 0.525;
 
     public static final double  pateador_off = 0.55;
     public static final double  pateador_on = 0.6;
@@ -81,9 +81,9 @@ public class Mecanismos {
     public static final double  INTAKER_OFF = 0.5;
     public static final double  INTAKER_ON = 0.12;
 
-    public static final double  POW_LEJOS = 42;
-    public static final double  POW_MEDIO = 40;
-    public static final double  POW_CERCA = 30;
+    public static final double  POW_LEJOS = 43;
+    public static final double  POW_MEDIO = 37;
+    public static final double  POW_CERCA = 27;
 
     char actualPos = 'a';
 
@@ -106,11 +106,11 @@ public class Mecanismos {
     public long shootStartTime = 0;
 
     //TL: ======= TIMES =========
-    public final long PATEADOR_ON_TIME = 1000;
-    public final long PATEADOR_OFF_TIME = 1300;
+    public final long PATEADOR_ON_TIME = 800;
+    public final long PATEADOR_OFF_TIME = 1100;
     public final long OUTTAKE_HOLD_TIME_MS = 1500;
     public long lastIntakeTime = 0;
-    public long INTAKE_COOLDOWN_MS = 900;
+    public long INTAKE_COOLDOWN_MS = 650;
     public long NO_INTAKE_COOLDOWN_MS = 100;
     public long distanceStartTime = 0;
 
@@ -187,6 +187,10 @@ public class Mecanismos {
     }
 
 //TL: ============ CANNON ===============
+
+    double getMotorRPM() {
+        return (cannon.getVelocity() * 60.0) / TICKS_PER_REV;
+    }
     public void shootPow(double power){
         double rpm = (312 * power) / 100;
         double ticksPerSecond = (rpm * TICKS_PER_REV) / 60.0;
@@ -290,12 +294,13 @@ public class Mecanismos {
                 }
 
                 TestColorSensorMecanism.DetectedColor detected = getDetectedColor();
-                boolean canIntakeNow = (System.currentTimeMillis() - lastIntakeTime >= INTAKE_COOLDOWN_MS) && (distanceSens.getDistance(DistanceUnit.CM) <= 4);
+                boolean canIntakeNow = System.currentTimeMillis() - lastIntakeTime >= INTAKE_COOLDOWN_MS;
                 if (canIntakeNow &&
                         (detected == TestColorSensorMecanism.DetectedColor.PURPLE ||
-                                detected == TestColorSensorMecanism.DetectedColor.GREEN)) {
+                                detected == TestColorSensorMecanism.DetectedColor.GREEN ||
+                                    distanceSens.getDistance(DistanceUnit.CM) <= 4)) {
 
-                    int value = detected == TestColorSensorMecanism.DetectedColor.PURPLE ? 1 : 2;
+                    int value = detected == TestColorSensorMecanism.DetectedColor.GREEN ? 2 : 1;
 
                     boolean actuallyLoaded = false;
 
@@ -464,13 +469,15 @@ public class Mecanismos {
         telemetry.addData("C: ",C);
         telemetry.addLine("");
         telemetry.addData("Actual Pos: ", actualPos);
-        telemetry.addData("Check step: ", checkStep);
+//        telemetry.addData("Check step: ", checkStep);
         if (pow1 == POW_LEJOS){telemetry.addLine("POW LEJOS");}
         if (pow1 == POW_MEDIO){telemetry.addLine("POW MEDIO");}
         if (pow1 == POW_CERCA){telemetry.addLine("POW CERCA");}
-        telemetry.addData("POW: ", pow1);
-        telemetry.addData("range", String.format("%.01f cm", distanceSens.getDistance(DistanceUnit.CM)));
-        telemetry.addData("COLOR: ", getDetectedColor());
+//        telemetry.addData("POW: ", pow1);
+//        telemetry.addData("range", String.format("%.01f cm", distanceSens.getDistance(DistanceUnit.CM)));
+
+        telemetry.addData("Current RPM", getMotorRPM());
+//        telemetry.addData("COLOR: ", getDetectedColor());
         if (check){telemetry.addLine("#################");telemetry.addLine("##### CHECK #####");telemetry.addLine("#################");}
 // speak
         telemetry.update();

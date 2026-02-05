@@ -146,7 +146,7 @@ public class TeleOpMasterV2 extends OpMode {
         }
 
 //  TL: INTAKE      {GPAD_1}
-        if (gamepad1.right_trigger > 0.0){mecanism.intake( -0.6);}//NOTE: Intake
+        if (gamepad1.right_trigger > 0.0){mecanism.intake( -0.8);}//NOTE: Intake
         else if (gamepad1.b){mecanism.intake( 0.5);
         } //NOTE: ESCUPELUPE
         else {
