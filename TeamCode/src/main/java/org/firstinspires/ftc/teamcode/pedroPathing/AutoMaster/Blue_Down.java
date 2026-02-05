@@ -42,9 +42,9 @@ public class Blue_Down extends OpMode{
 
     //TODO: SHOOT                                                                                     TL:Path #7
 
-    //private final Pose parking_emergency_path = new Pose(40.000, 9.000, Math.toRadians(90));      //TL:Path #8 fixme: EMERGENCY
+    private final Pose parking_emergency_pose = new Pose(40.000, 9.000, Math.toRadians(90));  //TL:Path #8 fixme: EMERGENCY
 
-    private final Pose snd_itk_pose = new Pose(48.000, 59.000, Math.toRadians(180));          //TL:Path #8
+    /*private final Pose snd_itk_pose = new Pose(48.000, 59.000, Math.toRadians(180));          //TL:Path #8
 
     private final Pose snd_itk_1 = new Pose(35.000, 59.000, Math.toRadians(180));             //TL:Path #9
 
@@ -58,7 +58,7 @@ public class Blue_Down extends OpMode{
 
 
     private final Pose trd_itk_pose = new Pose(56.000, 32.000, Math.toRadians(180));          //TL:Path #13
-
+*/
     private Path start_path;
     private PathChain snd_path, trd_path, fth_path, fvth_path, sxth_path, svnth_path, egth_path, nnth_path, tenth_path, elvnth_path,final_a, final_b, twlfth_path, thirtnth_path, frtnth_path, fftnth_path, sxtnth_path, svntnth_path, eightnth_path, nntnth_path, prk_em_path;
 
@@ -97,12 +97,12 @@ public class Blue_Down extends OpMode{
                 .setLinearHeadingInterpolation(fst_itk_3.getHeading(), shoot_Pose.getHeading())
                 .build();
 
-        /*prk_em_path = follower.pathBuilder()
-                .addPath(new BezierLine(shoot_Pose, parking_emergency_path))
-                .setLinearHeadingInterpolation(shoot_Pose.getHeading(), parking_pose.getHeading())
-                .build();*/
+        prk_em_path = follower.pathBuilder()
+                .addPath(new BezierLine(shoot_Pose, parking_emergency_pose))
+                .setLinearHeadingInterpolation(shoot_Pose.getHeading(), parking_emergency_pose.getHeading())
+                .build();
 
-        egth_path = follower.pathBuilder()
+        /*egth_path = follower.pathBuilder()
                 .addPath(new BezierLine(shoot_Pose, snd_itk_pose))
                 .setLinearHeadingInterpolation(shoot_Pose.getHeading(), snd_itk_pose.getHeading())
                 .build();
@@ -130,7 +130,7 @@ public class Blue_Down extends OpMode{
         thirtnth_path = follower.pathBuilder()
                 .addPath(new BezierLine(shoot_Pose, trd_itk_pose))
                 .setLinearHeadingInterpolation(shoot_Pose.getHeading(), trd_itk_pose.getHeading())
-                .build();
+                .build();*/
     }
 
     public void autonomousPathUpdate() {
@@ -174,9 +174,9 @@ public class Blue_Down extends OpMode{
                 }
                 break;
             case 5:
-                if ((!follower.isBusy()) && (actual_time >= time_Stamp + 0.5)){
+                if ((!follower.isBusy()) && (actual_time >= time_Stamp + 0.2)){
                     follower.setMaxPower(0.4);
-                    mecanism.intake(-0.6);
+                    //mecanism.intake(-0.8); fixme
                     follower.followPath(fth_path, true);                                    //TL:FIRST INTAKE, 1
                     setPathState(6);
                 }
@@ -188,24 +188,40 @@ public class Blue_Down extends OpMode{
                 }
                 break;
             case 7:
-                if (actual_time >= time_Stamp + 0.2) {
+                if ((actual_time >= time_Stamp + 0.2) && (actual_time < 0.9)) {
+                    mecanism.intakerON();
+                }
+                if (actual_time >= time_Stamp + 0.85) {
                     mecanism.A = 2;
                     mecanism.B = 0;
                     mecanism.C = 0;
+                }
+                if (actual_time >= time_Stamp + 0.9){
+                    mecanism.intakerOFF();
+                }
+                if (actual_time >= time_Stamp + 1.75){
                     follower.followPath(fvth_path, true);                                   //TL:FIRST INTAKE, 2
                     setPathState(8);
                 }
                 break;
             case 8:
-                if (!follower.isBusy()) {
+                if (actual_time >= time_Stamp + 0.2) {
                     time_Stamp = actual_time;
                     setPathState(9);
                 }
                 break;
             case 9:
-                if (actual_time >= time_Stamp + 0.2) {
+                if ((actual_time >= time_Stamp + 0.2) && (actual_time < 0.9)) {
+                    mecanism.intakerON();
+                }
+                if (actual_time >= time_Stamp + 0.85) {
                     mecanism.B = 1;
                     mecanism.C = 0;
+                }
+                if (actual_time >= time_Stamp + 0.9){
+                    mecanism.intakerOFF();
+                }
+                if (actual_time >= time_Stamp + 1.75){
                     follower.followPath(sxth_path, true);                                   //TL:FIRST INTAKE, 3
                     setPathState(10);
                 }
@@ -215,12 +231,14 @@ public class Blue_Down extends OpMode{
                     time_Stamp = actual_time;
                     setPathState(11);
                 }
-                break;
             case 11:
                 if (actual_time >= time_Stamp + 0.2) {
-                    mecanism.C = 1;
+                    mecanism.intakerON();
+                    if (actual_time >= time_Stamp + 0.85) {
+                        mecanism.C = 1;
+                    }
                     follower.setMaxPower(1);
-                    mecanism.intake(0);
+                    //mecanism.intake(0); fixme
                     follower.followPath(svnth_path, true);
                     setPathState(12);
                 }
@@ -231,9 +249,9 @@ public class Blue_Down extends OpMode{
                     setPathState(13);
                 }
                 break;
-            /*case 13:
-                if (!follower.isBusy() && !mecanism.isShooting) {
-                    follower.followPath(parking_emergency_path, true);
+            case 13:
+                if ((!follower.isBusy()) && (!mecanism.isShooting)) {
+                    follower.followPath(prk_em_path, true);
                     setPathState(14);
                 }
                 break;
@@ -241,8 +259,8 @@ public class Blue_Down extends OpMode{
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }
-                break;*/
-            case 13:
+                break;
+            /*case 13:
                 if (!follower.isBusy() && !mecanism.isShooting) {
                     follower.followPath(egth_path, true);
                     setPathState(14);
@@ -308,7 +326,7 @@ public class Blue_Down extends OpMode{
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }
-                break;
+                break;*/
         }
     }
 
