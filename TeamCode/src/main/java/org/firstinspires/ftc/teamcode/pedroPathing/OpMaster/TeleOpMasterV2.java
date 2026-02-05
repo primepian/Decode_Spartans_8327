@@ -143,9 +143,15 @@ public class TeleOpMasterV2 extends OpMode {
         }   //tl: Automatic Shoot Positioning
 
         //  TL: INTAKE      {GPAD_1}
-        //  : DESTAPACAÑOS
+        if (gamepad1.right_bumper){
+            mecanism.intakerON();
+        } else {
+            mecanism.intakerOFF();
+        }//NOTE: DESTAPACAÑOS
+
+        if (gamepad2.back){mecanism.cannon.setPower(-1);}
         if (gamepad1.right_trigger > 0.0){
-            mecanism.intake( -0.7);}//NOTE: TRAGATODO
+            mecanism.intake( -0.6);}//NOTE: TRAGATODO
         else if (gamepad1.b){mecanism.intake( 0.5);
         } //NOTE: ESCUPELUPE
         else {
@@ -193,11 +199,14 @@ public class TeleOpMasterV2 extends OpMode {
             if (mecanism.actualPos == 'a' && mecanism.A == 0){mecanism.A = 1;}
             else if (mecanism.actualPos == 'b' && mecanism.B == 0){mecanism.B = 1;}
             else if (mecanism.actualPos == 'c' && mecanism.C == 0){mecanism.C = 1;}
-            else if (mecanism.actualPos == 'a' && (mecanism.A == 1 || mecanism.A == 2)){mecanism.A = 0;}
-            else if (mecanism.actualPos == 'b' && (mecanism.B == 1 || mecanism.B == 2)){mecanism.B = 0;}
-            else if (mecanism.actualPos == 'c' && (mecanism.C == 1 || mecanism.C == 2)){mecanism.C = 0;}
+            mecanism.advanceToPreferredEmpty();
         }
         mecanism.RB2flag = currentRB2;
+        if (gamepad2.dpadDownWasReleased()){
+            mecanism.A = 0;
+            mecanism.B = 0;
+            mecanism.C = 0;
+        }
 
         //NOTE: a,b,x TO set powers
         if (gamepad2.a){
@@ -213,6 +222,7 @@ public class TeleOpMasterV2 extends OpMode {
             mecanism.check = true;
             mecanism.checkStep = 0;
             mecanism.lastIntakeTime = System.currentTimeMillis();
+            telemetry.speak("CHECKING");
         } //note: check
 
 

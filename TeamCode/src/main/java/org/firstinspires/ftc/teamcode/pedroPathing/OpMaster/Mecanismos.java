@@ -47,6 +47,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 public class Mecanismos {
 // Tl:========= INTAKE =========
     public DcMotor intake;
+    public Servo intaker;
 // TL:======== CANNON ==========
     public DcMotorEx cannonR;
     public DcMotorEx cannonL;
@@ -64,15 +65,21 @@ public class Mecanismos {
         UNKNOWN,
     }
 // Tl: ======== Posiciones =========
-    public static final double  Ain = 0.588;
-    public static final double  Bin = 0.510;
-    public static final double  Cin = 0.425;
+    public static final double  Ain = 0.604;
+    public static final double  Bin = 0.524;
+    public static final double  Cin = 0.447;
 
-    public static final double  Aout = 0.465;
-    public static final double  Bout = 0.386;
-    public static final double  Cout = 0.315;
+    public static final double  Aout = 0.488;
+    public static final double  Bout = 0.409;
+    public static final double  Cout = 0.337;
+
+    public static final double  Chueco = 0.427;
+
     public static final double  pateador_off = 0.55;
     public static final double  pateador_on = 0.6;
+
+    public static final double  INTAKER_OFF = 0.55;
+    public static final double  INTAKER_ON = 0.6;
 
     char actualPos = 'a';
 
@@ -95,12 +102,12 @@ public class Mecanismos {
     public long shootStartTime = 0;
 
     //TL: ======= TIMES =========
-    public final long PATEADOR_ON_TIME = 800;
-    public final long PATEADOR_OFF_TIME = 1200;
-    public final long OUTTAKE_HOLD_TIME_MS = 1800;
+    public final long PATEADOR_ON_TIME = 1000;
+    public final long PATEADOR_OFF_TIME = 1300;
+    public final long OUTTAKE_HOLD_TIME_MS = 1500;
     public long lastIntakeTime = 0;
-    public long INTAKE_COOLDOWN_MS = 500;
-    public long NO_INTAKE_COOLDOWN_MS = 800;
+    public long INTAKE_COOLDOWN_MS = 1000;
+    public long NO_INTAKE_COOLDOWN_MS = 100;
     public long distanceStartTime = 0;
 
     //Tl: ======== VARIABLES =========
@@ -135,6 +142,7 @@ public class Mecanismos {
 //note: ---- intake
         pateador = hwMap.get(Servo.class, "pateador");
         intake = hwMap.get(DcMotor.class, "Intake");
+        intaker = hwMap.get(Servo.class, "intaker");
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //note: ---- cannon
         cannonR = hwMap.get(DcMotorEx.class, "CannonR");
@@ -153,8 +161,6 @@ public class Mecanismos {
 //note: ---- sensor
         colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
         colorSensor.setGain(10);
-        distanceSens = hwMap.get(DistanceSensor.class, "sensor_distance");
-        Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor) distanceSens;
 
         aprilTag = new AprilTagProcessor.Builder().build();
         aprilTag.setDecimation(2);
@@ -167,14 +173,12 @@ public class Mecanismos {
     }
 
 //TL: ============== INTAKE ==============
-    public void intake(double pow){
-        intake.setPower(pow);
-    }
-    public void piringolaOFF(){
-        piringola.setPosition(0.5);
-    }
+    public void intake(double pow){intake.setPower(pow);}
+    public void intakerON(){intaker.setPosition(INTAKER_ON);}
+    public void intakerOFF(){intaker.setPosition(INTAKER_OFF);}
+    public void piringolaOFF(){piringola.setPosition(0.4);}
     public void piringolaON(){
-        piringola.setPosition(0);
+        piringola.setPosition(0.95);
     }
 
 //TL: ============ CANNON ===============
@@ -184,12 +188,10 @@ public class Mecanismos {
         cannonR.setVelocity(ticksPerSecond);
         cannonL.setVelocity(ticksPerSecond);
     }
-    public double getPow(){
-        return (((cannonR.getVelocity() * 60) / TICKS_PER_REV) * 100 ) / 312;}
     public void shoot(){
         if (!isShooting) {
             shootPow(pow1);
-            cannon.setPower(1);
+            cannon.setPower(0.5);
             piringolaOFF();
             isShooting = true;
             shootStep = 0;
@@ -198,7 +200,7 @@ public class Mecanismos {
     public void shootNear(){
         if (!isShooting) {
             shootPow(pow1);
-            cannon.setPower(1);
+            cannon.setPower(0.5);
             piringolaON();
             isShooting = true;
             shootStep = 0;
@@ -215,8 +217,8 @@ public class Mecanismos {
             actualPos = 'a';
             isShooting = false;
         }
-        if (A != 0 && B != 0 && C != 0){
-            barril.setPosition(0.445);
+        if (A != 0 && B != 0 && C != 0 && !check){
+            barril.setPosition(Chueco);
             actualPos = 'a';
         }
     }
@@ -285,7 +287,7 @@ public class Mecanismos {
                 }
 
                 TestColorSensorMecanism.DetectedColor detected = getDetectedColor();
-                boolean canIntakeNow = System.currentTimeMillis() - lastIntakeTime >= INTAKE_COOLDOWN_MS;
+                boolean canIntakeNow = (System.currentTimeMillis() - lastIntakeTime >= INTAKE_COOLDOWN_MS);
                 if (canIntakeNow &&
                         (detected == TestColorSensorMecanism.DetectedColor.PURPLE ||
                                 detected == TestColorSensorMecanism.DetectedColor.GREEN)) {
@@ -320,31 +322,31 @@ public class Mecanismos {
                 if (currentValue != 0 && (A == 0 || B == 0 || C == 0)) {
                     advanceToPreferredEmpty();
                 }
-                if (distanceSens.getDistance(DistanceUnit.CM) <= 4 && !distanceChange && (A==0 || B==0 || C==0) && canIntakeNow){
-                    distanceStartTime = System.currentTimeMillis();
-                    distanceChange = true;
-                    lastPos = actualPos;
-                }
-
-                if (distanceChange) {
-                    if (lastPos == actualPos) {
-                        if (System.currentTimeMillis() - distanceStartTime >= 300 &&
-                                (distanceSens.getDistance(DistanceUnit.CM) <= 4) && (detected == TestColorSensorMecanism.DetectedColor.UNKNOWN)) {
-                            if (actualPos == 'a') {
-                                A = 1;
-                                distanceChange = false;
-                            } else if (actualPos == 'b') {
-                                B = 1;
-                                distanceChange = false;
-                            } else if (actualPos == 'c') {
-                                C = 1;
-                                distanceChange = false;
-                            }
-                        }
-                    } else {
-                        distanceChange = false;
-                    }
-                }
+//                if (distanceSens.getDistance(DistanceUnit.CM) <= 4 && !distanceChange && (A==0 || B==0 || C==0) && canIntakeNow){
+//                    distanceStartTime = System.currentTimeMillis();
+//                    distanceChange = true;
+//                    lastPos = actualPos;
+//                }
+//
+//                if (distanceChange) {
+//                    if (lastPos == actualPos) {
+//                        if (System.currentTimeMillis() - distanceStartTime >= 300 &&
+//                                (distanceSens.getDistance(DistanceUnit.CM) <= 4) && (detected == TestColorSensorMecanism.DetectedColor.UNKNOWN)) {
+//                            if (actualPos == 'a') {
+//                                A = 1;
+//                                distanceChange = false;
+//                            } else if (actualPos == 'b') {
+//                                B = 1;
+//                                distanceChange = false;
+//                            } else if (actualPos == 'c') {
+//                                C = 1;
+//                                distanceChange = false;
+//                            }
+//                        }
+//                    } else {
+//                        distanceChange = false;
+//                    }
+//                }
             }
             else {
                 boolean canIntakeNow = System.currentTimeMillis() - lastIntakeTime >= INTAKE_COOLDOWN_MS;
@@ -390,15 +392,17 @@ public class Mecanismos {
                 if (checkStep >= 3) {
                     check = false;
                     advanceToPreferredEmpty();
+                    telemetry.speak("READY");
+                    telemetry.addLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 }
                 if (actuallyLoaded) {
-                    checkStep ++;
                     lastIntakeTime = System.currentTimeMillis(); // cooldown
+                    checkStep++;
                 }
             }
         }
     }
-    private void advanceToPreferredEmpty()
+    public void advanceToPreferredEmpty()
     {
         if (actualPos == 'a') {
             if (B == 0) {
@@ -459,10 +463,11 @@ public class Mecanismos {
         telemetry.addData("C: ",C);
         telemetry.addLine("");
         telemetry.addData("Actual Pos: ", actualPos);
+        telemetry.addData("Check step: ", checkStep
+        );
         telemetry.addData("POW: ", pow1);
         telemetry.addData("COLOR: ", getDetectedColor());
-        telemetry.addData("range", String.format("%.01f cm", distanceSens.getDistance(DistanceUnit.CM)));
-        if (check){telemetry.addLine("#################");}
+        if (check){telemetry.addLine("#################");telemetry.addLine("##### CHECK #####");telemetry.addLine("#################");}
 // speak
         telemetry.update();
     }
