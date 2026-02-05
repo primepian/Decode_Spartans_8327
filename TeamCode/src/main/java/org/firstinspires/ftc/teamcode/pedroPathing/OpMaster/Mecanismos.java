@@ -110,7 +110,7 @@ public class Mecanismos {
     public final long PATEADOR_OFF_TIME = 1100;
     public final long OUTTAKE_HOLD_TIME_MS = 1500;
     public long lastIntakeTime = 0;
-    public long INTAKE_COOLDOWN_MS = 650;
+    public long INTAKE_COOLDOWN_MS = 900;
     public long NO_INTAKE_COOLDOWN_MS = 100;
     public long distanceStartTime = 0;
 
