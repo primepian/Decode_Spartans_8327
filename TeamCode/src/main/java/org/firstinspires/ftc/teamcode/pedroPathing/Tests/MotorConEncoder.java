@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "RPM Motor Control")
+@TeleOp(group = "test", name = "RPM Motor Control")
 public class MotorConEncoder extends LinearOpMode {
 
     DcMotorEx motor;
