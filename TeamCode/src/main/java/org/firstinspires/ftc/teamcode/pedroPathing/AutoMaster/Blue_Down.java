@@ -52,22 +52,12 @@ public class Blue_Down extends OpMode{
 
     private final Pose snd_itk_3 = new Pose(22.000, 59.000, Math.toRadians(180));             //TL:Path #11
 
+    //TODO: SHOOT                                                                                   //TL:Path #12
 
     private final Pose end1 = new Pose(25.000, 66.000, Math.toRadians(180));                               //TL:Path #12
 
 
     private final Pose trd_itk_pose = new Pose(56.000, 32.000, Math.toRadians(180));          //TL:Path #13
-
-    private final Pose trd_itk_1 = new Pose(47.000, 32.000, Math.toRadians(180));             //TL:Path #14
-
-    private final Pose trd_itk_2 = new Pose(42.000, 32.000, Math.toRadians(180));             //TL:Path #15
-
-    private final Pose trd_itk_3 = new Pose(36.000, 32.000, Math.toRadians(180));             //TL:Path #16
-
-    private final Pose frth_shoot_CP = new Pose(46.000, 91.000);                              //TL:Path #17 TODO: With SHOOT
-
-    private final Pose parking_pose = new Pose(16.000, 103.000, Math.toRadians(180));         //TL:Path #18
-
 
     private Path start_path;
     private PathChain snd_path, trd_path, fth_path, fvth_path, sxth_path, svnth_path, egth_path, nnth_path, tenth_path, elvnth_path,final_a, final_b, twlfth_path, thirtnth_path, frtnth_path, fftnth_path, sxtnth_path, svntnth_path, eightnth_path, nntnth_path, prk_em_path;
@@ -140,36 +130,6 @@ public class Blue_Down extends OpMode{
         thirtnth_path = follower.pathBuilder()
                 .addPath(new BezierLine(shoot_Pose, trd_itk_pose))
                 .setLinearHeadingInterpolation(shoot_Pose.getHeading(), trd_itk_pose.getHeading())
-                .build();
-
-        frtnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(trd_itk_pose, trd_itk_1))
-                .setLinearHeadingInterpolation(trd_itk_pose.getHeading(), trd_itk_1.getHeading())
-                .build();
-
-        fftnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(trd_itk_1, trd_itk_2))
-                .setLinearHeadingInterpolation(trd_itk_1.getHeading(), trd_itk_2.getHeading())
-                .build();
-
-        sxtnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(trd_itk_2, trd_itk_3))
-                .setLinearHeadingInterpolation(trd_itk_2.getHeading(), trd_itk_3.getHeading())
-                .build();
-
-        svntnth_path = follower.pathBuilder()
-                .addPath(new BezierCurve(trd_itk_3, frth_shoot_CP, shoot_Pose))
-                .setLinearHeadingInterpolation(trd_itk_3.getHeading(), shoot_Pose.getHeading())
-                .build();
-
-        eightnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(shoot_Pose, parking_pose))
-                .setLinearHeadingInterpolation(shoot_Pose.getHeading(), parking_pose.getHeading())
-                .build();
-
-        final_a = follower.pathBuilder()
-                .addPath(new BezierLine(snd_itk_3, end1))
-                .setLinearHeadingInterpolation(snd_itk_3.getHeading(), end1.getHeading())
                 .build();
     }
 
@@ -331,29 +291,20 @@ public class Blue_Down extends OpMode{
                     setPathState(20);
                 }
                 break;
-
-
-
             case 20:
                 if (!follower.isBusy()) {
                     time_Stamp = actual_time;
-                    pathState = 17;
+                    setPathState(21);
                 }
                 break;
             case 21:
                 if (actual_time >= time_Stamp + 0.4) {
-                    mecanism.intake(0);
                     mecanism.C = 1;
                     follower.setMaxPower(1.0);
-                    setPathState(18);
+                    setPathState(22);
                 }
                 break;
             case 22:
-                if (!follower.isBusy()) {
-                    setPathState(19);
-                }
-                break;
-            case 23:
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }
