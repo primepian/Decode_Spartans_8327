@@ -81,6 +81,7 @@ public class TeleOpMasterV2 extends OpMode {
         mecanism.targetFound = false;
         mecanism.desiredTag  = null;
 
+//tl: drive / inverted drive
         if (!automatedDrive) {//  TL: DRIVE {GPAD_1}
             if (!mecanism.invertedDrive) {
                 if (gamepad1.left_trigger == 0.0) follower.setTeleOpDrive(
@@ -110,8 +111,9 @@ public class TeleOpMasterV2 extends OpMode {
                         true // Robot Centric
                 );
             }
-        } //tl: drive / inverted drive
+        }
 
+//tl: April Tags
         List<AprilTagDetection> currentDetections = mecanism.aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
@@ -125,8 +127,9 @@ public class TeleOpMasterV2 extends OpMode {
             } else {
                 telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
             }
-        } //tl: April Tags
+        }
 
+//tl:  Automatic Shoot Positioning
         if (gamepad1.left_bumper && mecanism.targetFound) {
             double  rangeError      = (mecanism.desiredTag.ftcPose.range - mecanism.DESIRED_DISTANCE);
             double  headingError    = mecanism.desiredTag.ftcPose.bearing;
@@ -140,22 +143,19 @@ public class TeleOpMasterV2 extends OpMode {
                     mecanism.turn,
                     true
             );
-        }   //tl: Automatic Shoot Positioning
+        }
 
-        //  TL: INTAKE      {GPAD_1}
-        if (gamepad1.right_bumper){
-            mecanism.intakerON();
-        } else {
-            mecanism.intakerOFF();
-        }//NOTE: DESTAPACAÑOS
-
-        if (gamepad2.back){mecanism.cannon.setPower(-1);}
-        if (gamepad1.right_trigger > 0.0){
-            mecanism.intake( -0.6);}//NOTE: TRAGATODO
+//  TL: INTAKE      {GPAD_1}
+        if (gamepad1.right_trigger > 0.0){mecanism.intake( -0.6);}//NOTE: Intake
         else if (gamepad1.b){mecanism.intake( 0.5);
         } //NOTE: ESCUPELUPE
         else {
             mecanism.intake( 0);}
+
+        if (gamepad1.right_bumper) {mecanism.intakerON();
+        } else {mecanism.intakerOFF();
+        }//NOTE: DESTAPACAÑOS
+        if (gamepad2.back){mecanism.cannon.setPower(-1);}
 
 //  Tl: CHOOSE TEAM FOR SHOOTING POSE   {GPAD_2}
         if (gamepad2.left_stick_button)  {mecanism.DESIRED_TAG_ID = 20;}    //NOTE: BLUE TEAM
@@ -179,11 +179,11 @@ public class TeleOpMasterV2 extends OpMode {
         }
 
 //tl:---------- CANNON / BARREL -----------
-        if (gamepad2.right_trigger > 0.1f){
+        if (gamepad2.right_trigger > 0.1f) {
             mecanism.shoot();
         } //NOTE: DISPARAR
         if (gamepad2.left_trigger > 0.1f) {
-            Mecanismos.pow1 = 30; //fixme
+            Mecanismos.pow1 = Mecanismos.POW_CERCA;
             mecanism.shootNear();
         }//NOTE: SHOOT NEAR
         if (gamepad2.right_bumper){
@@ -202,7 +202,8 @@ public class TeleOpMasterV2 extends OpMode {
             mecanism.advanceToPreferredEmpty();
         }
         mecanism.RB2flag = currentRB2;
-        if (gamepad2.dpadDownWasReleased()){
+
+        if (gamepad2.xWasPressed()){
             mecanism.A = 0;
             mecanism.B = 0;
             mecanism.C = 0;
@@ -210,14 +211,12 @@ public class TeleOpMasterV2 extends OpMode {
 
         //NOTE: a,b,x TO set powers
         if (gamepad2.a){
-            Mecanismos.pow1 = 49;
+            Mecanismos.pow1 = Mecanismos.POW_LEJOS;
         }
         if (gamepad2.b){
-            Mecanismos.pow1 = 43;
+            Mecanismos.pow1 = Mecanismos.POW_MEDIO;
         }
-        if (gamepad2.x){
-            Mecanismos.pow1 = 30;
-        }
+
         if (gamepad2.yWasReleased()){
             mecanism.check = true;
             mecanism.checkStep = 0;

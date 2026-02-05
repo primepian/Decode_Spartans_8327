@@ -78,12 +78,16 @@ public class Mecanismos {
     public static final double  pateador_off = 0.55;
     public static final double  pateador_on = 0.6;
 
-    public static final double  INTAKER_OFF = 0.55;
-    public static final double  INTAKER_ON = 0.6;
+    public static final double  INTAKER_OFF = 0.5;
+    public static final double  INTAKER_ON = 0.12;
+
+    public static final double  POW_LEJOS = 42;
+    public static final double  POW_MEDIO = 40;
+    public static final double  POW_CERCA = 30;
 
     char actualPos = 'a';
 
-    public static double pow1 = 50;
+    public static double pow1 = POW_LEJOS;
     static final double TICKS_PER_REV = 537.7;
 
     //NOTE: 0 = empty || 1 = PURPLE |
@@ -106,7 +110,7 @@ public class Mecanismos {
     public final long PATEADOR_OFF_TIME = 1300;
     public final long OUTTAKE_HOLD_TIME_MS = 1500;
     public long lastIntakeTime = 0;
-    public long INTAKE_COOLDOWN_MS = 1000;
+    public long INTAKE_COOLDOWN_MS = 900;
     public long NO_INTAKE_COOLDOWN_MS = 100;
     public long distanceStartTime = 0;
 
@@ -160,6 +164,7 @@ public class Mecanismos {
         cannonL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 //note: ---- sensor
         colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
+        distanceSens = hwMap.get(DistanceSensor.class, "distanceSensor");
         colorSensor.setGain(10);
 
         aprilTag = new AprilTagProcessor.Builder().build();
@@ -169,7 +174,7 @@ public class Mecanismos {
                 .addProcessor(aprilTag)
                 .build();
 //note: ---- Pos
-//        intakerOFF();
+        intakerOFF();
     }
 
 //TL: ============== INTAKE ==============
@@ -207,8 +212,6 @@ public class Mecanismos {
             shootStartTime = System.currentTimeMillis();
         }
     }
-
-
 
 //TL: ============= BARRREL =============
     public void G28(){
@@ -287,7 +290,7 @@ public class Mecanismos {
                 }
 
                 TestColorSensorMecanism.DetectedColor detected = getDetectedColor();
-                boolean canIntakeNow = (System.currentTimeMillis() - lastIntakeTime >= INTAKE_COOLDOWN_MS);
+                boolean canIntakeNow = (System.currentTimeMillis() - lastIntakeTime >= INTAKE_COOLDOWN_MS) && (distanceSens.getDistance(DistanceUnit.CM) <= 4);
                 if (canIntakeNow &&
                         (detected == TestColorSensorMecanism.DetectedColor.PURPLE ||
                                 detected == TestColorSensorMecanism.DetectedColor.GREEN)) {
@@ -431,8 +434,6 @@ public class Mecanismos {
         }
     }
 
-
-
     public TestColorSensorMecanism.DetectedColor getDetectedColor(){
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
 
@@ -463,9 +464,12 @@ public class Mecanismos {
         telemetry.addData("C: ",C);
         telemetry.addLine("");
         telemetry.addData("Actual Pos: ", actualPos);
-        telemetry.addData("Check step: ", checkStep
-        );
+        telemetry.addData("Check step: ", checkStep);
+        if (pow1 == POW_LEJOS){telemetry.addLine("POW LEJOS");}
+        if (pow1 == POW_MEDIO){telemetry.addLine("POW MEDIO");}
+        if (pow1 == POW_CERCA){telemetry.addLine("POW CERCA");}
         telemetry.addData("POW: ", pow1);
+        telemetry.addData("range", String.format("%.01f cm", distanceSens.getDistance(DistanceUnit.CM)));
         telemetry.addData("COLOR: ", getDetectedColor());
         if (check){telemetry.addLine("#################");telemetry.addLine("##### CHECK #####");telemetry.addLine("#################");}
 // speak
