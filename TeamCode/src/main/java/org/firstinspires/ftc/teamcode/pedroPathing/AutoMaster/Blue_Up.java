@@ -27,7 +27,7 @@ public class Blue_Up extends OpMode{
 
     private double time_Stamp;
 
-    private final Pose startingPose = new Pose(35.000, 135.000, Math.toRadians(-90));         //TL:Path #1
+    private final Pose startingPose = new Pose(35.000, 135.000, Math.toRadians(90));         //TL:Path #1
     private final Pose search_pose = new Pose(55.000, 104.000, Math.toRadians(70));           //TL:Path #1
 
     private final Pose shoot_Pose = new Pose(49.000, 96.000, Math.toRadians(127));            //TL:Path #2 TODO: SHOOT

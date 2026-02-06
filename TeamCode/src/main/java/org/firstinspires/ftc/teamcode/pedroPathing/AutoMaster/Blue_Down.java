@@ -160,7 +160,7 @@ public class Blue_Down extends OpMode{
                 break;
             case 2:
                 if (!follower.isBusy()){
-                    mecanism.shoot();                                                               //TODO: SHOOT
+                    mecanism.shootNear();                                                               //TODO: SHOOT
                     setPathState(3);
                 }
                 break;
@@ -253,7 +253,7 @@ public class Blue_Down extends OpMode{
                 break;
             case 12:
                 if (!follower.isBusy()) {
-                    mecanism.shoot();                                                               //TODO:SECOND SHOOT
+                    mecanism.shootNear();                                                               //TODO:SECOND SHOOT
                     setPathState(13);
                 }
                 break;
