@@ -106,8 +106,8 @@ public class Mecanismos {
     public long shootStartTime = 0;
 
     //TL: ======= TIMES =========
-    public final long PATEADOR_ON_TIME = 900;
-    public final long PATEADOR_OFF_TIME = 1200;
+    public final long PATEADOR_ON_TIME = 850;
+    public final long PATEADOR_OFF_TIME = 1250;
     public final long OUTTAKE_HOLD_TIME_MS = 1600;
     public long lastIntakeTime = 0;
     public long INTAKE_COOLDOWN_MS = 900;

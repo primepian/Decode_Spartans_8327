@@ -22,6 +22,7 @@ import java.util.List;
 
 
 @Autonomous(name = "Final_Auto", group = "Autonomous")
+@Disabled
 public class Final_Auto_D extends OpMode{
     Mecanismos mecanism = new Mecanismos();
 

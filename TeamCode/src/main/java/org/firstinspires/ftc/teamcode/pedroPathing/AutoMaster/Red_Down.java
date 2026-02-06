@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.AutoMaster;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
@@ -17,8 +16,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import java.util.List;
 
 
-@Autonomous(group = "Blue")
-public class Blue_Down extends OpMode{
+@Autonomous(group = "Red")
+public class Red_Down extends OpMode{
     Mecanismos mecanism = new Mecanismos();
 
     private Follower follower;
@@ -27,22 +26,22 @@ public class Blue_Down extends OpMode{
 
     private double time_Stamp;
 
-    private final Pose startingPose = new Pose(55.000, 9.000, Math.toRadians(90));            //TL:Path #1
-    private final Pose search_pose = new Pose(61.000, 12.000, Math.toRadians(90));            //TL:Path #1
+    private final Pose startingPose = new Pose(55.000, 9.000, Math.toRadians(90)).mirror();            //TL:Path #1
+    private final Pose search_pose = new Pose(61.000, 12.000, Math.toRadians(90)).mirror();            //TL:Path #1
 
-    private final Pose shoot_Pose = new Pose(60.000, 12.000, Math.toRadians(120));            //TL:Path #2 TODO: SHOOT
+    private final Pose shoot_Pose = new Pose(60.000, 12.000, Math.toRadians(120)).mirror();            //TL:Path #2 TODO: SHOOT
 
-    private final Pose fst_itk_pose = new Pose(48.000, 33.000, Math.toRadians(180));          //TL:Path #3
+    private final Pose fst_itk_pose = new Pose(48.000, 33.000, Math.toRadians(180)).mirror();          //TL:Path #3
 
-    private final Pose fst_itk_1 = new Pose(35.000, 33.000, Math.toRadians(180));             //TL:Path #4
+    private final Pose fst_itk_1 = new Pose(35.000, 33.000, Math.toRadians(180)).mirror();             //TL:Path #4
 
-    private final Pose fst_itk_2 = new Pose(30.000, 33.000, Math.toRadians(180));             //TL:Path #5
+    private final Pose fst_itk_2 = new Pose(30.000, 33.000, Math.toRadians(180)).mirror();             //TL:Path #5
 
-    private final Pose fst_itk_3 = new Pose(22.000, 33.000, Math.toRadians(180));             //TL:Path #6
+    private final Pose fst_itk_3 = new Pose(22.000, 33.000, Math.toRadians(180)).mirror();             //TL:Path #6
 
-    private final Pose shoot_Pose_2 = new Pose(60.000, 12.000, Math.toRadians(117));          //TL:Path #7 TODO: SECOND SHOOT
+    private final Pose shoot_Pose_2 = new Pose(60.000, 12.000, Math.toRadians(117)).mirror();          //TL:Path #7 TODO: SECOND SHOOT
 
-    private final Pose parking_emergency_pose = new Pose(40.000, 9.000, Math.toRadians(180));  //TL:Path #8 fixme: EMERGENCY
+    private final Pose parking_emergency_pose = new Pose(40.000, 9.000, Math.toRadians(180)).mirror();  //TL:Path #8 fixme: EMERGENCY
 
     /*private final Pose snd_itk_pose = new Pose(48.000, 59.000, Math.toRadians(180));          //TL:Path #8
 
