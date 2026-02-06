@@ -146,8 +146,8 @@ public class TeleOpMasterV2 extends OpMode {
         }
 
 //  TL: INTAKE      {GPAD_1}
-        if (gamepad1.right_trigger > 0.0){mecanism.intake( -0.8);}//NOTE: Intake
-        else if (gamepad1.b){mecanism.intake( 0.5);
+        if (gamepad1.right_trigger > 0.0){mecanism.intake( -0.9);}//NOTE: Intake
+        else if (gamepad1.b){mecanism.intake( 0.6);
         } //NOTE: ESCUPELUPE
         else {
             mecanism.intake( 0);}
@@ -155,7 +155,7 @@ public class TeleOpMasterV2 extends OpMode {
         if (gamepad1.right_bumper) {mecanism.intakerON();
         } else {mecanism.intakerOFF();
         }//NOTE: DESTAPACAÑOS
-        if (gamepad2.back){mecanism.cannon.setPower(-1);}
+        if (gamepad2.back){mecanism.cannon.setPower(-.9);}
 
 //  Tl: CHOOSE TEAM FOR SHOOTING POSE   {GPAD_2}
         if (gamepad2.left_stick_button)  {mecanism.DESIRED_TAG_ID = 20;}    //NOTE: BLUE TEAM
@@ -196,10 +196,9 @@ public class TeleOpMasterV2 extends OpMode {
         //  NOTE: [LB] ACTUAL TO 1
         boolean currentRB2 = gamepad2.left_bumper;
         if (currentRB2 && !mecanism.RB2flag){
-            if (mecanism.actualPos == 'a' && mecanism.A == 0){mecanism.A = 1;}
-            else if (mecanism.actualPos == 'b' && mecanism.B == 0){mecanism.B = 1;}
-            else if (mecanism.actualPos == 'c' && mecanism.C == 0){mecanism.C = 1;}
-            mecanism.advanceToPreferredEmpty();
+            mecanism.A = 1;
+            mecanism.B = 1;
+            mecanism.C = 1;
         }
         mecanism.RB2flag = currentRB2;
 

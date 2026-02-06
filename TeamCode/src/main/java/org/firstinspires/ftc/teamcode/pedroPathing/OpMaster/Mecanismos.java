@@ -200,7 +200,7 @@ public class Mecanismos {
     public void shoot(){
         if (!isShooting) {
             shootPow(pow1);
-            cannon.setPower(0.8);
+            cannon.setPower(0.9);
             piringolaOFF();
             isShooting = true;
             shootStep = 0;
@@ -209,7 +209,7 @@ public class Mecanismos {
     public void shootNear(){
         if (!isShooting) {
             shootPow(pow1);
-            cannon.setPower(0.5);
+            cannon.setPower(0.9);
             piringolaON();
             isShooting = true;
             shootStep = 0;

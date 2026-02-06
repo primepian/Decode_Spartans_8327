@@ -38,7 +38,7 @@ public class Blue_Down extends OpMode{
 
     private final Pose fst_itk_2 = new Pose(30.000, 33.000, Math.toRadians(180));             //TL:Path #5
 
-    private final Pose fst_itk_3 = new Pose(22.000, 33.000, Math.toRadians(180));             //TL:Path #6
+    private final Pose fst_itk_3 = new Pose(10.000, 33.000, Math.toRadians(180));             //TL:Path #6
 
     private final Pose shoot_Pose_2 = new Pose(60.000, 12.000, Math.toRadians(117));          //TL:Path #7 TODO: SECOND SHOOT
 
@@ -139,7 +139,7 @@ public class Blue_Down extends OpMode{
 
         switch (pathState) {
             case 0: //start to obelisk
-                Mecanismos.pow1 = 44;
+                Mecanismos.pow1 = 42;
                 follower.setMaxPower(0.55);
                 follower.followPath(start_path);
                 time_Stamp = actual_time;
@@ -155,6 +155,7 @@ public class Blue_Down extends OpMode{
                 if ((!follower.isBusy() && actual_time >= time_Stamp + 3) || (!follower.isBusy() && (mecanism.PPG || mecanism.GPP || mecanism.PGP) )) {
                     follower.followPath(snd_path,true);
                     setPathState(2);
+                    follower.setMaxPower(7);
                 }
                 break;
             case 2:
@@ -210,7 +211,7 @@ public class Blue_Down extends OpMode{
                 }
                 break;
             case 8:
-                if (actual_time >= time_Stamp + 0.05) {
+                if (!follower.isBusy()) {
                     time_Stamp = actual_time;
                     setPathState(9);
                 }
@@ -222,6 +223,8 @@ public class Blue_Down extends OpMode{
                 if (actual_time >= time_Stamp + 0.6) {
                     mecanism.B = 1;
                     mecanism.C = 0;
+                    mecanism.barril.setPosition(Mecanismos.Cin);
+                    mecanism.actualPos = 'c';
                 }
                 if (actual_time >= time_Stamp + 0.5){
                     mecanism.intakerOFF();
@@ -237,9 +240,9 @@ public class Blue_Down extends OpMode{
                     setPathState(11);
                 }
             case 11:
-                if ((actual_time >= time_Stamp + 0.0) && (actual_time < time_Stamp + 0.5)) {
+                if ((actual_time >= time_Stamp + 0.2) && (actual_time < time_Stamp + 0.7)) {
                     mecanism.intakerON();
-                    if (actual_time >= time_Stamp + 0.5) {
+                    if (actual_time >= time_Stamp + 0.7) {
                         mecanism.C = 1;
                     }
                     follower.setMaxPower(0.55);
