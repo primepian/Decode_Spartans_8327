@@ -28,21 +28,21 @@ public class Blue_Down extends OpMode{
     private double time_Stamp;
 
     private final Pose startingPose = new Pose(55.000, 9.000, Math.toRadians(90));            //TL:Path #1
-    private final Pose search_pose = new Pose(65.000, 12.000, Math.toRadians(90));            //TL:Path #1
+    private final Pose search_pose = new Pose(61.000, 12.000, Math.toRadians(90));            //TL:Path #1
 
-    private final Pose shoot_Pose = new Pose(60.000, 12.000, Math.toRadians(111));            //TL:Path #2 TODO: SHOOT
+    private final Pose shoot_Pose = new Pose(60.000, 12.000, Math.toRadians(120));            //TL:Path #2 TODO: SHOOT
 
-    private final Pose fst_itk_pose = new Pose(48.000, 35.000, Math.toRadians(180));          //TL:Path #3
+    private final Pose fst_itk_pose = new Pose(48.000, 33.000, Math.toRadians(180));          //TL:Path #3
 
-    private final Pose fst_itk_1 = new Pose(35.000, 35.000, Math.toRadians(180));             //TL:Path #4
+    private final Pose fst_itk_1 = new Pose(35.000, 33.000, Math.toRadians(180));             //TL:Path #4
 
-    private final Pose fst_itk_2 = new Pose(30.000, 35.000, Math.toRadians(180));             //TL:Path #5
+    private final Pose fst_itk_2 = new Pose(30.000, 33.000, Math.toRadians(180));             //TL:Path #5
 
-    private final Pose fst_itk_3 = new Pose(22.000, 35.000, Math.toRadians(180));             //TL:Path #6
+    private final Pose fst_itk_3 = new Pose(22.000, 33.000, Math.toRadians(180));             //TL:Path #6
 
-    //TODO: SHOOT                                                                                     TL:Path #7
+    private final Pose shoot_Pose_2 = new Pose(60.000, 12.000, Math.toRadians(117));          //TL:Path #7 TODO: SECOND SHOOT
 
-    private final Pose parking_emergency_pose = new Pose(40.000, 9.000, Math.toRadians(90));  //TL:Path #8 fixme: EMERGENCY
+    private final Pose parking_emergency_pose = new Pose(40.000, 9.000, Math.toRadians(180));  //TL:Path #8 fixme: EMERGENCY
 
     /*private final Pose snd_itk_pose = new Pose(48.000, 59.000, Math.toRadians(180));          //TL:Path #8
 
@@ -93,13 +93,13 @@ public class Blue_Down extends OpMode{
                 .build();
 
         svnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(fst_itk_3, shoot_Pose))
-                .setLinearHeadingInterpolation(fst_itk_3.getHeading(), shoot_Pose.getHeading())
+                .addPath(new BezierLine(fst_itk_3, shoot_Pose_2))
+                .setLinearHeadingInterpolation(fst_itk_3.getHeading(), shoot_Pose_2.getHeading())
                 .build();
 
         prk_em_path = follower.pathBuilder()
-                .addPath(new BezierLine(shoot_Pose, parking_emergency_pose))
-                .setLinearHeadingInterpolation(shoot_Pose.getHeading(), parking_emergency_pose.getHeading())
+                .addPath(new BezierLine(shoot_Pose_2, parking_emergency_pose))
+                .setLinearHeadingInterpolation(shoot_Pose_2.getHeading(), parking_emergency_pose.getHeading())
                 .build();
 
         /*egth_path = follower.pathBuilder()
@@ -139,6 +139,8 @@ public class Blue_Down extends OpMode{
 
         switch (pathState) {
             case 0: //start to obelisk
+                Mecanismos.pow1 = 44;
+                follower.setMaxPower(0.5);
                 follower.followPath(start_path);
                 time_Stamp = actual_time;
                 setPathState(1);
@@ -164,7 +166,7 @@ public class Blue_Down extends OpMode{
             case 3:
                 if (!follower.isBusy() && !mecanism.isShooting) {
                     follower.followPath(trd_path, true);
-                    setPathState(4);
+                    setPathState(5);
                 }
                 break;
             case 4:
@@ -174,10 +176,11 @@ public class Blue_Down extends OpMode{
                 }
                 break;
             case 5:
-                if ((!follower.isBusy()) && (actual_time >= time_Stamp + 0.2)){
+                if ((!follower.isBusy()) && (actual_time >= time_Stamp + 0.1)){
                     follower.setMaxPower(0.4);
-                    //mecanism.intake(-0.8); fixme
+                    mecanism.intake(-0.8);
                     follower.followPath(fth_path, true);                                    //TL:FIRST INTAKE, 1
+                    mecanism.intakerOFF();
                     setPathState(6);
                 }
                 break;
@@ -188,40 +191,42 @@ public class Blue_Down extends OpMode{
                 }
                 break;
             case 7:
-                if ((actual_time >= time_Stamp + 0.2) && (actual_time < 0.9)) {
+                if ((actual_time >= time_Stamp + 0.0) && (actual_time < time_Stamp + 0.5)) {
                     mecanism.intakerON();
                 }
-                if (actual_time >= time_Stamp + 0.85) {
+                if (actual_time >= time_Stamp + 0.6) {
                     mecanism.A = 2;
                     mecanism.B = 0;
                     mecanism.C = 0;
+                    mecanism.barril.setPosition(Mecanismos.Bin);
+                    mecanism.actualPos = 'b';
                 }
-                if (actual_time >= time_Stamp + 0.9){
+                if (actual_time >= time_Stamp + 0.5){
                     mecanism.intakerOFF();
                 }
-                if (actual_time >= time_Stamp + 1.75){
+                if (actual_time >= time_Stamp + 0.9){
                     follower.followPath(fvth_path, true);                                   //TL:FIRST INTAKE, 2
                     setPathState(8);
                 }
                 break;
             case 8:
-                if (actual_time >= time_Stamp + 0.2) {
+                if (actual_time >= time_Stamp + 0.05) {
                     time_Stamp = actual_time;
                     setPathState(9);
                 }
                 break;
             case 9:
-                if ((actual_time >= time_Stamp + 0.2) && (actual_time < 0.9)) {
+                if ((actual_time >= time_Stamp + 0.0) && (actual_time < time_Stamp + 0.5)) {
                     mecanism.intakerON();
                 }
-                if (actual_time >= time_Stamp + 0.85) {
+                if (actual_time >= time_Stamp + 0.6) {
                     mecanism.B = 1;
                     mecanism.C = 0;
                 }
-                if (actual_time >= time_Stamp + 0.9){
+                if (actual_time >= time_Stamp + 0.5){
                     mecanism.intakerOFF();
                 }
-                if (actual_time >= time_Stamp + 1.75){
+                if (actual_time >= time_Stamp + 0.9){
                     follower.followPath(sxth_path, true);                                   //TL:FIRST INTAKE, 3
                     setPathState(10);
                 }
@@ -232,13 +237,13 @@ public class Blue_Down extends OpMode{
                     setPathState(11);
                 }
             case 11:
-                if (actual_time >= time_Stamp + 0.2) {
+                if ((actual_time >= time_Stamp + 0.0) && (actual_time < time_Stamp + 0.5)) {
                     mecanism.intakerON();
-                    if (actual_time >= time_Stamp + 0.85) {
+                    if (actual_time >= time_Stamp + 0.5) {
                         mecanism.C = 1;
                     }
-                    follower.setMaxPower(1);
-                    //mecanism.intake(0); fixme
+                    follower.setMaxPower(0.55);
+                    mecanism.intake(0);
                     follower.followPath(svnth_path, true);
                     setPathState(12);
                 }
@@ -379,6 +384,7 @@ public class Blue_Down extends OpMode{
         telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.addData("pathTimer: ", pathTimer);
         telemetry.addData("DESIRED_TAG_ID: ", mecanism.DESIRED_TAG_ID);
+        mecanism.telem(telemetry);
 
         telemetry.update();
     }
@@ -389,6 +395,7 @@ public class Blue_Down extends OpMode{
     @Override
     public void init() {
         mecanism.initAll(hardwareMap);
+        mecanism.piringolaOFF();
 
         pathTimer = new Timer();
         opmodeTimer = new Timer();

@@ -45,16 +45,16 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
  */
 
 public class Mecanismos {
-// Tl:========= INTAKE =========
+    // Tl:========= INTAKE =========
     public DcMotor intake;
     public Servo intaker;
-// TL:======== CANNON ==========
+    // TL:======== CANNON ==========
     public DcMotorEx cannonR;
     public DcMotorEx cannonL;
     public DcMotorEx cannon;
     public DcMotor turret;
     public Servo piringola;
-// Tl:======== BARRIL ==========
+    // Tl:======== BARRIL ==========
     public Servo barril;
     public Servo pateador;
     public DistanceSensor distanceSens;
@@ -64,7 +64,7 @@ public class Mecanismos {
         GREEN,
         UNKNOWN,
     }
-// Tl: ======== Posiciones =========
+    // Tl: ======== Posiciones =========
     public static final double  Ain = 0.658;
     public static final double  Bin = 0.585;
     public static final double  Cin = 0.505;
@@ -85,7 +85,7 @@ public class Mecanismos {
     public static final double  POW_MEDIO = 37;
     public static final double  POW_CERCA = 27;
 
-    char actualPos = 'a';
+    public char actualPos = 'a';
 
     public static double pow1 = POW_LEJOS;
     static final double TICKS_PER_REV = 537.7;
@@ -106,9 +106,9 @@ public class Mecanismos {
     public long shootStartTime = 0;
 
     //TL: ======= TIMES =========
-    public final long PATEADOR_ON_TIME = 800;
-    public final long PATEADOR_OFF_TIME = 1100;
-    public final long OUTTAKE_HOLD_TIME_MS = 1500;
+    public final long PATEADOR_ON_TIME = 900;
+    public final long PATEADOR_OFF_TIME = 1200;
+    public final long OUTTAKE_HOLD_TIME_MS = 1600;
     public long lastIntakeTime = 0;
     public long INTAKE_COOLDOWN_MS = 900;
     public long NO_INTAKE_COOLDOWN_MS = 100;
@@ -140,7 +140,7 @@ public class Mecanismos {
     public double  drive           = 0;
     public double  turn            = 0;
 
-//TL: ============= INIT =================
+    //TL: ============= INIT =================
     public void initAll(HardwareMap hwMap){
         barril = hwMap.get(Servo.class,"servo");
 //note: ---- intake
@@ -177,7 +177,7 @@ public class Mecanismos {
         intakerOFF();
     }
 
-//TL: ============== INTAKE ==============
+    //TL: ============== INTAKE ==============
     public void intake(double pow){intake.setPower(pow);}
     public void intakerON(){intaker.setPosition(INTAKER_ON);}
     public void intakerOFF(){intaker.setPosition(INTAKER_OFF);}
@@ -200,7 +200,7 @@ public class Mecanismos {
     public void shoot(){
         if (!isShooting) {
             shootPow(pow1);
-            cannon.setPower(0.5);
+            cannon.setPower(0.8);
             piringolaOFF();
             isShooting = true;
             shootStep = 0;
@@ -217,7 +217,7 @@ public class Mecanismos {
         }
     }
 
-//TL: ============= BARRREL =============
+    //TL: ============= BARRREL =============
     public void G28(){
         if ((A == 0 && B == 0 && C == 0) && !check) {
             barril.setPosition(Ain);
@@ -298,7 +298,7 @@ public class Mecanismos {
                 if (canIntakeNow &&
                         (detected == TestColorSensorMecanism.DetectedColor.PURPLE ||
                                 detected == TestColorSensorMecanism.DetectedColor.GREEN ||
-                                    distanceSens.getDistance(DistanceUnit.CM) <= 4)) {
+                                distanceSens.getDistance(DistanceUnit.CM) <= 4)) {
 
                     int value = detected == TestColorSensorMecanism.DetectedColor.GREEN ? 2 : 1;
 
