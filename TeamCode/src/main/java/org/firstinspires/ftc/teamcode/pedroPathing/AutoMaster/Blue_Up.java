@@ -44,21 +44,6 @@ public class Blue_Up extends OpMode{
 
     private final Pose parking_emergency_pose = new Pose(35.000, 81.000, Math.toRadians(-90));//TL:Path #8 fixme: EMERGENCY
 
-    /*private final Pose snd_itk_pose = new Pose(48.000, 59.000, Math.toRadians(180));          //TL:Path #8
-
-    private final Pose snd_itk_1 = new Pose(35.000, 59.000, Math.toRadians(180));             //TL:Path #9
-
-    private final Pose snd_itk_2 = new Pose(30.000, 59.000, Math.toRadians(180));             //TL:Path #10
-
-    private final Pose snd_itk_3 = new Pose(22.000, 59.000, Math.toRadians(180));             //TL:Path #11
-
-    //TODO: SHOOT                                                                                   //TL:Path #12
-
-    private final Pose end1 = new Pose(25.000, 66.000, Math.toRadians(180));                               //TL:Path #12
-
-
-    private final Pose trd_itk_pose = new Pose(56.000, 32.000, Math.toRadians(180));          //TL:Path #13
-*/
     private Path start_path;
     private PathChain snd_path, trd_path, fth_path, fvth_path, sxth_path, svnth_path, egth_path, nnth_path, tenth_path, elvnth_path,final_a, final_b, twlfth_path, thirtnth_path, frtnth_path, fftnth_path, sxtnth_path, svntnth_path, eightnth_path, nntnth_path, prk_em_path;
 
@@ -101,36 +86,6 @@ public class Blue_Up extends OpMode{
                 .addPath(new BezierLine(shoot_Pose_2, parking_emergency_pose))
                 .setLinearHeadingInterpolation(shoot_Pose_2.getHeading(), parking_emergency_pose.getHeading())
                 .build();
-
-        /*egth_path = follower.pathBuilder()
-                .addPath(new BezierLine(shoot_Pose, snd_itk_pose))
-                .setLinearHeadingInterpolation(shoot_Pose.getHeading(), snd_itk_pose.getHeading())
-                .build();
-
-        nnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(snd_itk_pose, snd_itk_1))
-                .setLinearHeadingInterpolation(snd_itk_pose.getHeading(), snd_itk_1.getHeading())
-                .build();
-
-        tenth_path = follower.pathBuilder()
-                .addPath(new BezierLine(snd_itk_1, snd_itk_2))
-                .setLinearHeadingInterpolation(snd_itk_1.getHeading(), snd_itk_2.getHeading())
-                .build();
-
-        elvnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(snd_itk_2, snd_itk_3))
-                .setLinearHeadingInterpolation(snd_itk_2.getHeading(), snd_itk_3.getHeading())
-                .build();
-
-        twlfth_path = follower.pathBuilder()
-                .addPath(new BezierLine(snd_itk_3, shoot_Pose))
-                .setLinearHeadingInterpolation(snd_itk_3.getHeading(), shoot_Pose.getHeading())
-                .build();
-
-        thirtnth_path = follower.pathBuilder()
-                .addPath(new BezierLine(shoot_Pose, trd_itk_pose))
-                .setLinearHeadingInterpolation(shoot_Pose.getHeading(), trd_itk_pose.getHeading())
-                .build();*/
     }
 
     public void autonomousPathUpdate() {
@@ -265,73 +220,6 @@ public class Blue_Up extends OpMode{
                     setPathState(-1);
                 }
                 break;
-            /*case 13:
-                if (!follower.isBusy() && !mecanism.isShooting) {
-                    follower.followPath(egth_path, true);
-                    setPathState(14);
-                }
-                break;
-            case 14:
-                if (!follower.isBusy()) {
-                    time_Stamp = actual_time;
-                    setPathState(15);
-                }
-                break;
-            case 15:
-                if ((!follower.isBusy()) && (actual_time >= time_Stamp + 0.8)){
-                    follower.setMaxPower(0.4);
-                    mecanism.intake(-0.6);
-                    follower.followPath(nnth_path, true);                                   //TL:SECOND INTAKE, 1
-                    setPathState(12);
-                }
-                break;
-            case 16:
-                if (!follower.isBusy()) {
-                    time_Stamp = actual_time;
-                    setPathState(17);
-                }
-                break;
-            case 17:
-                if (actual_time >= time_Stamp + 0.5) {
-                    mecanism.A = 1;
-                    mecanism.B = 0;
-                    mecanism.C = 0;
-                    follower.followPath(tenth_path, true);                                  //TL:SECOND INTAKE, 2
-                    setPathState(18);
-                }
-                break;
-            case 18:
-                if (!follower.isBusy()) {
-                    time_Stamp = actual_time;
-                    setPathState(19);
-                }
-                break;
-            case 19:
-                if (actual_time >= time_Stamp + 0.2) {
-                    mecanism.B = 2;
-                    mecanism.C = 0;
-                    follower.followPath(elvnth_path, true);                                 //TL:SECOND INTAKE, 3
-                    setPathState(20);
-                }
-                break;
-            case 20:
-                if (!follower.isBusy()) {
-                    time_Stamp = actual_time;
-                    setPathState(21);
-                }
-                break;
-            case 21:
-                if (actual_time >= time_Stamp + 0.4) {
-                    mecanism.C = 1;
-                    follower.setMaxPower(1.0);
-                    setPathState(22);
-                }
-                break;
-            case 22:
-                if (!follower.isBusy()) {
-                    setPathState(-1);
-                }
-                break;*/
         }
     }
 
